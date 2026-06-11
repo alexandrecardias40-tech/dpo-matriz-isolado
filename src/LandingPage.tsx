@@ -1,135 +1,179 @@
-import { Link } from "wouter";
+import { useCallback } from "react";
+import Particles from "react-tsparticles";
+import { loadSlim } from "tsparticles-slim";
+import type { Container, Engine } from "tsparticles-engine";
 
 export default function LandingPage() {
+  const particlesInit = useCallback(async (engine: Engine) => {
+    await loadSlim(engine);
+  }, []);
+
+  const particlesLoaded = useCallback(async (container: Container | undefined) => {
+    console.log(container);
+  }, []);
+
   return (
-    <>
-      <style>{`
-        .landing-container {
-            font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: #0f172a;
-            color: #f8fafc;
-            background: radial-gradient(circle at top, rgba(37, 99, 235, 0.25), transparent 55%),
-                radial-gradient(circle at 20% 20%, rgba(14, 165, 233, 0.2), transparent 60%), #0f172a;
-            min-height: 100vh;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-        }
+    <div style={{ position: "relative", minHeight: "100vh", background: "linear-gradient(135deg, #334155 0%, #0f172a 100%)", color: "white", fontFamily: "sans-serif", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+      
+      {/* Background Particles */}
+      <Particles
+        id="tsparticles"
+        init={particlesInit}
+        loaded={particlesLoaded}
+        style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 0 }}
+        options={{
+          background: {
+            color: {
+              value: "transparent",
+            },
+          },
+          fpsLimit: 120,
+          interactivity: {
+            events: {
+              onClick: {
+                enable: true,
+                mode: "push",
+              },
+              onHover: {
+                enable: true,
+                mode: "grab",
+              },
+              resize: true,
+            },
+            modes: {
+              push: {
+                quantity: 4,
+              },
+              grab: {
+                distance: 180,
+                links: {
+                  opacity: 0.8,
+                  color: "#38bdf8"
+                }
+              },
+            },
+          },
+          particles: {
+            color: {
+              value: "#38bdf8",
+            },
+            links: {
+              color: "#38bdf8",
+              distance: 150,
+              enable: true,
+              opacity: 0.35,
+              width: 1,
+            },
+            move: {
+              direction: "none",
+              enable: true,
+              outModes: {
+                default: "bounce",
+              },
+              random: false,
+              speed: 1.5,
+              straight: false,
+            },
+            number: {
+              density: {
+                enable: true,
+                area: 800,
+              },
+              value: 120,
+            },
+            opacity: {
+              value: 0.7,
+            },
+            shape: {
+              type: "circle",
+            },
+            size: {
+              value: { min: 1, max: 4 },
+            },
+          },
+          detectRetina: true,
+        }}
+      />
 
-        .landing-wrapper {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 48px 20px 72px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .hero {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .hero-title {
-            font-size: clamp(2.25rem, 4vw, 3rem);
-            font-weight: 700;
-            margin: 0 0 12px;
-        }
-
-        .hero-subtitle {
-            font-size: 1rem;
-            opacity: 0.8;
-            margin: 0;
-        }
-
-        .landing-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-            max-width: 380px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .landing-card {
-            border-radius: 24px;
-            padding: 28px;
-            text-decoration: none;
-            color: inherit;
-            background: rgba(15, 23, 42, 0.65);
-            border: 1px solid rgba(148, 163, 184, 0.25);
-            box-shadow: 0 20px 45px rgba(15, 23, 42, 0.45);
-            transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: 16px;
-        }
-
-        .landing-card:hover {
-            transform: translateY(-6px);
-            border-color: rgba(248, 250, 252, 0.6);
-            background: rgba(15, 23, 42, 0.85);
-        }
-
-        .card-badge {
-            font-size: 0.85rem;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            font-weight: 600;
-            opacity: 0.85;
-        }
-
-        .card-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin: 0;
-        }
-
-        .card-description {
-            font-size: 1rem;
-            line-height: 1.5;
-            margin: 0;
-            opacity: 0.85;
-        }
-
-        @media (max-width: 768px) {
-            .landing-wrapper { padding: 40px 20px 60px; }
-            .hero-title { font-size: 2rem; margin-bottom: 16px; }
-            .hero-subtitle { font-size: 0.95rem; margin-bottom: 12px; }
-            .landing-card { padding: 32px 24px; border-radius: 20px; }
-            .card-badge { font-size: 0.9rem; margin-bottom: 4px; }
-            .card-title { font-size: 1.4rem; line-height: 1.3; margin: 8px 0; }
-            .card-description { font-size: 1rem; line-height: 1.6; }
-        }
-
-        @media (max-width: 640px) {
-            .landing-wrapper { padding: 32px 16px 48px; }
-            .hero-title { font-size: 1.75rem; }
-            .landing-card { padding: 28px 20px; }
-            .card-title { font-size: 1.3rem; }
-        }
-      `}</style>
-      <div className="landing-container">
-        <main className="landing-wrapper">
-            <header className="hero">
-                <p className="hero-subtitle">Universidade de Brasília · Diretoria de Orçamento</p>
-                <h1 className="hero-title">Portal unificado de dashboards</h1>
-                <p className="hero-subtitle">Escolha o painel que deseja consultar</p>
-            </header>
-            <section className="landing-grid">
-                <Link href="/dashboard" className="landing-card">
-                    <span className="card-badge" style={{ color: "#38bdf8" }}>DOR</span>
-                    <h2 className="card-title">Dashboard Custos Indiretos</h2>
-                    <p className="card-description">Análise de Custos Indiretos</p>
-                </Link>
-            </section>
-            <p style={{ marginTop: "auto", paddingTop: 32, textAlign: "center", fontSize: "0.85rem", color: "rgba(248, 250, 252, 0.85)", letterSpacing: "0.08em" }}>
-                created by dor@unb.br
-            </p>
-        </main>
+      {/* Header */}
+      <div style={{ position: "absolute", top: 0, left: 0, right: 0, padding: "30px 40px", display: "flex", flexDirection: "column", gap: 6, zIndex: 10 }}>
+        <span style={{ fontSize: 17, color: "#f8fafc", fontWeight: 600, letterSpacing: "0.5px", textShadow: "0 2px 4px rgba(0,0,0,0.3)" }}>
+          Decanato de Planejamento, Orçamento e Avaliação Institucional - DPO
+        </span>
+        <span style={{ fontSize: 14, color: "#94a3b8", fontWeight: 500, letterSpacing: "0.3px" }}>
+          Diretoria de Orçamento - DOR
+        </span>
       </div>
-    </>
+
+      {/* Main Content */}
+      <div style={{ zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", marginTop: "-60px" }}>
+        
+        <h1 style={{ fontSize: 56, fontWeight: 800, color: "#f8fafc", margin: 0, textShadow: "0 0 40px rgba(56, 189, 248, 0.4)", letterSpacing: "-1px" }}>
+          Painel de Custos Indiretos
+        </h1>
+        <p style={{ fontSize: 20, color: "#cbd5e1", marginTop: 12, marginBottom: 50, fontWeight: 400 }}>
+          Monitoramento e Análise Estratégica
+        </p>
+
+        {/* Glass Card */}
+        <div style={{
+          background: "linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%)",
+          backdropFilter: "blur(32px)",
+          WebkitBackdropFilter: "blur(32px)",
+          border: "1px solid rgba(255, 255, 255, 0.15)",
+          borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
+          borderRight: "1px solid rgba(255, 255, 255, 0.05)",
+          borderRadius: 20,
+          padding: "50px 60px",
+          width: "100%",
+          maxWidth: 480,
+          boxShadow: "0 30px 60px -10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center"
+        }}>
+          <h2 style={{ margin: 0, fontSize: 32, color: "white", fontWeight: 700, letterSpacing: "-0.5px" }}>Dashboard</h2>
+          <h2 style={{ margin: "4px 0 0 0", fontSize: 32, color: "white", fontWeight: 700, letterSpacing: "-0.5px" }}>Custos Indiretos</h2>
+          <p style={{ marginTop: 16, marginBottom: 40, color: "#94a3b8", fontSize: 16, fontWeight: 500 }}>Análise de Custos Indiretos</p>
+          
+          <a href="#/dashboard" style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            background: "linear-gradient(to right, #059669, #10b981)",
+            color: "white",
+            textDecoration: "none",
+            padding: "16px 40px",
+            borderRadius: 8,
+            fontWeight: 600,
+            fontSize: 17,
+            letterSpacing: "0.5px",
+            boxShadow: "0 8px 20px -6px rgba(16, 185, 129, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.3)",
+            transition: "all 0.3s ease",
+            textTransform: "uppercase"
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = "translateY(-3px)";
+            e.currentTarget.style.boxShadow = "0 15px 25px -8px rgba(16, 185, 129, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.3)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = "translateY(0)";
+            e.currentTarget.style.boxShadow = "0 8px 20px -6px rgba(16, 185, 129, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.3)";
+          }}
+          >
+            Acessar Dashboard
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div style={{ position: "absolute", bottom: 24, color: "#64748b", fontSize: 13, zIndex: 10 }}>
+        created by dor@unb.br
+      </div>
+    </div>
   );
 }
