@@ -117,11 +117,11 @@ export default function App() {
   const [selAno, setSelAno] = useState("all");
   const [selFonte, setSelFonte] = useState("all");
 
-  const unidades = useMemo(()=>Array.from(new Set(allData.map((d:any)=>(d.centro_custo||"").trim()).filter(Boolean))).sort() as string[],[]);
+  const unidades = useMemo(()=>Array.from(new Set(allData.map((d:any)=>(d.centro_custo||"").trim()).filter(Boolean))).sort() as string[],[allData]);
   const anos = useMemo(() => {
     const dataByFonte = selFonte === "all" ? allData : allData.filter((d: any) => d.fonte === selFonte);
     return Array.from(new Set(dataByFonte.map((d: any) => d.ano).filter(Boolean))).sort() as number[];
-  }, [selFonte]);
+  }, [allData, selFonte]);
 
   useEffect(() => {
     if (selAno !== "all" && !anos.includes(Number(selAno))) {
@@ -140,7 +140,7 @@ export default function App() {
       if(selFonte!=="all"&&d.fonte!==selFonte) return false;
       return true;
     });
-  },[selUnidade,selSemaforo,selAno,selFonte]);
+  },[allData,selUnidade,selSemaforo,selAno,selFonte]);
 
   const T = useMemo(()=>{
     const n = (key:string)=>filtered.reduce((s:number,d:any)=>s+(Number(d[key])||0),0);

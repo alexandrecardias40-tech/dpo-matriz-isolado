@@ -162,7 +162,7 @@ export default function ComparativosPage() {
   const anos = useMemo(() => {
     const dataByFonte = selFonte === "all" ? all : all.filter((d: any) => d.fonte === selFonte);
     return Array.from(new Set(dataByFonte.map((d: any) => d.ano).filter(Boolean))).sort() as number[];
-  }, [selFonte]);
+  }, [all, selFonte]);
 
   useEffect(() => {
     if (selAno !== "all" && !anos.includes(Number(selAno))) {
@@ -176,7 +176,7 @@ export default function ComparativosPage() {
       if (selFonte !== "all" && d.fonte !== selFonte) return false;
       return true;
     });
-  }, [selAno, selFonte]);
+  }, [all, selAno, selFonte]);
 
   const labelFonte = selFonte === "all" ? "TED / Emenda" : selFonte;
 
