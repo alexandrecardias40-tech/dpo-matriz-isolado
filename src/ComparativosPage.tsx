@@ -236,20 +236,25 @@ export default function ComparativosPage() {
             </div>
             
             <div style={{ display:"flex", alignItems:"center", gap:14, flexWrap:"wrap" }}>
-              <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-                <span style={{ fontSize:11, fontWeight:600, color:"#475569" }}>Fonte:</span>
+              <div style={{ display:"flex", flexDirection:"column", gap:3, alignItems:"center" }}>
+                <div style={{fontSize:11,fontWeight:600,color:"#475569", display: "flex", gap: 4, alignItems: "center"}}>
+                  Origem
+                  <span style={{background: "#e2e8f0", color: "#1e293b", padding: "2px 6px", borderRadius: 4, fontSize: 10, fontWeight: 700}}>
+                    {selFonte === "all" ? "TED / EMENDA" : selFonte.toUpperCase()}
+                  </span>
+                </div>
                 <select value={selFonte} onChange={e=>setSelFonte(e.target.value)}
-                  style={{ padding:"4px 8px", border:"1px solid #d1d5db", borderRadius:6, fontSize:11, background:"white", cursor:"pointer", minWidth:80, boxShadow:"0 1px 2px rgba(0,0,0,0.05)" }}>
-                  <option value="all">Todas</option>
-                  <option value="TED">Apenas TED</option>
-                  <option value="Emenda">Apenas Emenda</option>
+                  style={{ padding:"4px 8px", border:"1px solid #d1d5db", borderRadius:6, fontSize:11, background:"white", cursor:"pointer", minWidth:140, boxShadow:"0 1px 2px rgba(0,0,0,0.05)" }}>
+                  <option value="all">Todas as Origens</option>
+                  <option value="TED">Somente TED</option>
+                  <option value="Emenda">Somente Emenda</option>
                 </select>
               </div>
 
-              <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-                <span style={{ fontSize:11, fontWeight:600, color:"#475569" }}>Filtrar por Ano:</span>
+              <div style={{ display:"flex", flexDirection:"column", gap:3, alignItems:"center" }}>
+                <span style={{ fontSize:11, fontWeight:600, color:"#475569" }}>Ano</span>
                 <select value={selAno} onChange={e=>setSelAno(e.target.value)}
-                  style={{ padding:"4px 8px", border:"1px solid #d1d5db", borderRadius:6, fontSize:11, background:"white", cursor:"pointer", minWidth:80, boxShadow:"0 1px 2px rgba(0,0,0,0.05)" }}>
+                  style={{ padding:"4px 8px", border:"1px solid #d1d5db", borderRadius:6, fontSize:11, background:"white", cursor:"pointer", minWidth:100, boxShadow:"0 1px 2px rgba(0,0,0,0.05)" }}>
                   <option value="all">Todos</option>
                   {anos.map(a=><option key={a} value={String(a)}>{a}</option>)}
                 </select>

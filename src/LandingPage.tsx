@@ -106,14 +106,32 @@ export default function LandingPage() {
       </div>
 
       {/* Main Content */}
-      <div style={{ zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", marginTop: "-60px" }}>
+      <div style={{ zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", marginTop: "40px" }}>
         
-        <h1 style={{ fontSize: 56, fontWeight: 800, color: "#f8fafc", margin: 0, textShadow: "0 0 40px rgba(56, 189, 248, 0.4)", letterSpacing: "-1px" }}>
+
+
+        <h1 style={{ fontSize: 42, fontWeight: 800, color: "#f8fafc", margin: 0, textShadow: "0 0 40px rgba(56, 189, 248, 0.4)", letterSpacing: "-1px" }}>
           Painel de Custos Indiretos
         </h1>
-        <p style={{ fontSize: 20, color: "#cbd5e1", marginTop: 12, marginBottom: 50, fontWeight: 400 }}>
-          Monitoramento e Análise Estratégica
-        </p>
+        {/* Inova Gestão Logo */}
+        <div style={{ 
+          background: "white", 
+          padding: "24px 40px", 
+          borderRadius: "20px", 
+          boxShadow: "0 10px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.8)",
+          marginTop: "40px",
+          marginBottom: "40px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          maxWidth: "90%"
+        }}>
+          <img 
+            src="/inova_gestao.png" 
+            alt="Inova Gestão" 
+            style={{ height: 160, objectFit: "contain", imageRendering: "high-quality", filter: "contrast(1.15) saturate(1.1)" }} 
+          />
+        </div>
 
         {/* Glass Card */}
         <div style={{
