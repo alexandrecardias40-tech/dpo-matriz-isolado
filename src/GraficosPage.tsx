@@ -13,6 +13,17 @@ const fmtK = (v: number) => {
 };
 
 export function calcUnidadeValues(d: any) {
+  // Para Emendas, confiamos 100% no dado do backend (build_data.py)
+  if (d.fonte === "Emenda") {
+    const a = Number(d.a_ressarcir) || 0;
+    const r = Number(d.ressarcido) || 0;
+    return {
+      aRessarcirVal: a > 0 ? a / 2 : null,
+      ressarcidoVal: r > 0 ? r / 2 : null,
+    };
+  }
+
+  // Para TED, mantemos a lógica clássica da interface (que baseia no TG)
   const sem = d.semaforo;
   const pago = Number(d.total_pago_tg) || 0;
   const emp = Number(d.empenhado) || 0;
