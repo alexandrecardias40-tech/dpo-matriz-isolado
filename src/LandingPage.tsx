@@ -113,24 +113,51 @@ export default function LandingPage() {
         <h1 style={{ fontSize: 42, fontWeight: 800, color: "#f8fafc", margin: 0, textShadow: "0 0 40px rgba(56, 189, 248, 0.4)", letterSpacing: "-1px" }}>
           Painel de Custos Indiretos
         </h1>
+        {/* CSS for Logo Animations */}
+        <style>{`
+          @keyframes floatLogo {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+          }
+          @keyframes fadeInLogo {
+            0% { opacity: 0; transform: translateY(60px) scale(0.1); }
+            100% { opacity: 1; transform: translateY(0px) scale(1); }
+          }
+          .logo-container-wrapper {
+            animation: fadeInLogo 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards, floatLogo 5s ease-in-out infinite;
+            animation-delay: 0s, 2.5s;
+            margin-top: 40px;
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: center;
+          }
+          .inova-logo-inner {
+            background: white;
+            padding: 24px 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.8);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            max-width: 90%;
+            cursor: default;
+          }
+          .inova-logo-inner:hover {
+            transform: scale(1.06);
+            box-shadow: 0 20px 40px rgba(56, 189, 248, 0.4), 0 0 20px rgba(56, 189, 248, 0.2), inset 0 1px 0 rgba(255,255,255,1);
+          }
+        `}</style>
+
         {/* Inova Gestão Logo */}
-        <div style={{ 
-          background: "white", 
-          padding: "24px 40px", 
-          borderRadius: "20px", 
-          boxShadow: "0 10px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.8)",
-          marginTop: "40px",
-          marginBottom: "40px",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          maxWidth: "90%"
-        }}>
-          <img 
-            src="/inova_gestao.png" 
-            alt="Inova Gestão" 
-            style={{ height: 160, objectFit: "contain", imageRendering: "high-quality", filter: "contrast(1.15) saturate(1.1)" }} 
-          />
+        <div className="logo-container-wrapper">
+          <div className="inova-logo-inner">
+            <img 
+              src="/inova_gestao.png" 
+              alt="Inova Gestão" 
+              style={{ height: 160, objectFit: "contain", imageRendering: "high-quality", filter: "contrast(1.15) saturate(1.1)" }} 
+            />
+          </div>
         </div>
 
         {/* Glass Card */}
