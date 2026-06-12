@@ -23,7 +23,29 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // 1. Tenta buscar os dados do portal principal DPO-DOR (que é a central de dados)
+    // 0. Se estiver rodando localmente (desenvolvimento), força o uso do arquivo local
+    if (import.meta.env.DEV) {
+      fetch("./data.json")
+        .then(res => res.json())
+        .then(json => {
+          setData(json);
+          fetch("./metadata.json")
+            .then(res => res.json())
+            .then(metaJson => {
+              setMeta(metaJson);
+              setLoading(false);
+            })
+            .catch(() => setLoading(false));
+        })
+        .catch(e => {
+          console.error("Erro ao carregar dados locais (DEV):", e);
+          setError("Não foi possível carregar os dados locais.");
+          setLoading(false);
+        });
+      return;
+    }
+
+    // 1. Tenta buscar os dados do portal principal DPO-DOR (em produção)
     fetch("https://dpo-dor.onrender.com/custos-indiretos/data.json")
       .then(res => {
         if (!res.ok) throw new Error("Erro ao acessar API do DPO");

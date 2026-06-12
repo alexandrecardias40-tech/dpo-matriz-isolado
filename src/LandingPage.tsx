@@ -130,22 +130,24 @@ export default function LandingPage() {
             margin-bottom: 40px;
             display: flex;
             justify-content: center;
+            will-change: transform, opacity;
           }
           .inova-logo-inner {
             background: white;
             padding: 24px 40px;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.8);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             display: flex;
             justify-content: center;
             align-items: center;
             max-width: 90%;
             cursor: default;
+            will-change: transform;
           }
           .inova-logo-inner:hover {
-            transform: scale(1.06);
-            box-shadow: 0 20px 40px rgba(56, 189, 248, 0.4), 0 0 20px rgba(56, 189, 248, 0.2), inset 0 1px 0 rgba(255,255,255,1);
+            transform: scale(1.05);
+            box-shadow: 0 15px 30px rgba(56, 189, 248, 0.4);
           }
         `}</style>
 
@@ -155,7 +157,7 @@ export default function LandingPage() {
             <img 
               src="/inova_gestao.png" 
               alt="Inova Gestão" 
-              style={{ height: 160, objectFit: "contain", imageRendering: "high-quality", filter: "contrast(1.15) saturate(1.1)" }} 
+              style={{ height: 160, objectFit: "contain" }} 
             />
           </div>
         </div>
