@@ -17,8 +17,14 @@ export function calcUnidadeValues(d: any) {
   if (d.fonte === "Emenda") {
     const a = Number(d.a_ressarcir) || 0;
     const r = Number(d.ressarcido) || 0;
+    const emp = Number(d.empenhado) || 0;
+    const pago = Number(d.total_pago_tg) || 0;
+    
+    // Regra solicitada: só entra o valor "a ressarcir" quando houver empenho e pagamento juntos
+    const canHaveRessarcir = (emp > 0 && pago > 0);
+
     return {
-      aRessarcirVal: a > 0 ? a / 2 : null,
+      aRessarcirVal: (a > 0 && canHaveRessarcir) ? a / 2 : null,
       ressarcidoVal: r > 0 ? r / 2 : null,
     };
   }
