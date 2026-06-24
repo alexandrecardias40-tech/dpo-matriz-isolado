@@ -95,19 +95,16 @@ export default function UGRNetworkMotionChart({ data, height = 540, onNodeClick 
 
   useEffect(() => {
     let animationFrame = 0;
-    let lastT = 0;
-    const FPS = 30;
-    const INTERVAL = 1000 / FPS;
 
     const animate = (nextTime: number) => {
-      if (document.hidden) { animationFrame = requestAnimationFrame(animate); return; }
-      if (nextTime - lastT >= INTERVAL) { lastT = nextTime; setTime(nextTime); }
+      setTime(nextTime);
       animationFrame = requestAnimationFrame(animate);
     };
 
     animationFrame = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationFrame);
   }, []);
+
 
 
   // Convert screen coordinates to SVG coordinates
