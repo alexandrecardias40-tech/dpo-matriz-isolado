@@ -86,7 +86,14 @@ export default function CINetworkChart({
 
   useEffect(() => {
     let af = 0;
-    const animate = (t: number) => { setTime(t); af = requestAnimationFrame(animate); };
+    let lastT = 0;
+    const FPS = 30;
+    const INTERVAL = 1000 / FPS;
+    const animate = (t: number) => {
+      if (document.hidden) { af = requestAnimationFrame(animate); return; }
+      if (t - lastT >= INTERVAL) { lastT = t; setTime(t); }
+      af = requestAnimationFrame(animate);
+    };
     af = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(af);
   }, []);
@@ -111,7 +118,13 @@ export default function CINetworkChart({
     // Stagger initial Y coordinates to make columns descend at random starting points
     const yPositions = Array(columns).fill(0).map(() => Math.random() * -canvas.height);
 
-    const draw = () => {
+    let lastFrameTime = 0;
+    const MATRIX_FPS = 30;
+    const MATRIX_INTERVAL = 1000 / MATRIX_FPS;
+    const draw = (timestamp: number) => {
+      if (document.hidden) { animationId = requestAnimationFrame(draw); return; }
+      if (timestamp - lastFrameTime < MATRIX_INTERVAL) { animationId = requestAnimationFrame(draw); return; }
+      lastFrameTime = timestamp;
       // Create trailing rain effect with semi-transparent black fade
       ctx.fillStyle = 'rgba(0, 0, 0, 0.07)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -138,7 +151,7 @@ export default function CINetworkChart({
       animationId = requestAnimationFrame(draw);
     };
 
-    draw();
+    draw(0);
 
     return () => {
       cancelAnimationFrame(animationId);
