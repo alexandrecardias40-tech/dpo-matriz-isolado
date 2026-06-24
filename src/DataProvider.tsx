@@ -1,14 +1,16 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
 interface DataContextType {
-  data: any[];
+  records: any[];
+  adiantamentos: any[];
   meta: { lastUpdated: string; filename: string };
   loading: boolean;
   error: string | null;
 }
 
 const DataContext = createContext<DataContextType>({
-  data: [],
+  records: [],
+  adiantamentos: [],
   meta: { lastUpdated: "", filename: "" },
   loading: true,
   error: null,
@@ -17,7 +19,8 @@ const DataContext = createContext<DataContextType>({
 export const useData = () => useContext(DataContext);
 
 export function DataProvider({ children }: { children: React.ReactNode }) {
-  const [data, setData] = useState<any[]>([]);
+  const [records, setRecords] = useState<any[]>([]);
+  const [adiantamentos, setAdiantamentos] = useState<any[]>([]);
   const [meta, setMeta] = useState<any>({ lastUpdated: "", filename: "" });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -30,7 +33,15 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         return res.json();
       })
       .then(json => {
-        setData(json);
+        if (json && typeof json === "object" && "records" in json) {
+          setRecords(json.records || []);
+          setAdiantamentos(json.adiantamentos || []);
+        } else {
+          // Fallback se o JSON for uma lista simples
+          setRecords(Array.isArray(json) ? json : []);
+          setAdiantamentos([]);
+        }
+        
         fetch("./metadata.json")
           .then(res => res.json())
           .then(metaJson => {
@@ -47,7 +58,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <DataContext.Provider value={{ data, meta, loading, error }}>
+    <DataContext.Provider value={{ records, adiantamentos, meta, loading, error }}>
       {children}
     </DataContext.Provider>
   );

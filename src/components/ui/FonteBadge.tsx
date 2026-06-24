@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface FonteBadgeProps {
-  fonte: string;
+  fonte: "matriz" | "tg" | "ambos" | string;
   size?: "xs" | "sm" | "md" | "lg";
 }
 
@@ -24,25 +24,34 @@ export function FonteBadge({ fonte, size = "md" }: FonteBadgeProps) {
     whiteSpace: "nowrap",
   };
 
-  if (fonte === "TED") {
+  const fLower = fonte.toLowerCase();
+
+  if (fLower === "matriz") {
     return (
       <span style={{ ...baseStyle, background: "#eff6ff", color: "#2563eb", border: "1px solid #bfdbfe" }}>
-        TED
+        MATRIZ
       </span>
     );
   }
-  if (fonte === "Emenda") {
+  if (fLower === "tg" || fLower === "tesouro") {
     return (
-      <span style={{ ...baseStyle, background: "#fdf4ff", color: "#c026d3", border: "1px solid #f5d0fe" }}>
-        EMENDA
+      <span style={{ ...baseStyle, background: "#faf5ff", color: "#7c3aed", border: "1px solid #e9d5ff" }}>
+        TESOURO
+      </span>
+    );
+  }
+  if (fLower === "ambos" || fLower === "integrado") {
+    return (
+      <span style={{ ...baseStyle, background: "#ecfdf5", color: "#059669", border: "1px solid #a7f3d0" }}>
+        INTEGRADO
       </span>
     );
   }
   
-  // "all"
+  // Default/all
   return (
     <span style={{ ...baseStyle, background: "#f8fafc", color: "#475569", border: "1px solid #e2e8f0" }}>
-      TED <span style={{ color: "#8b5cf6", margin: "0 4px", fontSize: "1.1em" }}>+</span> EMENDA
+      MATRIZ <span style={{ color: "#6366f1", margin: "0 4px", fontSize: "1.1em" }}>+</span> TESOURO
     </span>
   );
 }

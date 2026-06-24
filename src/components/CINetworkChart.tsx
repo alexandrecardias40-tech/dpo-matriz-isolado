@@ -33,6 +33,37 @@ const seed = (s: number) => { const v = Math.sin(s * 12.9898) * 43758.5453; retu
 const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v));
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
+function getUnitAbbreviation(name: string): string {
+  if (!name) return "";
+  const parenMatch = name.match(/\(([^)]+)\)/);
+  if (parenMatch && parenMatch[1]) {
+    return parenMatch[1].trim();
+  }
+  const partsSlash = name.split("/");
+  if (partsSlash.length > 1) {
+    const lastPart = partsSlash[partsSlash.length - 1].trim();
+    if (lastPart.length <= 8) {
+      return lastPart;
+    }
+  }
+  const parts = name.split(" - ");
+  if (parts.length > 1) {
+    const lastPart = parts[parts.length - 1].trim();
+    if (lastPart.length <= 10) {
+      return lastPart;
+    }
+  }
+  if (name.length <= 12) {
+    return name;
+  }
+  const words = name.replace(/[^a-zA-Z0-9 ]/g, "").split(" ").filter(w => w.length > 2);
+  if (words.length > 1) {
+    const initials = words.map(w => w[0]).join("").toUpperCase();
+    if (initials.length >= 2 && initials.length <= 5) return initials;
+  }
+  return name.slice(0, 12) + "...";
+}
+
 export default function CINetworkChart({
   data, height = 680, onNodeClick
 }: {
@@ -51,12 +82,68 @@ export default function CINetworkChart({
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     let af = 0;
     const animate = (t: number) => { setTime(t); af = requestAnimationFrame(animate); };
     af = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(af);
+  }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animationId: number;
+
+    const resizeCanvas = () => {
+      canvas.width = canvas.parentElement?.clientWidth || W;
+      canvas.height = canvas.parentElement?.clientHeight || H;
+    };
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    const fontSize = 13;
+    const columns = Math.floor(canvas.width / 13);
+    // Stagger initial Y coordinates to make columns descend at random starting points
+    const yPositions = Array(columns).fill(0).map(() => Math.random() * -canvas.height);
+
+    const draw = () => {
+      // Create trailing rain effect with semi-transparent black fade
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.07)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = '#0f0'; // Classic Matrix green
+      ctx.font = `${fontSize}px monospace`;
+
+      for (let i = 0; i < yPositions.length; i++) {
+        // Random binary number (0 or 1)
+        const text = Math.random() > 0.5 ? '1' : '0';
+        const x = i * 13;
+        const y = yPositions[i];
+
+        ctx.fillText(text, x, y);
+
+        // Advance cascade down the screen
+        yPositions[i] += 13;
+
+        // Reset column to top randomly once it hits the bottom
+        if (yPositions[i] > canvas.height && Math.random() > 0.98) {
+          yPositions[i] = 0;
+        }
+      }
+      animationId = requestAnimationFrame(draw);
+    };
+
+    draw();
+
+    return () => {
+      cancelAnimationFrame(animationId);
+      window.removeEventListener('resize', resizeCanvas);
+    };
   }, []);
 
   const getSVGPoint = (cx: number, cy: number): Point => {
@@ -185,16 +272,14 @@ export default function CINetworkChart({
 
   return (
     <div
-      style={{ position: 'relative', borderRadius: 0, overflow: 'hidden', background: '#030b1c', cursor: isDragging ? 'grabbing' : 'grab', userSelect: 'none' }}
+      style={{ position: 'relative', borderRadius: 0, overflow: 'hidden', background: '#000000', cursor: isDragging ? 'grabbing' : 'grab', userSelect: 'none' }}
       onMouseDown={handleBgDown} onMouseMove={handleMouseMove} onMouseUp={handleUp} onMouseLeave={handleUp}
     >
-      <svg ref={svgRef} viewBox={`${-pan.x} ${-pan.y} ${W} ${H}`} width="100%" height={height} preserveAspectRatio="xMidYMid meet">
+      {/* Matrix falling binary code canvas background */}
+      <canvas ref={canvasRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 0 }} />
+
+      <svg ref={svgRef} viewBox={`${-pan.x} ${-pan.y} ${W} ${H}`} width="100%" height={height} preserveAspectRatio="xMidYMid meet" style={{ position: 'relative', zIndex: 1 }}>
         <defs>
-          <radialGradient id="bg-g" cx="50%" cy="45%" r="75%">
-            <stop offset="0%" stopColor="#102a58" />
-            <stop offset="35%" stopColor="#071a3a" />
-            <stop offset="100%" stopColor="#030b1c" />
-          </radialGradient>
           {nodes.map(n => (
             <radialGradient key={`g${n.id}`} id={`g${n.id}`} cx="35%" cy="30%" r="70%">
               <stop offset="0%" stopColor="#fff" stopOpacity="0.9" />
@@ -204,12 +289,6 @@ export default function CINetworkChart({
           ))}
           <filter id="glow-strong"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
         </defs>
-
-        {/* Space background */}
-        <rect x={-pan.x - W} y={-pan.y - H} width={W * 3} height={H * 3} fill="url(#bg-g)" />
-
-        {/* Stars */}
-        {stars.map(s => <circle key={s.id} cx={s.x} cy={s.y} r={s.r} fill="white" opacity={s.int * (0.45 + 0.55 * Math.sin(time * 0.0011 + s.phase))} />)}
 
         {/* Links */}
         {links.map(link => {
@@ -260,7 +339,7 @@ export default function CINetworkChart({
               {/* Label */}
               <text x={pos.x} y={pos.y + labelSize * 0.32} textAnchor="middle" fontSize={labelSize} fontWeight={700} fill="#f8fafc"
                 style={{ letterSpacing: '0.2px', textShadow: '0 1px 4px rgba(0,0,0,0.7)', pointerEvents: 'none' }}>
-                {shortLabel(n.label, n.isHub ? 7 : 5)}
+                {n.isHub ? n.label : getUnitAbbreviation(n.label)}
               </text>
               {/* Click hint on hover (non-hub) */}
               {isHov && !n.isHub && (

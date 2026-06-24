@@ -1,139 +1,101 @@
-import { useMemo, useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useData } from "./DataProvider";
 import DashboardLayout from "./components/DashboardLayout";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  Legend, Cell, AreaChart, Area
+  Legend, AreaChart, Area, PieChart, Pie, Cell, ScatterChart, Scatter, ZAxis
 } from "recharts";
-import { TrendingUp, DollarSign, AlertTriangle, Target, Wallet, ArrowUpRight } from "lucide-react";
-import { FonteBadge } from "./components/ui/FonteBadge";
+import { TrendingUp, DollarSign, AlertTriangle, Target, Wallet, ArrowUpRight, Percent, BarChart3, ChevronDown, X, LineChart } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "./components/ui/popover";
+import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from "./components/ui/command";
+import { Checkbox } from "./components/ui/checkbox";
 
-const fmt  = (v: number) => new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL",minimumFractionDigits:0,maximumFractionDigits:0}).format(v||0);
-const fmtM = (v: number) => `R$ ${((v||0)/1e6).toFixed(1)}M`;
-const pct  = (a:number,b:number) => b>0?((a/b)*100).toFixed(1)+"%":"—";
-
-export function calcUnidadeValues(d: any) {
-  // Para Emendas, confiamos 100% no dado do backend (build_data.py)
-  if (d.fonte === "Emenda") {
-    const a = Number(d.a_ressarcir) || 0;
-    const r = Number(d.ressarcido) || 0;
-    const emp = Number(d.empenhado) || 0;
-    const pago = Number(d.total_pago_tg) || 0;
-    
-    // Regra solicitada: só entra o valor "a ressarcir" quando houver empenho e pagamento juntos
-    const canHaveRessarcir = (emp > 0 && pago > 0);
-
-    return {
-      aRessarcirVal: (a > 0 && canHaveRessarcir) ? a / 2 : null,
-      ressarcidoVal: r > 0 ? r / 2 : null,
-    };
-  }
-
-  // Para TED, mantemos a lógica clássica da interface (que baseia no TG)
-  const sem = d.semaforo;
-  const pago = Number(d.total_pago_tg) || 0;
-  const emp = Number(d.empenhado) || 0;
-
-  let aRessarcirVal: number | null = null;
-  let ressarcidoVal: number | null = null;
-
-  if (sem === 'verde') {
-    ressarcidoVal = pago / 2;
-    aRessarcirVal = null;
-  } else if (sem === 'amarelo') {
-    aRessarcirVal = pago / 2;
-    ressarcidoVal = null;
-  } else if (emp > 0 && pago > 0) {
-    aRessarcirVal = pago / 2;
-    ressarcidoVal = null;
-  } else {
-    aRessarcirVal = null;
-    ressarcidoVal = null;
-  }
-
-  return { aRessarcirVal, ressarcidoVal };
-}
+const fmt  = (v: number) => new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL",minimumFractionDigits:2,maximumFractionDigits:2}).format(v||0);
+const fmtK = (v: number) => `R$ ${((v||0)/1e6).toFixed(2)}M`;
+const pct  = (a:number,b:number) => b>0?((a/b)*100).toFixed(1)+"%":"0%";
 
 /* ── palette ── */
 const C = { blue:"#3b82f6", green:"#10b981", red:"#ef4444", amber:"#f59e0b", purple:"#8b5cf6", teal:"#14b8a6", slate:"#64748b" };
+const COLORS = ['#2f6bff','#13c7d6','#ff6b00','#f9d600','#2ed11e','#ff2d95','#7a4dff','#ff9f1c','#00d3a7','#d163ff','#4cc9f0','#f72585','#06d6a0','#ffd166','#e63946','#52b788'];
 
-/* ── custom legend ── */
-const RessLegend = () => (
-  <div style={{ display:"flex", justifyContent:"center", gap:20, paddingTop:10, fontSize:11 }}>
-    <span style={{ display:"flex", alignItems:"center", gap:5 }}>
-      <span style={{ width:10, height:10, borderRadius:"50%", background:C.teal, display:"inline-block" }}/>
-      Ressarcido
-    </span>
-    <span style={{ display:"flex", alignItems:"center", gap:5 }}>
-      <span style={{ width:10, height:10, borderRadius:"50%", background:C.red, display:"inline-block" }}/>
-      A Ressarcir
-    </span>
-  </div>
-);
-
-/* ── aggregation ── */
-function buildData(data: any[]) {
-  // by centro_custo
-  const byCC: Record<string,any> = {};
-  data.forEach(d => {
-    const cc = (d.centro_custo||"Outros").trim();
-    if (!byCC[cc]) byCC[cc] = { cc, emp:0, pago:0, ress:0, a_ress:0, total_ci:0, n:0, verde:0, amarelo:0, verm:0 };
-    byCC[cc].emp     += Number(d.empenhado)||0;
-    byCC[cc].pago    += Number(d.total_pago_tg)||0;
-    byCC[cc].total_ci+= Number(d.total_ci)||0;
-
-    const { aRessarcirVal, ressarcidoVal } = calcUnidadeValues(d);
-    byCC[cc].ress    += (ressarcidoVal || 0);
-    byCC[cc].a_ress  += (aRessarcirVal || 0);
-
-    byCC[cc].n++;
-    if (d.semaforo==="verde")    byCC[cc].verde++;
-    if (d.semaforo==="amarelo")  byCC[cc].amarelo++;
-    if (d.semaforo==="vermelho") byCC[cc].verm++;
-  });
-
-  // by ano
-  const byAno: Record<number,any> = {};
-  data.forEach(d => {
-    const ano = Number(d.ano)||0; if (!ano) return;
-    if (!byAno[ano]) byAno[ano] = { ano, emp:0, pago:0, ress:0, a_ress:0, n:0 };
-    byAno[ano].emp   += Number(d.empenhado)||0;
-    byAno[ano].pago  += Number(d.total_pago_tg)||0;
-
-    const { aRessarcirVal, ressarcidoVal } = calcUnidadeValues(d);
-    byAno[ano].ress  += (ressarcidoVal || 0);
-    byAno[ano].a_ress+= (aRessarcirVal || 0);
-
-    byAno[ano].n++;
-  });
-
-  const ccArr = Object.values(byCC).sort((a:any,b:any)=>b.emp-a.emp);
-  const anoArr = Object.values(byAno).sort((a:any,b:any)=>a.ano-b.ano);
-
-  const totEmp  = ccArr.reduce((s:number,r:any)=>s+r.emp,0);
-  const totPago = ccArr.reduce((s:number,r:any)=>s+r.pago,0);
-  const totRess = ccArr.reduce((s:number,r:any)=>s+r.ress,0);
-  const totARess= ccArr.reduce((s:number,r:any)=>s+r.a_ress,0);
-  const totVerde= data.filter(d=>d.semaforo==="verde").length;
-  const totVerm = data.filter(d=>d.semaforo==="vermelho").length;
-
-  // Top 15 for charts and table
-  const top12 = ccArr.slice(0,15).map((r:any)=>({
-    name: r.cc.length>14?r.cc.slice(0,13)+"…":r.cc,
-    fullName: r.cc,
-    Empenhado: r.emp, "Pago (TG)": r.pago, Ressarcido: r.ress, "A Ressarcir": r.a_ress,
-    pctRess: (r.total_ci / 2)>0?((r.ress/(r.total_ci / 2))*100):0,
-    registros: r.n,
-  }));
-
-  // Maior pendente
-  const maisPendente = ccArr.sort((a:any,b:any)=>b.a_ress-a.a_ress)[0];
-  const maisRessarcida= [...Object.values(byCC)].sort((a:any,b:any)=>b.ress-a.ress)[0];
-
-  return { top12, anoArr, totEmp, totPago, totRess, totARess, totVerde, totVerm, maisPendente, maisRessarcida, nCC: ccArr.length };
+function getUnitAbbreviation(name: string): string {
+  if (!name) return "";
+  const parenMatch = name.match(/\(([^)]+)\)/);
+  if (parenMatch && parenMatch[1]) {
+    return parenMatch[1].trim();
+  }
+  const partsSlash = name.split("/");
+  if (partsSlash.length > 1) {
+    const lastPart = partsSlash[partsSlash.length - 1].trim();
+    if (lastPart.length <= 8) {
+      return lastPart;
+    }
+  }
+  const parts = name.split(" - ");
+  if (parts.length > 1) {
+    const lastPart = parts[parts.length - 1].trim();
+    if (lastPart.length <= 10) {
+      return lastPart;
+    }
+  }
+  if (name.length <= 12) {
+    return name;
+  }
+  const words = name.replace(/[^a-zA-Z0-9 ]/g, "").split(" ").filter(w => w.length > 2);
+  if (words.length > 1) {
+    const initials = words.map(w => w[0]).join("").toUpperCase();
+    if (initials.length >= 2 && initials.length <= 5) return initials;
+  }
+  return name.slice(0, 12) + "...";
 }
 
-/* ── custom tooltip ── */
+/* ── MultiSel Filter Helper ── */
+function MultiSel({ label, opts, sel, set, formatVal }: { label: string; opts: string[]; sel: string[]; set: (v: string[]) => void; formatVal?: (v: string) => string }) {
+  const renderLabel = (val: string) => formatVal ? formatVal(val) : val;
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 3, alignItems: "center" }}>
+      <span style={{ fontSize: 11, fontWeight: 700, color: "#475569" }}>{label}</span>
+      <Popover>
+        <PopoverTrigger asChild>
+          <button style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "4px 8px", border: "1px solid #cbd5e1", borderRadius: 6, background: "white", fontSize: 11, cursor: "pointer", width: 170, gap: 6, textAlign: "center", boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}>
+            <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", textAlign: "center", flex: 1 }}>
+              {sel.length > 0 ? sel.map(renderLabel).join(", ") : "Todos"}
+            </span>
+            <ChevronDown size={13} style={{ opacity: 0.5, flexShrink: 0 }} />
+          </button>
+        </PopoverTrigger>
+        <PopoverContent style={{ width: 240, padding: 0 }}>
+          <Command>
+            <CommandInput placeholder="Buscar…" />
+            {opts.length > 0 && (
+              <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", borderBottom: "1px solid #f1f5f9", background: "#f8fafc", cursor: "pointer" }}
+                onClick={() => set(sel.length === opts.length ? [] : [...opts])}>
+                <Checkbox checked={sel.length === opts.length && opts.length > 0} style={{ pointerEvents: "none" }} />
+                <span style={{ fontSize: 12, fontWeight: 700, color: "#2563eb" }}>Selecionar Todos</span>
+              </div>
+            )}
+            <CommandList style={{ maxHeight: 220, overflowY: "auto" }}>
+              <CommandEmpty>Nenhum resultado.</CommandEmpty>
+              <CommandGroup>
+                {opts.map(o => (
+                  <CommandItem key={o} value={o} onSelect={() => set(sel.includes(o) ? sel.filter(x => x !== o) : [...sel, o])} style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", padding: "6px 12px" }}>
+                    <Checkbox checked={sel.includes(o)} style={{ pointerEvents: "none" }} />
+                    <span style={{ fontSize: 11, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={o}>
+                      {formatVal ? `${formatVal(o)} - ${o}` : o}
+                    </span>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+}
+
+/* ── custom tooltips ── */
 const DarkTooltip = ({ active, payload, label }: any) => {
   if (!active||!payload?.length) return null;
   return (
@@ -149,309 +111,481 @@ const DarkTooltip = ({ active, payload, label }: any) => {
   );
 };
 
-/* ── Bar label ── */
-const PctLabel = ({ x, y, width, value }: any) => {
-  if (!value||value<1) return null;
-  return <text x={x+width+4} y={y+10} fontSize={9} fill="#64748b">{value.toFixed(0)}%</text>;
+const ScatterTooltip = ({ active, payload }: any) => {
+  if (!active || !payload?.length) return null;
+  const d = payload[0].payload;
+  return (
+    <div style={{ background:"#0f172a", color:"#f1f5f9", borderRadius:10, padding:"10px 14px", fontSize:11, boxShadow:"0 8px 24px rgba(0,0,0,0.3)", minWidth:200 }}>
+      <div style={{ fontWeight:700, marginBottom:6, borderBottom:"1px solid #1e293b", paddingBottom:4 }}>{d.fullName} ({d.name})</div>
+      <div style={{ display:"flex", justifyContent:"space-between", marginTop:3 }}>
+        <span style={{ color:"#94a3b8" }}>Aprovado:</span>
+        <span style={{ fontWeight:700 }}>{fmt(d.aprovado)}</span>
+      </div>
+      <div style={{ display:"flex", justifyContent:"space-between", marginTop:3 }}>
+        <span style={{ color:"#94a3b8" }}>Executado:</span>
+        <span style={{ fontWeight:700, color:"#10b981" }}>{fmt(d.executado)}</span>
+      </div>
+      <div style={{ display:"flex", justifyContent:"space-between", marginTop:3 }}>
+        <span style={{ color:"#94a3b8" }}>Disponível:</span>
+        <span style={{ fontWeight:700, color:"#f59e0b" }}>{fmt(d.disponivel)}</span>
+      </div>
+      <div style={{ display:"flex", justifyContent:"space-between", marginTop:3 }}>
+        <span style={{ color:"#94a3b8" }}>Taxa de Execução:</span>
+        <span style={{ fontWeight:700, color:"#8b5cf6" }}>{(d.originalY !== undefined ? d.originalY : d.y).toFixed(1)}%</span>
+      </div>
+    </div>
+  );
 };
 
+/* ── aggregation ── */
+function buildData(records: any[]) {
+  const byCC: Record<string,any> = {};
+  records.forEach(d => {
+    const cc = (d.unidade||"Outras Unidades").trim();
+    if (!byCC[cc]) byCC[cc] = { cc, valor_aprovado:0, emp_matriz:0, deb_matriz:0, disp_matriz:0, exec_matriz:0, n:0 };
+    byCC[cc].valor_aprovado += Number(d.valor_aprovado)||0;
+    byCC[cc].emp_matriz     += Number(d.despesas_empenhadas_matriz)||0;
+    byCC[cc].deb_matriz     += Number(d.despesas_debitadas_matriz)||0;
+    byCC[cc].disp_matriz    += Number(d.credito_disponivel_matriz)||0;
+    byCC[cc].exec_matriz    += Number(d.total_executado_matriz)||0;
+    byCC[cc].n++;
+  });
+
+  const ccArr = Object.values(byCC).sort((a:any,b:any)=>b.valor_aprovado-a.valor_aprovado);
+
+  const totAprovado = ccArr.reduce((s:number,r:any)=>s+r.valor_aprovado,0);
+  const totEmpMatriz = ccArr.reduce((s:number,r:any)=>s+r.emp_matriz,0);
+  const totDebMatriz = ccArr.reduce((s:number,r:any)=>s+r.deb_matriz,0);
+  const totDispMatriz = ccArr.reduce((s:number,r:any)=>s+r.disp_matriz,0);
+  const totExecMatriz = ccArr.reduce((s:number,r:any)=>s+r.exec_matriz,0);
+
+  // Top 15 para gráficos e tabelas com siglas
+  const top15 = ccArr.slice(0,15).map((r:any)=>({
+    name: getUnitAbbreviation(r.cc),
+    fullName: r.cc,
+    "Aprovado (Matriz)": r.valor_aprovado,
+    "Executado (Matriz)": r.exec_matriz,
+    "Empenhado (Matriz)": r.emp_matriz,
+    "Debitado (Matriz)": r.deb_matriz,
+    "Disponível (Matriz)": r.disp_matriz,
+    registros: r.n,
+  }));
+
+  // Scatter/Bubble Data
+  const scatterData = ccArr.map((r:any)=>({
+    x: r.valor_aprovado,
+    y: r.valor_aprovado > 0 ? (r.exec_matriz / r.valor_aprovado) * 100 : 0,
+    z: r.disp_matriz,
+    name: getUnitAbbreviation(r.cc),
+    fullName: r.cc,
+    aprovado: r.valor_aprovado,
+    executado: r.exec_matriz,
+    disponivel: r.disp_matriz,
+  }));
+
+  // Insights
+  const ccExec = [...ccArr].sort((a:any, b:any) => b.exec_matriz - a.exec_matriz);
+  const liderExec = ccExec[0];
+
+  const ccDisp = [...ccArr].sort((a:any, b:any) => b.disp_matriz - a.disp_matriz);
+  const maiorSaldoLivre = ccDisp[0];
+
+  return {
+    top15,
+    scatterData,
+    totAprovado,
+    totEmpMatriz,
+    totDebMatriz,
+    totDispMatriz,
+    totExecMatriz,
+    liderExec,
+    maiorSaldoLivre,
+    nCC: ccArr.length
+  };
+}
+
 export default function ComparativosPage() {
-  const { data: rawData, loading } = useData();
-  const [selAno, setSelAno] = useState("all");
-  const [selFonte, setSelFonte] = useState("all");
-
-  const all = useMemo(() => {
-    return rawData.map((d: any) => {
-      let fav = (d.favorecido || "").trim();
-      const upperFav = fav.toUpperCase();
-      if (upperFav.includes("COMPANHIA DE SANEAMENTO")) {
-        fav = "CAESB";
-      } else if (upperFav.includes("NEOENERGIA") || upperFav.includes("NEO ENERGIA")) {
-        fav = "NEO ENERGIA";
-      } else if (upperFav.includes("RCA PRODUTOS")) {
-        fav = "RCA";
-      }
-      return { ...d, favorecido: fav };
-    }).filter((d: any) => d.ano >= 2020);
-  }, [rawData]);
-  const [view, setView] = useState<"empenhado"|"ressarcimento">("empenhado");
-
-  const anos = useMemo(() => {
-    const dataByFonte = selFonte === "all" ? all : all.filter((d: any) => d.fonte === selFonte);
-    return Array.from(new Set(dataByFonte.map((d: any) => d.ano).filter(Boolean))).sort() as number[];
-  }, [all, selFonte]);
+  const { records, loading } = useData();
+  const [activeTab, setActiveTab] = useState<"ranking" | "eficiencia">("ranking");
+  const [barView, setBarView] = useState<"execucao" | "desmembramento">("execucao");
+  
+  // Estado de Filtro de Unidade
+  const [selUnidade, setSelUnidade] = useState<string[]>([]);
+  const [animationTick, setAnimationTick] = useState(0);
 
   useEffect(() => {
-    if (selAno !== "all" && !anos.includes(Number(selAno))) {
-      setSelAno("all");
-    }
-  }, [anos, selAno]);
+    if (activeTab !== "eficiencia") return;
+    let active = true;
+    const tick = () => {
+      if (!active) return;
+      setAnimationTick(t => t + 0.045); // Gentle slow floating
+      requestAnimationFrame(tick);
+    };
+    const frameId = requestAnimationFrame(tick);
+    return () => {
+      active = false;
+      cancelAnimationFrame(frameId);
+    };
+  }, [activeTab]);
 
-  const filteredData = useMemo(() => {
-    return all.filter((d: any) => {
-      if (selAno !== "all" && String(d.ano) !== selAno) return false;
-      if (selFonte !== "all" && d.fonte !== selFonte) return false;
+  // Filtro de unidades da Matriz ordenadas por sigla
+  const unidades = useMemo(() => {
+    const matrixRecs = records.filter((d: any) => d.in_matrix);
+    const raw = Array.from(new Set(matrixRecs.map((d: any) => (d.unidade || "").trim()).filter(Boolean))) as string[];
+    return raw.sort((a, b) => getUnitAbbreviation(a).localeCompare(getUnitAbbreviation(b)));
+  }, [records]);
+
+  const filteredRecords = useMemo(() => {
+    return records.filter((d: any) => {
+      if (!d.in_matrix) return false;
+      const u = (d.unidade || "").trim();
+      if (selUnidade.length > 0 && !selUnidade.includes(u)) return false;
       return true;
     });
-  }, [all, selAno, selFonte]);
+  }, [records, selUnidade]);
 
-  const labelFonte = selFonte === "all" ? "TED / Emenda" : selFonte;
+  const D = useMemo(() => buildData(filteredRecords), [filteredRecords]);
 
-  const D = useMemo(() => buildData(filteredData), [filteredData]);
+  // Análise conceitual gerada dinamicamente baseada nos filtros
+  const dynamicAnalysis = useMemo(() => {
+    if (selUnidade.length === 0) {
+      return {
+        title: "Análise Consolidada da Matriz",
+        text: `Atualmente, o painel exibe a visão global com todas as ${D.nCC} unidades organizacionais da Matriz. O orçamento total aprovado totaliza ${fmt(D.totAprovado)}, com uma execução acumulada de ${fmt(D.totExecMatriz)} (${pct(D.totExecMatriz, D.totAprovado)}). A unidade ${D.liderExec ? getUnitAbbreviation(D.liderExec.cc) : "N/A"} apresenta o maior volume de execução real (${fmt(D.liderExec?.exec_matriz)}), enquanto a unidade ${D.maiorSaldoLivre ? getUnitAbbreviation(D.maiorSaldoLivre.cc) : "N/A"} retém o maior saldo livre restante (${fmt(D.maiorSaldoLivre?.disp_matriz)}). O saldo livre total disponível em toda a Matriz é de ${fmt(D.totDispMatriz)}.`
+      };
+    } else if (selUnidade.length === 1) {
+      const uName = selUnidade[0];
+      const abbrev = getUnitAbbreviation(uName);
+      const uData = D.top15[0] || { "Aprovado (Matriz)": 0, "Executado (Matriz)": 0, "Disponível (Matriz)": 0, "Empenhado (Matriz)": 0, "Debitado (Matriz)": 0 };
+      const aprovado = Number(uData["Aprovado (Matriz)"]) || 0;
+      const executado = Number(uData["Executado (Matriz)"]) || 0;
+      const eRate = aprovado > 0 ? (executado / aprovado) * 100 : 0;
+      
+      let performanceSub = "";
+      if (aprovado > 500000 && eRate < 35) {
+        performanceSub = "A unidade possui um volume expressivo de orçamento aprovado, mas apresenta uma taxa de execução crítica (abaixo de 35%). Isso sinaliza um potencial represamento de recursos que poderiam ser remanejados ou otimizados para outros setores.";
+      } else if (eRate < 35) {
+        performanceSub = "A taxa de execução atual é considerada baixa (abaixo de 35%). Indica que as atividades planejadas estão em ritmo lento ou aguardando liberação de processos administrativos.";
+      } else if (eRate >= 35 && eRate <= 75) {
+        performanceSub = "A unidade apresenta um ritmo de execução moderado e equilibrado em relação ao orçamento alocado, compatível com o cronograma regular do período.";
+      } else {
+        performanceSub = "A unidade demonstra excelente desempenho de execução, utilizando a maior parte do seu orçamento aprovado. Demonstra alta capacidade de entrega e maturidade no planejamento físico-financeiro.";
+      }
+
+      return {
+        title: `Análise Individual — ${abbrev}`,
+        text: `A unidade ${uName} (${abbrev}) possui um orçamento aprovado de ${fmt(aprovado)} na Matriz. Desse montante, executou ${fmt(executado)}, atingindo uma taxa de execução de ${eRate.toFixed(1)}%. Resta um saldo livre de ${fmt(uData["Disponível (Matriz)"])} disponível para novas programações. ${performanceSub}`
+      };
+    } else {
+      const globalData = buildData(records.filter((d: any) => d.in_matrix));
+      const groupShare = pct(D.totAprovado, globalData.totAprovado);
+      const avgRate = D.totAprovado > 0 ? (D.totExecMatriz / D.totAprovado) * 100 : 0;
+      
+      let performanceSub = "";
+      if (avgRate < 35) {
+        performanceSub = "O grupo selecionado apresenta uma média de execução consolidada baixa (abaixo de 35%). Recomenda-se revisar os cronogramas de compras ou liberar saldos para outras áreas da Matriz.";
+      } else if (avgRate >= 35 && avgRate <= 75) {
+        performanceSub = "O grupo apresenta desempenho de execução intermediário e estável, alinhado às médias gerais da Matriz.";
+      } else {
+        performanceSub = "O grupo se destaca por uma taxa de execução consolidada alta, evidenciando ótima eficiência operacional nas unidades selecionadas.";
+      }
+
+      return {
+        title: `Análise Comparativa do Grupo (${selUnidade.length} Unidades)`,
+        text: `As ${selUnidade.length} unidades selecionadas representam ${groupShare} do orçamento total aprovado da Matriz. Juntas, somam ${fmt(D.totAprovado)} em recursos aprovados e registram uma execução conjunta de ${fmt(D.totExecMatriz)} (${pct(D.totExecMatriz, D.totAprovado)}). Dentre as selecionadas, ${D.liderExec ? getUnitAbbreviation(D.liderExec.cc) : "N/A"} lidera a execução com ${fmt(D.liderExec?.exec_matriz)} executados, e ${D.maiorSaldoLivre ? getUnitAbbreviation(D.maiorSaldoLivre.cc) : "N/A"} possui o maior saldo disponível individual (${fmt(D.maiorSaldoLivre?.disp_matriz)}). O saldo acumulado disponível para o grupo é de ${fmt(D.totDispMatriz)}. ${performanceSub}`
+      };
+    }
+  }, [selUnidade, D, records]);
+
+  // Análise específica de eficiência para a segunda aba
+  const efficiencyAnalysis = useMemo(() => {
+    const allRecs = records.filter((d: any) => d.in_matrix);
+    const ccData = buildData(allRecs);
+    const totalUnits = ccData.scatterData.length;
+    
+    // Concentração do Orçamento (Pareto)
+    const sortedByBudget = [...ccData.scatterData].sort((a, b) => b.aprovado - a.aprovado);
+    const top3BudgetSum = sortedByBudget.slice(0, 3).reduce((sum, item) => sum + item.aprovado, 0);
+    const paretoPct = ccData.totAprovado > 0 ? (top3BudgetSum / ccData.totAprovado) * 100 : 0;
+
+    // Distribuição de eficiência
+    const lowExec = ccData.scatterData.filter(d => d.y < 35).length;
+    const midExec = ccData.scatterData.filter(d => d.y >= 35 && d.y <= 75).length;
+    const highExec = ccData.scatterData.filter(d => d.y > 75).length;
+    
+    const pctLow = totalUnits > 0 ? (lowExec / totalUnits) * 100 : 0;
+    const pctHigh = totalUnits > 0 ? (highExec / totalUnits) * 100 : 0;
+
+    let dispersionDesc = "";
+    if (pctLow > 45) {
+      dispersionDesc = "Assimetria Elevada (Baixo Desempenho Generalizado): Quase metade ou mais das unidades apresenta taxa de execução crítica (< 35%), sinalizando que a maioria das unidades aloca recursos mas tem dificuldade para empenhar.";
+    } else if (pctHigh > 45) {
+      dispersionDesc = "Alta Eficiência Geral: A maior parte das unidades executa acima de 75%, mostrando excelente fluxo de utilização dos recursos alocados.";
+    } else {
+      dispersionDesc = "Distribuição Equilibrada: As unidades estão dispersas de forma equilibrada, com a maior parte apresentando execução intermediária.";
+    }
+
+    if (selUnidade.length === 0) {
+      return {
+        title: "Diagnóstico de Eficiência da Matriz (Geral)",
+        text: `O gráfico de dispersão exibe a eficiência de alocação das ${totalUnits} unidades. Observa-se que as 3 maiores unidades concentram ${paretoPct.toFixed(1)}% de todo o orçamento aprovado da Matriz, indicando alta concentração orçamentária. Com relação ao aproveitamento: ${lowExec} unidades (${pctLow.toFixed(1)}%) estão com desempenho baixo (vermelho), ${midExec} intermediário (amarelo) e ${highExec} (${pctHigh.toFixed(1)}%) alto (verde). Este cenário indica uma ${dispersionDesc}`,
+        recommendations: [
+          "Promover remanejamentos preventivos de saldos ociosos (unidades com baixa taxa) para aquelas com alta taxa de execução.",
+          "Padronizar os fluxos de contratação e capacitar gestores das unidades com execução crítica.",
+          "Realizar monitoramento quinzenal com as 3 maiores unidades detentoras de recursos para garantir a execução das grandes metas."
+        ]
+      };
+    } else if (selUnidade.length === 1) {
+      const uName = selUnidade[0];
+      const abbrev = getUnitAbbreviation(uName);
+      const uData = D.scatterData[0] || { aprovado: 0, executado: 0, disponivel: 0, y: 0 };
+      const budgetShare = ccData.totAprovado > 0 ? (uData.aprovado / ccData.totAprovado) * 100 : 0;
+      const rate = uData.y;
+
+      let diagText = "";
+      let recs: string[] = [];
+
+      if (rate < 35) {
+        diagText = `A unidade ${abbrev} apresenta eficiência crítica com apenas ${rate.toFixed(1)}% de execução do seu orçamento de ${fmt(uData.aprovado)} (que representa ${budgetShare.toFixed(1)}% de toda a Matriz). O saldo disponível restante é significativo (${fmt(uData.disponivel)}), indicando recursos parados.`;
+        recs = [
+          "Identificar imediatamente gargalos licitatórios ou contratuais específicos desta unidade.",
+          "Verificar a viabilidade de liberação de saldos não utilizados para remanejamento antes do fechamento das janelas orçamentárias.",
+          "Estabelecer um cronograma emergencial de empenho."
+        ];
+      } else if (rate >= 35 && rate <= 75) {
+        diagText = `A unidade ${abbrev} apresenta eficiência moderada de ${rate.toFixed(1)}% na execução de seu orçamento de ${fmt(uData.aprovado)}. Seu saldo disponível de ${fmt(uData.disponivel)} indica que o cronograma está em andamento normal, mas há espaço para otimização.`;
+        recs = [
+          "Acelerar a liquidação de serviços atestados para liberar espaço financeiro.",
+          "Revisar processos pendentes na UGR correspondente para evitar acúmulos no final do exercício."
+        ];
+      } else {
+        diagText = `A unidade ${abbrev} apresenta excelente eficiência com ${rate.toFixed(1)}% de execução do seu orçamento de ${fmt(uData.aprovado)}. O saldo livre restante é de apenas ${fmt(uData.disponivel)}, demonstrando excelente aproveitamento.`;
+        recs = [
+          "Utilizar os processos de gestão desta unidade como referência (benchmark) para as demais da Matriz.",
+          "Priorizar esta unidade para novos aportes financeiros se houver recursos remanescentes de outras áreas."
+        ];
+      }
+
+      return {
+        title: `Diagnóstico de Eficiência — ${abbrev}`,
+        text: diagText,
+        recommendations: recs
+      };
+    } else {
+      const avgRate = D.totAprovado > 0 ? (D.totExecMatriz / D.totAprovado) * 100 : 0;
+      const budgetShare = ccData.totAprovado > 0 ? (D.totAprovado / ccData.totAprovado) * 100 : 0;
+
+      let diagText = `O grupo selecionado (${selUnidade.length} unidades) responde por ${budgetShare.toFixed(1)}% do orçamento total da Matriz. A taxa de execução média consolidada do grupo é de ${avgRate.toFixed(1)}%, com saldo livre acumulado de ${fmt(D.totDispMatriz)}.`;
+      let recs: string[] = [];
+
+      if (avgRate < 35) {
+        diagText += " O grupo encontra-se em zona de execução lenta com recursos subutilizados.";
+        recs = [
+          "Criar uma força-tarefa integrada entre os gestores das unidades selecionadas para destravar processos comuns.",
+          "Remanejar saldos internos para as unidades do grupo que demonstrarem maior agilidade administrativa."
+        ];
+      } else if (avgRate >= 35 && avgRate <= 75) {
+        diagText += " O desempenho do grupo é regular e atende aos parâmetros médios esperados.";
+        recs = [
+          "Monitorar individualmente as unidades do grupo que estão abaixo de 35% de execução.",
+          "Manter a regularidade dos empenhos programados."
+        ];
+      } else {
+        diagText += " O grupo demonstra alto nível de maturidade e eficiência na execução dos recursos alocados.";
+        recs = [
+          "Utilizar este grupo como modelo interno de boa gestão de suprimentos e planejamento.",
+          "Favorecer o grupo em futuras distribuições orçamentárias devido à alta velocidade de resposta."
+        ];
+      }
+
+      return {
+        title: `Diagnóstico do Grupo Selecionado (${selUnidade.length} Unidades)`,
+        text: diagText,
+        recommendations: recs
+      };
+    }
+  }, [selUnidade, D, records]);
+
+  const animatedScatterData = useMemo(() => {
+    return D.scatterData.map((d: any, idx: number) => {
+      // Gentle floating:
+      // We vary x by up to 1.2% of its value (or a small fixed fraction)
+      // We vary y by up to 1.2 percentage points
+      const offsetFactorX = Math.sin(animationTick + idx * 1.7) * 0.012;
+      const offsetFactorY = Math.cos(animationTick + idx * 2.3) * 1.2;
+      return {
+        ...d,
+        x: d.x * (1 + offsetFactorX),
+        y: Math.max(0, Math.min(100, d.y + offsetFactorY)),
+        originalY: d.y
+      };
+    });
+  }, [D.scatterData, animationTick]);
 
   const s = {
     card: { background:"white", borderRadius:12, border:"1px solid #e2e8f0", boxShadow:"0 1px 6px rgba(0,0,0,0.06)" } as React.CSSProperties,
     section: { fontWeight:700, fontSize:13, color:"#0f172a", marginBottom:4 } as React.CSSProperties,
+    tabBtn: (active: boolean) => ({
+      display: "flex",
+      alignItems: "center",
+      gap: 6,
+      padding: "8px 16px",
+      fontSize: 12,
+      fontWeight: 700,
+      border: "none",
+      cursor: "pointer",
+      borderRadius: 8,
+      transition: "all 0.2s",
+      background: active ? "#0f172a" : "transparent",
+      color: active ? "white" : "#64748b",
+      boxShadow: active ? "0 4px 12px rgba(15,23,42,0.15)" : "none"
+    }) as React.CSSProperties
   };
 
   return (
     <DashboardLayout>
       {loading ? (
-        <div style={{ padding: "40px", textAlign: "center", color: "#64748b" }}>Carregando dados em tempo real...</div>
+        <div style={{ padding: "40px", textAlign: "center", color: "#64748b", fontWeight: 600 }}>Carregando dados comparativos da Matriz...</div>
       ) : (
       <div style={{ display:"flex", flexDirection:"column", gap:24 }}>
 
-        {/* ── Header ── */}
-        <div style={{ borderBottom:"1px solid #e2e8f0", paddingBottom:18, display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:14 }}>
+        {/* Cabeçalho */}
+        <div style={{ borderBottom:"1px solid #e2e8f0", paddingBottom:14, display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:14 }}>
           <div>
-            <h1 style={{ fontSize:26, fontWeight:800, color:"#0f172a", margin:0, letterSpacing:"-0.5px", display:"flex", alignItems:"center" }}>
-              Painel de Inteligência — Custos Indiretos <FonteBadge fonte={selFonte} size="lg" />
+            <h1 style={{ fontSize:26, fontWeight:800, color:"#0f172a", margin:0, letterSpacing:"-0.5px" }}>
+              Painel de Comparativos — Gestão da Matriz
             </h1>
             <p style={{ fontSize:13, color:"#64748b", marginTop:4 }}>
-              Visão estratégica de execução, ressarcimento e comparativos por unidade e ano · {filteredData.length} registros · {D.nCC} unidades
+              Análise comparativa de alocação, despesas provisionadas, saldo disponível e taxas de execução entre as unidades organizacionais da Matriz.
             </p>
+          </div>
+
+          {/* Abas Principais (Navegação Dinâmica) */}
+          <div style={{ display:"flex", background:"#f1f5f9", padding:4, borderRadius:10, gap:4 }}>
+            <button onClick={() => setActiveTab("ranking")} style={s.tabBtn(activeTab === "ranking")}>
+              <BarChart3 size={14}/> Desempenho & Participação
+            </button>
+            <button onClick={() => setActiveTab("eficiencia")} style={s.tabBtn(activeTab === "eficiencia")}>
+              <LineChart size={14}/> Matriz de Eficiência
+            </button>
           </div>
         </div>
 
-        {/* ── KPIs ── */}
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(240px,1fr))", gap:14 }}>
+        {/* Painel de Filtros */}
+        <div style={{ background: "white", borderRadius: 12, border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", padding: "10px 14px", display: "flex", flexWrap: "wrap", gap: 10, alignItems: "center" }}>
+          <MultiSel label="Unidade Organizacional" opts={unidades} sel={selUnidade} set={setSelUnidade} formatVal={getUnitAbbreviation} />
+
+          {selUnidade.length > 0 && (
+            <button onClick={() => setSelUnidade([])}
+              style={{ display: "flex", alignItems: "center", gap: 4, padding: "5px 10px", border: "1px solid #cbd5e1", borderRadius: 6, background: "white", fontSize: 11, cursor: "pointer", alignSelf: "center", fontWeight: 600, color: "#ef4444", marginTop: 14 }}>
+              <X size={12} /> Limpar Filtro
+            </button>
+          )}
+        </div>
+
+        {/* KPIs de Cruzamento na mesma sequência do gráfico */}
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))", gap:14 }}>
           {[
-            { label:<span style={{display:"flex",alignItems:"center",gap:3,whiteSpace:"nowrap"}}>Total Empenhado <FonteBadge fonte={selFonte} size="xs" /></span>,      value:fmt(D.totEmp),                  color:C.blue,   icon:<span style={{fontSize:15,fontWeight:800}}>R$</span>,    sub:"Base Tesouro Gerencial" },
-            { label:<span style={{display:"flex",alignItems:"center",gap:3,whiteSpace:"nowrap"}}>Total Pago (TG) <FonteBadge fonte={selFonte} size="xs" /></span>,            value:fmt(D.totPago),                 color:C.green,  icon:<TrendingUp size={16}/>,    sub:pct(D.totPago,D.totEmp)+" do empenhado" },
-            { label:<span style={{display:"flex",alignItems:"center",gap:3,whiteSpace:"nowrap"}}>Ressarcido (Unid) <FonteBadge fonte={selFonte} size="xs" /></span>,       value:fmt(D.totRess),                 color:C.teal,   icon:<Wallet size={16}/>,        sub:pct(D.totRess,D.totRess+D.totARess)+" do total CI" },
-            { label:<span style={{display:"flex",alignItems:"center",gap:3,whiteSpace:"nowrap"}}>A Ressarcir (Unid) <FonteBadge fonte={selFonte} size="xs" /></span>,      value:fmt(D.totARess),                color:C.red,    icon:<AlertTriangle size={16}/>, sub:pct(D.totARess,D.totRess+D.totARess)+" do total CI" },
-            { label:<span style={{display:"flex",alignItems:"center",gap:3,whiteSpace:"nowrap"}}>Índice Ressarc. <FonteBadge fonte={selFonte} size="xs" /></span>,    value:pct(D.totVerde,filteredData.length),     color:"#0f172a",icon:<Target size={16}/>,        sub:`${D.totVerde} de ${filteredData.length} registros` },
-            { label:<span style={{display:"flex",alignItems:"center",gap:3,whiteSpace:"nowrap"}}>Pendências <FonteBadge fonte={selFonte} size="xs" /></span>,        value:`${D.totVerm}`,                 color:C.red,    icon:<ArrowUpRight size={16}/>,  sub:"Registros sem ressarcimento" },
+            { label:"Orçamento Aprovado", value:fmt(D.totAprovado), color:C.blue, icon:<DollarSign size={16}/>, sub:"Total aprovado" },
+            { label:"Empenhado (Matriz)", value:fmt(D.totEmpMatriz), color:C.amber, icon:<TrendingUp size={16}/>, sub:"Provisionado em sistema" },
+            { label:"Debitado (Matriz)", value:fmt(D.totDebMatriz), color:C.teal, icon:<Target size={16}/>, sub:"Provisionado em planilha" },
+            { label:"Disponível (Matriz)", value:fmt(D.totDispMatriz), color:C.slate, icon:<Wallet size={16}/>, sub:"Saldo livre restante" },
+            { label:"Taxa de Execução Média", value:pct(D.totExecMatriz, D.totAprovado), color:C.purple, icon:<Percent size={16}/>, sub:"Aproveitamento total" },
+            { label:"Unidades Mapeadas", value:`${D.nCC} unidades`, color:C.slate, icon:<ArrowUpRight size={16}/>, sub:"Mapeadas na planilha" },
           ].map(k=>(
-            <div key={typeof k.label === 'string' ? k.label : Math.random()} style={{ ...s.card, borderLeft:`4px solid ${k.color}`, padding:"14px 16px" }}>
+            <div key={k.label} style={{ ...s.card, borderLeft:`4px solid ${k.color}`, padding:"14px 16px" }}>
               <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6, gap: 8 }}>
-                <div style={{ fontSize:9, fontWeight:600, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.04em", flex:1, overflow:"hidden" }}>{k.label}</div>
+                <div style={{ fontSize:9, fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.04em", flex:1, overflow:"hidden" }}>{k.label}</div>
                 <span style={{ color:k.color, opacity:0.7, flexShrink:0 }}>{k.icon}</span>
               </div>
-              <div style={{ fontSize:20, fontWeight:800, color:"#0f172a", lineHeight:1 }}>{k.value}</div>
+              <div style={{ fontSize:17, fontWeight:800, color:"#0f172a", lineHeight:1, fontFamily:"monospace" }}>{k.value}</div>
               <div style={{ fontSize:10, color:"#94a3b8", marginTop:4 }}>{k.sub}</div>
             </div>
           ))}
         </div>
 
-        {/* ── Toggle + Bar chart por unidade ── */}
-        <div style={{ ...s.card, padding:0, overflow:"hidden" }}>
-          <div style={{ padding:"14px 18px", borderBottom:"1px solid #e2e8f0", display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:12 }}>
-            <div>
-              <div style={s.section}>Top 12 Unidades — Comparativo de Execução e Ressarcimento</div>
-              <div style={{ fontSize:11, color:"#64748b" }}>Valores em milhões · Ordenado por volume empenhado</div>
-            </div>
+        {/* Renderização condicional de abas com animação fluida */}
+        {activeTab === "ranking" ? (
+          <div style={{ width: "100%" }}>
             
-            <div style={{ display:"flex", alignItems:"center", gap:14, flexWrap:"wrap" }}>
-              <div style={{ display:"flex", flexDirection:"column", gap:3, alignItems:"center" }}>
-                <div style={{fontSize:11,fontWeight:600,color:"#475569", display: "flex", gap: 4, alignItems: "center"}}>
-                  Origem
-                  <span style={{background: "#e2e8f0", color: "#1e293b", padding: "2px 6px", borderRadius: 4, fontSize: 10, fontWeight: 700}}>
-                    {selFonte === "all" ? "TED / EMENDA" : selFonte.toUpperCase()}
-                  </span>
-                </div>
-                <select value={selFonte} onChange={e=>setSelFonte(e.target.value)}
-                  style={{ padding:"4px 8px", border:"1px solid #d1d5db", borderRadius:6, fontSize:11, background:"white", cursor:"pointer", minWidth:140, boxShadow:"0 1px 2px rgba(0,0,0,0.05)" }}>
-                  <option value="all">Todas as Origens</option>
-                  <option value="TED">Somente TED</option>
-                  <option value="Emenda">Somente Emenda</option>
-                </select>
+            {/* Gráfico de Barras Principal */}
+            <div style={{ ...s.card, padding:0, overflow:"hidden", display:"flex", flexDirection:"column" }}>
+              <div style={{ padding:"14px 18px", borderBottom:"1px solid #e2e8f0" }}>
+                <div style={s.section}>Top 15 Unidades da Matriz — Cenário Comparativo</div>
+                <div style={{ fontSize:11, color:"#64748b" }}>Ordenado por volume total aprovado · Exibido por Sigla de Unidade</div>
               </div>
-
-              <div style={{ display:"flex", flexDirection:"column", gap:3, alignItems:"center" }}>
-                <span style={{ fontSize:11, fontWeight:600, color:"#475569" }}>Ano</span>
-                <select value={selAno} onChange={e=>setSelAno(e.target.value)}
-                  style={{ padding:"4px 8px", border:"1px solid #d1d5db", borderRadius:6, fontSize:11, background:"white", cursor:"pointer", minWidth:100, boxShadow:"0 1px 2px rgba(0,0,0,0.05)" }}>
-                  <option value="all">Todos</option>
-                  {anos.map(a=><option key={a} value={String(a)}>{a}</option>)}
-                </select>
-              </div>
-
-              <div style={{ display:"flex", gap:0, border:"1px solid #e2e8f0", borderRadius:8, overflow:"hidden" }}>
-                {(["empenhado","ressarcimento"] as const).map(v=>(
-                  <button key={v} onClick={()=>setView(v)}
-                    style={{ padding:"5px 13px", fontSize:11, fontWeight:600, border:"none", cursor:"pointer",
-                      background:view===v?"#0f172a":"white", color:view===v?"white":"#64748b", transition:"all 0.15s" }}>
-                    {v==="empenhado"?"Execução TG":"Ressarcimento"}
-                  </button>
-                ))}
+              
+              <div style={{ padding:"18px 20px 10px", flex:1 }}>
+                <ResponsiveContainer width="100%" height={400}>
+                  <BarChart data={D.top15} layout="vertical" margin={{ left:5, right:20, top:0, bottom:0 }} barCategoryGap={6} barGap={2}>
+                    <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
+                    <XAxis type="number" tickFormatter={v=>fmtK(v)} tick={{ fontSize:10, fill:"#94a3b8" }} tickLine={false} axisLine={false} />
+                    <YAxis type="category" dataKey="name" width={60} tick={{ fontSize:10, fill:"#374151", fontWeight:800 }} tickLine={false} axisLine={false} interval={0} />
+                    <Tooltip content={<DarkTooltip/>} cursor={{ fill:"#f8fafc" }} />
+                    <Legend iconType="circle" wrapperStyle={{ fontSize:11, paddingTop:10 }} />
+                    <Bar dataKey="Aprovado (Matriz)" fill={C.blue} radius={[0,4,4,0]} barSize={11} isAnimationActive={true} animationDuration={800} />
+                    <Bar dataKey="Executado (Matriz)" fill={C.green} radius={[0,4,4,0]} barSize={11} isAnimationActive={true} animationDuration={800} />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
             </div>
+
+            {/* Bloco de Análise Dinâmica para Desempenho */}
+            <div style={{ ...s.card, padding: "16px 18px", background: "#f8fafc", borderLeft: "4px solid #3b82f6", marginTop: 14 }}>
+              <div style={{ fontWeight: 700, fontSize: 13, color: "#0f172a", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
+                <Target size={14} style={{ color: "#3b82f6" }} /> {dynamicAnalysis.title}
+              </div>
+              <p style={{ fontSize: 11.5, color: "#475569", lineHeight: 1.5, margin: 0 }}>
+                {dynamicAnalysis.text}
+              </p>
+            </div>
+
           </div>
-          <div style={{ padding:"18px 20px 10px" }}>
-            <ResponsiveContainer width="100%" height={420}>
-              <BarChart data={D.top12} layout="vertical" margin={{ left:10, right:60, top:0, bottom:0 }} barCategoryGap={6} barGap={2}>
-                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
-                <XAxis type="number" tickFormatter={v=>`R$${(v/1e6).toFixed(0)}M`} tick={{ fontSize:10, fill:"#94a3b8" }} tickLine={false} axisLine={false} />
-                <YAxis type="category" dataKey="name" width={90} tick={{ fontSize:11, fill:"#374151" }} tickLine={false} axisLine={false} interval={0} />
-                <Tooltip content={<DarkTooltip/>} cursor={{ fill:"#f8fafc" }} />
-                {view==="empenhado" ? <>
-                  <Legend iconType="circle" wrapperStyle={{ fontSize:11, paddingTop:10 }} />
-                  <Bar dataKey="Empenhado"   fill={C.blue}  radius={[0,4,4,0]} barSize={11} />
-                  <Bar dataKey="Pago (TG)"   fill={C.green} radius={[0,4,4,0]} barSize={11} />
-                </> : <>
-                  <Legend content={<RessLegend/>} />
-                  <Bar dataKey="Ressarcido"  fill={C.teal}  radius={[0,4,4,0]} barSize={11}>
-                    <PctLabel/>
-                  </Bar>
-                  <Bar dataKey="A Ressarcir" fill={C.red}   radius={[0,4,4,0]} barSize={11} />
-                </>}
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* ── Evolução por Ano + Painel lateral ── */}
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 300px", gap:16, alignItems:"start" }}>
-
-          {/* Area chart por ano */}
-          <div style={{ ...s.card, padding:0, overflow:"hidden" }}>
-            <div style={{ padding:"14px 18px", borderBottom:"1px solid #e2e8f0" }}>
-              <div style={s.section}>Evolução por Ano — Empenhado vs Pago vs Ressarcido</div>
-              <div style={{ fontSize:11, color:"#64748b" }}>Série histórica acumulada por exercício financeiro</div>
-            </div>
-            <div style={{ padding:"18px 20px 10px" }}>
-              <ResponsiveContainer width="100%" height={300}>
-                <AreaChart data={D.anoArr} margin={{ top:10, right:20, left:0, bottom:0 }}>
-                  <defs>
-                    {[["emp",C.blue],["pago",C.green],["ress",C.teal]].map(([k,c])=>(
-                      <linearGradient key={k} id={`g-${k}`} x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%"  stopColor={c} stopOpacity={0.25}/>
-                        <stop offset="95%" stopColor={c} stopOpacity={0}/>
-                      </linearGradient>
-                    ))}
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                  <XAxis dataKey="ano" tick={{ fontSize:11, fill:"#94a3b8" }} tickLine={false} axisLine={false} />
-                  <YAxis tickFormatter={v=>`R$${(v/1e6).toFixed(0)}M`} tick={{ fontSize:10, fill:"#94a3b8" }} tickLine={false} axisLine={false} />
-                  <Tooltip content={<DarkTooltip/>} />
-                  <Legend iconType="circle" wrapperStyle={{ fontSize:11 }} />
-                  <Area type="monotone" dataKey="emp"  name="Empenhado"  stroke={C.blue}  fill={`url(#g-emp)`}  strokeWidth={2}/>
-                  <Area type="monotone" dataKey="pago" name="Pago (TG)"  stroke={C.green} fill={`url(#g-pago)`} strokeWidth={2}/>
-                  <Area type="monotone" dataKey="ress" name="Ressarcido" stroke={C.teal}  fill={`url(#g-ress)`} strokeWidth={2} strokeDasharray="5 5"/>
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          {/* Painel de destaques */}
-          <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
-            {/* Dark card — destaques */}
-            <div style={{ ...s.card, background:"#0f172a", border:"none", padding:"16px 18px" }}>
-              <div style={{ fontWeight:700, fontSize:13, color:"white", marginBottom:14, display:"flex", alignItems:"center", gap:8 }}>
-                <Target size={15} style={{ color:"#34d399" }}/> Destaques
-              </div>
-              {[
-                { label:"Maior Pendência (Unidade)",     value:D.maisPendente?.cc||"—",    sub:fmt(D.maisPendente?.a_ress||0), color:"#f87171" },
-                { label:"Maior Ressarcimento (Unidade)", value:D.maisRessarcida?.cc||"—",  sub:fmt(D.maisRessarcida?.ress||0), color:"#34d399" },
-                { label:"Total de Unidades",             value:`${D.nCC} centros`,          sub:"com dados cruzados",                 color:"#60a5fa" },
-              ].map(h=>(
-                <div key={h.label} style={{ background:"rgba(255,255,255,0.07)", borderRadius:8, padding:"10px 12px", marginBottom:8, border:"1px solid rgba(255,255,255,0.05)" }}>
-                  <div style={{ fontSize:9, color:"#94a3b8", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:3 }}>{h.label}</div>
-                  <div style={{ fontWeight:700, color:h.color, fontSize:13, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{h.value}</div>
-                  <div style={{ fontSize:10, color:"#64748b", marginTop:2 }}>{h.sub}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Resumo semáforo */}
-            <div style={{ ...s.card, padding:"16px 18px" }}>
-              <div style={{ fontWeight:700, fontSize:13, color:"#0f172a", marginBottom:12 }}>Status Global</div>
-              {[
-                { label:"🟢 Ressarcidos",  n:D.totVerde,               color:"#22c55e", bg:"#f0fdf4" },
-                { label:"🔴 Pendentes",    n:D.totVerm,                 color:"#ef4444", bg:"#fff5f5" },
-                { label:"🟡 Parciais",     n:filteredData.length-D.totVerde-D.totVerm, color:"#eab308", bg:"#fefce8" },
-              ].map(r=>(
-                <div key={r.label} style={{ marginBottom:10 }}>
-                  <div style={{ display:"flex", justifyContent:"space-between", marginBottom:3 }}>
-                    <span style={{ fontSize:11, color:"#374151", fontWeight:600 }}>{r.label}</span>
-                    <span style={{ fontSize:11, fontWeight:700, color:r.color }}>{r.n} <span style={{ fontWeight:400, color:"#94a3b8" }}>({pct(r.n,filteredData.length)})</span></span>
-                  </div>
-                  <div style={{ height:5, background:"#f1f5f9", borderRadius:3, overflow:"hidden" }}>
-                    <div style={{ height:"100%", width:pct(r.n,filteredData.length), background:r.color, borderRadius:3, transition:"width 0.5s" }}/>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Alerta */}
-            <div style={{ ...s.card, background:"#fff7ed", border:"1px solid #fed7aa", padding:"14px 16px" }}>
-              <div style={{ display:"flex", gap:8, alignItems:"flex-start" }}>
-                <AlertTriangle size={15} style={{ color:"#f97316", flexShrink:0, marginTop:1 }}/>
-                <div>
-                  <div style={{ fontWeight:700, fontSize:12, color:"#9a3412", marginBottom:4 }}>Atenção</div>
-                  <p style={{ fontSize:11, color:"#c2410c", lineHeight:1.6, margin:0 }}>
-                    Registros com semáforo <strong>vermelho</strong> indicam ausência de pagamento e ND de ressarcimento — requerem acompanhamento prioritário.
-                  </p>
+        ) : (
+          /* Aba Eficiência - Scatter/Bubble Chart */
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <div style={{ ...s.card, padding:0, overflow:"hidden" }}>
+              <div style={{ padding:"14px 18px", borderBottom:"1px solid #e2e8f0" }}>
+                <div style={s.section}>Matriz de Eficiência Orçamentária</div>
+                <div style={{ fontSize:11, color:"#64748b" }}>
+                  Relação entre <strong>Orçamento Aprovado (X)</strong> e <strong>Taxa de Execução (Y)</strong> · O tamanho da bola representa o <strong>Saldo Disponível</strong>
                 </div>
               </div>
+              <div style={{ padding:"24px 20px 10px" }}>
+                <ResponsiveContainer width="100%" height={400}>
+                  <ScatterChart margin={{ top:20, right:30, bottom:20, left:20 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                    <XAxis type="number" dataKey="x" name="Aprovado" tickFormatter={v=>fmtK(v)} tick={{ fontSize:10 }} tickLine={false} axisLine={false}>
+                      <label value="Orçamento Aprovado" offset={-10} position="insideBottom" style={{ fontSize:10, fill:"#94a3b8", fontWeight:700 }} />
+                    </XAxis>
+                    <YAxis type="number" dataKey="y" name="Taxa de Execução" tickFormatter={v=>`${v}%`} tick={{ fontSize:10 }} domain={[0, 105]} tickLine={false} axisLine={false}>
+                      <label value="Taxa de Execução" angle={-90} position="insideLeft" style={{ fontSize:10, fill:"#94a3b8", fontWeight:700 }} />
+                    </YAxis>
+                    <ZAxis type="number" dataKey="z" range={[60, 1000]} name="Saldo Disponível" />
+                    <Tooltip cursor={{ strokeDasharray: '3 3' }} content={<ScatterTooltip />} />
+                    <Scatter name="Unidades" data={animatedScatterData} fill="#8b5cf6" isAnimationActive={false}>
+                      {animatedScatterData.map((entry: any, index: number) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Scatter>
+                  </ScatterChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Bloco de Análise Dinâmica para Eficiência */}
+            <div style={{ ...s.card, padding: "16px 18px", background: "#f8fafc", borderLeft: "4px solid #8b5cf6" }}>
+              <div style={{ fontWeight: 700, fontSize: 13, color: "#0f172a", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
+                <TrendingUp size={14} style={{ color: "#8b5cf6" }} /> {efficiencyAnalysis.title}
+              </div>
+              <p style={{ fontSize: 11.5, color: "#475569", lineHeight: 1.5, margin: 0 }}>
+                {efficiencyAnalysis.text}
+              </p>
             </div>
           </div>
-        </div>
+        )}
 
-        {/* ── Mini ranking table ── */}
-        <div style={{ ...s.card, padding:0, overflow:"hidden" }}>
-          <div style={{ padding:"14px 18px", borderBottom:"1px solid #e2e8f0" }}>
-            <div style={s.section}>Ranking de Ressarcimento por Unidade</div>
-            <div style={{ fontSize:11, color:"#64748b" }}>Percentual de registros ressarcidos vs total · Top 15</div>
-          </div>
-          <div style={{ overflowX:"auto" }}>
-            <table style={{ width:"100%", borderCollapse:"collapse", fontSize:11 }}>
-              <thead>
-                <tr>
-                  {["#","Unidade","Registros","Empenhado","Ressarcido","A Ressarcir","% Ressarcido","Status"].map(h=>(
-                    <th key={h} style={{ fontSize:10, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.06em", padding:"9px 12px", background:"#f8fafc", borderBottom:"1px solid #e2e8f0", fontWeight:600, textAlign: h==="#"||h==="Registros"?"center":"left" as any }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {D.top12.map((r:any,i:number)=>{
-                  const pctV = r["Ressarcido"]>0||(r["Ressarcido"]+r["A Ressarcir"])>0
-                    ? ((r["Ressarcido"]/(r["Ressarcido"]+r["A Ressarcir"]))*100) : 0;
-                  const barColor = pctV>=80?C.green:pctV>=40?C.amber:C.red;
-                  return (
-                    <tr key={r.name} style={{ background:i%2===0?"white":"#fafbfc" }}>
-                      <td style={{ padding:"9px 12px", textAlign:"center", fontWeight:700, color:"#94a3b8", fontSize:10 }}>#{i+1}</td>
-                      <td style={{ padding:"9px 12px", fontWeight:600, color:"#0f172a", maxWidth:180 }}>
-                        <div style={{ overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }} title={r.fullName}>{r.fullName}</div>
-                      </td>
-                      <td style={{ padding:"9px 12px", textAlign:"center", color:"#64748b" }}>{r.registros}</td>
-                      <td style={{ padding:"9px 12px", fontWeight:700, color:C.blue }}>{fmt(r.Empenhado)}</td>
-                      <td style={{ padding:"9px 12px", color:C.teal, fontWeight:600 }}>{fmt(r.Ressarcido)}</td>
-                      <td style={{ padding:"9px 12px", color:r["A Ressarcir"]>0?C.red:"#10b981", fontWeight:600 }}>{r["A Ressarcir"]>0?fmt(r["A Ressarcir"]):"✓"}</td>
-                      <td style={{ padding:"9px 14px", minWidth:120 }}>
-                        <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-                          <div style={{ flex:1, height:5, background:"#f1f5f9", borderRadius:3, overflow:"hidden" }}>
-                            <div style={{ height:"100%", width:`${pctV}%`, background:barColor, borderRadius:3 }}/>
-                          </div>
-                          <span style={{ fontWeight:700, color:barColor, minWidth:34, fontSize:10 }}>{pctV.toFixed(0)}%</span>
-                        </div>
-                      </td>
-                      <td style={{ padding:"9px 12px" }}>
-                        <span style={{ display:"inline-block", padding:"2px 8px", borderRadius:12, fontSize:10, fontWeight:700,
-                          background:pctV>=80?"#dcfce7":pctV>=40?"#fef9c3":"#fee2e2",
-                          color:pctV>=80?"#166534":pctV>=40?"#713f12":"#991b1b",
-                          border:`1px solid ${pctV>=80?"#86efac":pctV>=40?"#fde047":"#fca5a5"}` }}>
-                          {pctV>=80?"🟢 Em dia":pctV>=40?"🟡 Parcial":"🔴 Crítico"}
-                        </span>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
+
 
       </div>
       )}

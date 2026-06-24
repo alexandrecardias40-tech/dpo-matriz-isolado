@@ -42,13 +42,13 @@ export default function DashboardLayout({ children, menuConfig, hideUpdateBadge 
             {
               key: "charts",
               title: "📈 Gráficos",
-              items: [{ href: "/graficos", label: "Sistema Orçamentário CI", icon: <Activity size={16} /> }],
+              items: [{ href: "/graficos", label: "Fluxo de Crédito Matriz", icon: <Activity size={16} /> }],
             },
             {
               key: "comparatives",
               title: "🔄 Comparativos",
               items: [
-                { href: "/comparisons", label: "Comparativo Geral", icon: <GitCompare size={16} /> },
+                { href: "/comparisons", label: "Comparativo de Saldos", icon: <GitCompare size={16} /> },
               ],
             },
           ],
@@ -103,7 +103,7 @@ export default function DashboardLayout({ children, menuConfig, hideUpdateBadge 
           {sidebarOpen && (
             <div>
               <div style={{ fontWeight: 700, fontSize: 14, color: "white", letterSpacing: "-0.025em" }}>
-                Custos Indiretos
+                Execução Matriz
               </div>
               <div style={{ fontSize: 10, color: "#94a3b8", marginTop: 2 }}>Dashboard UnB</div>
             </div>

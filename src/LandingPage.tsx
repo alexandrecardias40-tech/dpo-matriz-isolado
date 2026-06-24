@@ -96,7 +96,7 @@ export default function LandingPage() {
       />
 
       {/* Header Banner */}
-      <div style={{ position: "absolute", top: "15px", left: "15px", right: "15px", padding: "6px 30px", borderRadius: "12px", display: "flex", justifyContent: "space-between", alignItems: "center", backgroundColor: "white", zIndex: 10, boxShadow: "0 4px 15px rgba(0,0,0,0.1)", boxSizing: "border-box" }}>
+      <div style={{ position: "absolute", top: "15px", left: "15px", right: "15px", padding: "12px 30px", borderRadius: "12px", display: "flex", justifyContent: "space-between", alignItems: "center", backgroundColor: "white", zIndex: 10, boxShadow: "0 4px 15px rgba(0,0,0,0.1)", boxSizing: "border-box" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 2, flex: 1, minWidth: 0 }}>
           <span style={{ fontSize: 14, color: "#000000", fontWeight: 700, letterSpacing: "0.3px", wordWrap: "break-word" }}>
             Decanato de Planejamento, Orçamento e Avaliação Institucional - DPO
@@ -105,20 +105,13 @@ export default function LandingPage() {
             Diretoria de Orçamento - DOR
           </span>
         </div>
-        <div style={{ flexShrink: 0, marginLeft: "10px" }}>
-          <img 
-            src="/inova_gestao.png" 
-            alt="Inova Gestão" 
-            style={{ height: 80, objectFit: "contain" }} 
-          />
-        </div>
       </div>
 
       {/* Main Content */}
       <div style={{ zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", marginTop: "0px", width: "100%", padding: "0 20px", boxSizing: "border-box" }}>
         
         <h1 style={{ fontSize: 22, fontWeight: 800, color: "#f8fafc", margin: "0 0 20px 0", textShadow: "0 0 40px rgba(56, 189, 248, 0.4)", letterSpacing: "-0.5px", maxWidth: "100%", wordWrap: "break-word" }}>
-          Painel de Custos Indiretos
+          Painel de Execução da Matriz
         </h1>
 
         {/* Glass Card */}
@@ -140,8 +133,8 @@ export default function LandingPage() {
           alignItems: "center"
         }}>
           <h2 style={{ margin: 0, fontSize: 20, color: "white", fontWeight: 700, letterSpacing: "-0.5px" }}>Dashboard</h2>
-          <h2 style={{ margin: "4px 0 0 0", fontSize: 20, color: "white", fontWeight: 700, letterSpacing: "-0.5px" }}>Custos Indiretos</h2>
-          <p style={{ marginTop: 10, marginBottom: 24, color: "#94a3b8", fontSize: 13, fontWeight: 500 }}>Análise de Custos Indiretos</p>
+          <h2 style={{ margin: "4px 0 0 0", fontSize: 20, color: "white", fontWeight: 700, letterSpacing: "-0.5px" }}>Matriz Orçamentária</h2>
+          <p style={{ marginTop: 10, marginBottom: 24, color: "#94a3b8", fontSize: 13, fontWeight: 500 }}>Análise e Cruzamento de Dados</p>
           
           <a href="#/dashboard" style={{
             display: "flex",

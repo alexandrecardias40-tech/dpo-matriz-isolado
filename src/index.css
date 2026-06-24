@@ -67,3 +67,49 @@
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   }
 }
+
+/* Custom CSS Tooltip - Instant Response */
+.instant-tooltip-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.instant-tooltip-container .tooltip-text {
+  visibility: hidden;
+  width: max-content;
+  background-color: #0f172a;
+  color: #fff;
+  text-align: center;
+  border-radius: 4px;
+  padding: 4px 8px;
+  position: absolute;
+  z-index: 99;
+  left: 140%; /* Position to the right of the dot */
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  font-size: 9px;
+  font-weight: 600;
+  pointer-events: none;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  white-space: nowrap;
+}
+
+/* Arrow pointing to the dot */
+.instant-tooltip-container .tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 100%; /* Align arrow at the left edge of the balloon */
+  margin-top: -4px;
+  border-width: 4px;
+  border-style: solid;
+  border-color: transparent #0f172a transparent transparent;
+}
+
+/* Show tooltip instantly on hover */
+.instant-tooltip-container:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
