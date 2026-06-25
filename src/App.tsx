@@ -678,58 +678,7 @@ export default function App() {
                 📢 <strong>Diagnóstico de Escala:</strong> A UGR selecionada ({unitMatrixDiagnostic.unitsText}) responde por <strong>{unitMatrixDiagnostic.shareApprovedText}</strong> de todo o orçamento da Matriz, mas atinge <strong>{unitMatrixDiagnostic.shareExecutedText}</strong> de participação da execução global. Seu índice interno de utilização <strong>{unitMatrixDiagnostic.comparisonText}</strong>.
               </div>
 
-              {/* Grid 2: Visão Interna dos Planos Internos (Concentração e Gargalos) */}
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
-                
-                {/* Lado A: Concentração Orçamentária (Top 3 PIs com mais orçamento) */}
-                <div style={{ border: "1px solid #e2e8f0", borderRadius: 8, padding: "14px 16px", background: "white" }}>
-                  <h4 style={{ fontSize: 12, fontWeight: 800, color: "#0f172a", marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.04em" }}>
-                    🔍 Concentração de Recursos
-                  </h4>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                    {unitMatrixDiagnostic.topBudgets.map((p: any, idx: number) => (
-                      <div key={idx} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 11, paddingBottom: 6, borderBottom: idx < 2 ? "1px solid #f1f5f9" : "none" }}>
-                        <div>
-                          <span style={{ fontWeight: 700, color: "#4f46e5" }}>{p.code}</span>
-                          <span style={{ color: "#64748b", marginLeft: 4, display: "block", fontSize: 9.5 }}>{p.name}</span>
-                        </div>
-                        <div style={{ textAlign: "right" }}>
-                          <div style={{ fontWeight: 700, color: "#334155" }}>{fmt(p.approved)}</div>
-                          <div style={{ fontSize: 9.5, color: p.rate >= 75 ? "#10b981" : p.rate >= 35 ? "#f59e0b" : "#ef4444", fontWeight: 600 }}>Execução: {p.rate.toFixed(1)}%</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
 
-                {/* Lado B: Gargalos de Execução (Planos Internos Críticos < 35%) */}
-                <div style={{ border: "1px solid #fecaca", borderRadius: 8, padding: "14px 16px", background: "#fef2f2" }}>
-                  <h4 style={{ fontSize: 12, fontWeight: 800, color: "#991b1b", marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.04em" }}>
-                    ⚠️ Planos com Lenta Execução (Críticos)
-                  </h4>
-                  {unitMatrixDiagnostic.criticalPIs.length === 0 ? (
-                    <div style={{ fontSize: 11, color: "#166534", fontWeight: 600, padding: "8px 0" }}>
-                      ✓ Nenhum PI com execução crítica (&lt;35%) nesta UGR!
-                    </div>
-                  ) : (
-                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                      {unitMatrixDiagnostic.criticalPIs.map((p: any, idx: number) => (
-                        <div key={idx} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 11, paddingBottom: 6, borderBottom: idx < 2 ? "1px solid #fee2e2" : "none" }}>
-                          <div>
-                            <span style={{ fontWeight: 700, color: "#991b1b" }}>{p.code}</span>
-                            <span style={{ color: "#b91c1c", marginLeft: 4, display: "block", fontSize: 9.5 }}>{p.name}</span>
-                          </div>
-                          <div style={{ textAlign: "right" }}>
-                            <div style={{ fontWeight: 700, color: "#7f1d1d" }}>Disp: {fmt(p.available)}</div>
-                            <div style={{ fontSize: 9.5, color: "#ef4444", fontWeight: 700 }}>Taxa: {p.rate.toFixed(1)}%</div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-              </div>
 
             </div>
           )}
