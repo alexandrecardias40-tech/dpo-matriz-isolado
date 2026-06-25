@@ -241,8 +241,8 @@ function DetailPanel({ cc, onBack, records }: { cc: any; onBack: ()=>void; recor
 
       {/* Bloco de Análise Dinâmica e Diagnóstico da Unidade */}
       {diagnostic && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 14 }}>
-          {/* Coluna 1: Status e Diagnóstico Geral */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 14 }}>
+          {/* Diagnóstico Geral */}
           <div style={{ ...s.card, padding: "16px 18px", borderLeft: `4px solid ${diagnostic.color}`, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
@@ -266,34 +266,9 @@ function DetailPanel({ cc, onBack, records }: { cc: any; onBack: ()=>void; recor
               <span>Disponível: <strong style={{ color: "#ef4444" }}>{diagnostic.disponivelText}</strong></span>
             </div>
           </div>
-
-          {/* Coluna 2: Preocupações e Recomendações */}
-          <div style={{ ...s.card, padding: "16px 18px", background: "#faf5ff", borderLeft: "4px solid #8b5cf6" }}>
-            <span style={{ fontWeight: 800, fontSize: 13, color: "#0f172a", display: "flex", alignItems: "center", gap: 6, marginBottom: 12 }}>
-              <AlertTriangle size={15} style={{ color: "#8b5cf6" }} /> Pontos de Atenção & Preocupações
-            </span>
-            <ul style={{ paddingLeft: 16, margin: 0, fontSize: 11, color: "#475569", lineHeight: 1.5 }}>
-              {diagnostic.concerns.map((con, idx) => (
-                <li key={idx} style={{ marginBottom: 6 }}>
-                  {con}
-                </li>
-              ))}
-            </ul>
-            {diagnostic.positivePoints.length > 0 && (
-              <div style={{ marginTop: 12, paddingTop: 10, borderTop: "1px dashed #e9d5ff" }}>
-                <span style={{ fontWeight: 700, fontSize: 11, color: "#10b981", display: "flex", alignItems: "center", gap: 4, marginBottom: 6 }}>
-                  ✓ Aspectos Positivos
-                </span>
-                <ul style={{ paddingLeft: 16, margin: 0, fontSize: 10.5, color: "#475569", lineHeight: 1.4 }}>
-                  {diagnostic.positivePoints.map((pos, idx) => (
-                    <li key={idx} style={{ marginBottom: 2 }}>{pos}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
         </div>
       )}
+
 
       {/* Tabela de registros */}
       <div style={{ ...s.card, padding:0, overflow:"hidden" }}>
