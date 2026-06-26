@@ -65,11 +65,13 @@ function getUnitAbbreviation(name: string): string {
 }
 
 export default function CINetworkChart({
-  data, height = 680, onNodeClick
+  data, height = 680, onNodeClick, hubLabel = "UnB CI", onHubClick
 }: {
   data: CINode[];
   height?: number;
   onNodeClick?: (node: CINode | null) => void;
+  hubLabel?: string;
+  onHubClick?: () => void;
 }) {
   const [time, setTime] = useState(0);
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -179,7 +181,12 @@ export default function CINetworkChart({
     e.stopPropagation();
     const dist = Math.hypot(e.clientX - mouseDownPos.x, e.clientY - mouseDownPos.y);
     if (dist < 6) {
-      if (node.isHub) { setSelectedId(null); onNodeClick?.(null); return; }
+      if (node.isHub) {
+        onHubClick?.();
+        setSelectedId(null);
+        onNodeClick?.(null);
+        return;
+      }
       setSelectedId(node.id);
       onNodeClick?.(node.originalData);
     }
@@ -212,7 +219,7 @@ export default function CINetworkChart({
     });
 
     const hub: NetworkNode = {
-      id: 'hub', label: 'UnB CI',
+      id: 'hub', label: hubLabel,
       empenhado: sats.reduce((s, n) => s + n.empenhado, 0),
       pago: sats.reduce((s, n) => s + n.pago, 0),
       ressarcido: sats.reduce((s, n) => s + n.ressarcido, 0),
@@ -223,7 +230,7 @@ export default function CINetworkChart({
       semaforo_amarelo: sats.reduce((s, n) => s + n.semaforo_amarelo, 0),
       semaforo_vermelho: sats.reduce((s, n) => s + n.semaforo_vermelho, 0),
       size: 62, color: '#2f6bff', phase: 0, isHub: true, ringIndex: -1,
-      originalData: { centro_custo: 'UnB CI', empenhado: 0, total_pago_tg: 0, ressarcido: 0, a_ressarcir: 0, total_ci: 0, qtd_nes: 0, semaforo_verde: 0, semaforo_amarelo: 0, semaforo_vermelho: 0 },
+      originalData: { centro_custo: hubLabel, empenhado: 0, total_pago_tg: 0, ressarcido: 0, a_ressarcir: 0, total_ci: 0, qtd_nes: 0, semaforo_verde: 0, semaforo_amarelo: 0, semaforo_vermelho: 0 },
     };
     return [hub, ...sats];
   }, [data]);
@@ -341,10 +348,15 @@ export default function CINetworkChart({
                 style={{ letterSpacing: '0.2px', textShadow: '0 1px 4px rgba(0,0,0,0.7)', pointerEvents: 'none' }}>
                 {n.isHub ? n.label : getUnitAbbreviation(n.label)}
               </text>
-              {/* Click hint on hover (non-hub) */}
+              {/* Click hint on hover */}
               {isHov && !n.isHub && (
                 <text x={pos.x} y={pos.y + n.size + 18} textAnchor="middle" fontSize={9} fill="rgba(255,255,255,0.7)" style={{ pointerEvents: 'none' }}>
                   clique para detalhes
+                </text>
+              )}
+              {isHov && n.isHub && (
+                <text x={pos.x} y={pos.y + n.size + 18} textAnchor="middle" fontSize={9} fill="rgba(255,255,255,0.7)" style={{ pointerEvents: 'none' }}>
+                  clique para alternar matriz
                 </text>
               )}
             </g>
@@ -356,7 +368,7 @@ export default function CINetworkChart({
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '7px 18px', background: 'rgba(3,11,28,0.82)', backdropFilter: 'blur(8px)', borderTop: '1px solid rgba(51,65,85,0.5)', fontSize: 10, color: '#64748b', display: 'flex', gap: 18, alignItems: 'center' }}>
         <span style={{ color: '#475569' }}>• Tamanho do nó = volume empenhado</span>
         <span style={{ color: '#475569' }}>• Linhas = fluxo financeiro entre unidades</span>
-        <span style={{ color: '#93c5fd', marginLeft: 'auto', fontWeight: 600 }}>🖱️ Clique no nó para detalhes • Arraste para navegar</span>
+        <span style={{ color: '#93c5fd', marginLeft: 'auto', fontWeight: 600 }}>🖱️ Clique nas unidades para detalhar ou na bola central para alternar Matrizes • Arraste para navegar</span>
       </div>
 
       <style>{`@keyframes spin { from { stroke-dashoffset: 0 } to { stroke-dashoffset: -18 } }`}</style>

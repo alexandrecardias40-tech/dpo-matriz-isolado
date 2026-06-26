@@ -3,7 +3,7 @@ import { useData } from "./DataProvider";
 import DashboardLayout from "./components/DashboardLayout";
 import CINetworkChart from "./components/CINetworkChart";
 import { ArrowLeft, TrendingUp, AlertTriangle } from "lucide-react";
-import { PI_NAMES } from "./App";
+import { PI_NAMES, PI_GROUPS } from "./App";
 
 const piLabel = (code: string) => PI_NAMES[code?.trim()] ?? code;
 
@@ -332,13 +332,26 @@ function DetailPanel({ cc, onBack, records }: { cc: any; onBack: ()=>void; recor
 export default function GraficosPage() {
   const { records, loading } = useData();
   const [selected, setSelected] = useState<any>(null);
+  const [activeMatrix, setActiveMatrix] = useState<"Matriz Acadêmica" | "Matriz Administrativa" | "Custos Indiretos">("Matriz Acadêmica");
 
-  const byCC = useMemo(() => buildByUnidade(records.filter((r: any) => r.in_matrix && r.in_tg)), [records]);
+  const byCC = useMemo(() => {
+    const codes = PI_GROUPS[activeMatrix] || [];
+    const filtered = records.filter((r: any) => r.in_matrix && r.in_tg && codes.includes((r.plano_interno || "").trim()));
+    return buildByUnidade(filtered);
+  }, [records, activeMatrix]);
 
   const handleNodeClick = (nodeData: any) => {
     if (!nodeData) return;
     const cc = byCC.find((c:any) => c.centro_custo === nodeData.centro_custo);
     if (cc) setSelected(cc);
+  };
+
+  const handleHubClick = () => {
+    setActiveMatrix(prev => {
+      if (prev === "Matriz Acadêmica") return "Matriz Administrativa";
+      if (prev === "Matriz Administrativa") return "Custos Indiretos";
+      return "Matriz Acadêmica";
+    });
   };
 
   const chartHeight = typeof window !== "undefined" ? window.innerHeight - 72 : 600;
@@ -353,13 +366,19 @@ export default function GraficosPage() {
         <div style={{ margin:"-24px -24px 0", position:"relative" }}>
           <div style={{ position:"absolute", top:16, left:20, zIndex:10, pointerEvents:"none" }}>
             <h1 style={{ fontSize:20, fontWeight:800, color:"rgba(255,255,255,0.9)", margin:0, textShadow:"0 2px 8px rgba(0,0,0,0.6)" }}>
-              Mapa do Fluxo de Créditos da Matriz
+              Mapa do Fluxo de Créditos — {activeMatrix}
             </h1>
             <p style={{ fontSize:11, color:"rgba(255,255,255,0.55)", margin:"2px 0 0" }}>
-              {byCC.length} unidades organizacionais · {records.length} registros de cruzamento · Clique em um nó para detalhar
+              {byCC.length} unidades organizacionais · Clique nas unidades para detalhar ou na bola central para alternar Matrizes
             </p>
           </div>
-          <CINetworkChart data={byCC} height={chartHeight} onNodeClick={handleNodeClick} />
+          <CINetworkChart 
+            data={byCC} 
+            height={chartHeight} 
+            onNodeClick={handleNodeClick} 
+            hubLabel={activeMatrix} 
+            onHubClick={handleHubClick} 
+          />
         </div>
       )}
     </DashboardLayout>
