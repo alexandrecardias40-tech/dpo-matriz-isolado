@@ -367,7 +367,7 @@ export default function GraficosPage() {
             <h1 style={{ fontSize:20, fontWeight:800, color:"rgba(255,255,255,0.9)", margin:0, textShadow:"0 2px 8px rgba(0,0,0,0.6)" }}>
               Mapa do Fluxo de Créditos — {activeMatrix}
             </h1>
-            <p style={{ fontSize:11, color:"rgba(255,255,255,0.55)", margin:"2px 0 0" }}>
+            <p style={{ fontSize:11, color:"#ffffff", margin:"2px 0 0" }}>
               {byCC.length} unidades organizacionais · Clique nas unidades para detalhar ou na bola central para alternar Matrizes
             </p>
           </div>
