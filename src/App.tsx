@@ -394,11 +394,13 @@ export default function App() {
       else if (d.in_tg) count_tg++;
     });
 
-    const pct_exec = valor_aprovado > 0 ? (total_executado_matriz / valor_aprovado) * 100 : 0;
+    const executado_tg = valor_aprovado - credito_disponivel_tg;
+    const pct_exec = valor_aprovado > 0 ? (executado_tg / valor_aprovado) * 100 : 0;
 
     return {
       valor_aprovado, despesas_empenhadas_matriz, credito_disponivel_matriz, despesas_debitadas_matriz, total_executado_matriz, pct_exec,
       credito_disponivel_tg, despesas_empenhadas_tg, despesas_empenhadas_a_liquidar_tg, despesas_liquidadas_tg, total_tg,
+      executado_tg,
       count_ambos, count_matriz, count_tg, total_count: filteredRecords.length
     };
   }, [filteredRecords]);
@@ -645,9 +647,9 @@ export default function App() {
                   <KpiCard title="Dotação"       value={fmt(T.valor_aprovado)}          sub="Valor fixado aprovado"       color="#3b82f6" icon="💰" tooltip="Valor aprovado fixado no planejamento inicial." />
                   <KpiCard title="Disponível"    value={fmt(T.credito_disponivel_tg)}   sub="Crédito disponível (TG)"    color="#6366f1" icon="📥" tooltip="Crédito disponível no Tesouro Gerencial." />
                   <KpiCard title="Empenhado"     value={fmt(T.despesas_empenhadas_tg)}  sub="Reservado oficialmente"     color="#0ea5e9" icon="📋" tooltip="Despesas empenhadas no Tesouro Gerencial." />
-                  <KpiCard title="Debitado"      value={fmt(T.despesas_debitadas_matriz)} sub="Cálculo: Aprov. - Disp. - Emp." color="#f59e0b" icon="🧾" tooltip="Calculado por fórmula: VALOR APROVADO - Crédito Disponível - Despesas empenhadas." />
-                  <KpiCard title="Executado"     value={fmt(T.total_executado_matriz)}  sub="Soma: Empenhado + Debitado" color="#10b981" icon="⚡" tooltip="Calculado por fórmula: Despesas empenhadas + Despesas debitadas." />
-                  <KpiCard title="% Executado"   value={T.pct_exec.toFixed(2) + "%"}    sub="Em relação à dotação"       color="#8b5cf6" icon="📈" tooltip="Calculado por fórmula: Total Executado / VALOR APROVADO." />
+                  <KpiCard title="Debitado"      value={fmt(T.valor_aprovado - T.credito_disponivel_tg - T.despesas_empenhadas_tg)} sub="Dotação - Disp. TG - Emp. TG" color="#f59e0b" icon="🧾" tooltip="Calculado por fórmula: Dotação (Valor Aprovado) − Crédito Disponível TG − Empenhado TG." />
+                  <KpiCard title="Executado"     value={fmt(T.executado_tg)}            sub="Dotação − Disponível TG"    color="#10b981" icon="⚡" tooltip="Calculado por fórmula: Valor Aprovado − Crédito Disponível TG." />
+                  <KpiCard title="% Executado"   value={T.pct_exec.toFixed(2) + "%"}    sub="Em relação à dotação"       color="#8b5cf6" icon="📈" tooltip="Calculado por fórmula: Executado TG / Valor Aprovado." />
                 </div>
               );
             })()}
@@ -683,7 +685,7 @@ export default function App() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredRecords.map((d: any, i: number) => {
+                  {[...filteredRecords].sort((a: any, b: any) => String(a.ugr ?? "").localeCompare(String(b.ugr ?? ""), "pt-BR", { numeric: true })).map((d: any, i: number) => {
                     const diff = Math.abs(d.despesas_empenhadas_matriz - d.despesas_empenhadas_tg);
                     
                     return (
@@ -700,7 +702,7 @@ export default function App() {
                         <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", fontWeight: 600, color: "#0f172a" }}>{d.in_matrix ? fmt(d.valor_aprovado) : "—"}</td>
                         <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", fontWeight: 700 }}>{d.in_tg ? fmt(d.credito_disponivel_tg) : "—"}</td>
                         <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", color: "#0f172a", fontWeight: 700 }}>
-                          {d.in_matrix ? fmt(d.despesas_debitadas_matriz) : "—"}
+                          {(d.in_matrix || d.in_tg) ? fmt((Number(d.valor_aprovado)||0) - (Number(d.credito_disponivel_tg)||0) - (Number(d.despesas_empenhadas_tg)||0)) : "—"}
                         </td>
                         <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", fontWeight: 700, position: "relative" }}>
                           {d.in_matrix ? (() => {

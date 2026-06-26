@@ -96,12 +96,19 @@ function DetailPanel({ cc, onBack, records }: { cc: any; onBack: ()=>void; recor
       if (r.semaforo === 'vermelho') count_vermelho += 1;
     });
 
+    // computed TG fields
+    const credito_disponivel_tg_sum = filteredRegistros.reduce((s:number, r:any) => s + (Number(r.credito_disponivel_tg)||0), 0);
+    const debitado_tg_sum  = valor_aprovado - credito_disponivel_tg_sum - despesas_empenhadas_tg;
+    const executado_tg_sum = valor_aprovado - credito_disponivel_tg_sum;
+
     return {
       valor_aprovado, total_executado_matriz, despesas_empenhadas_matriz, despesas_debitadas_matriz, credito_disponivel_matriz,
-      despesas_empenhadas_tg, despesas_liquidadas_tg,
+      despesas_empenhadas_tg, despesas_liquidadas_tg, credito_disponivel_tg: credito_disponivel_tg_sum,
+      debitado_tg: debitado_tg_sum, executado_tg: executado_tg_sum,
       count_verde, count_amarelo, count_vermelho, total: filteredRegistros.length
     };
   }, [filteredRegistros]);
+
 
   const diagnostic = useMemo(() => {
     if (!records || records.length === 0) return null;
@@ -109,20 +116,21 @@ function DetailPanel({ cc, onBack, records }: { cc: any; onBack: ()=>void; recor
     // Global stats
     const matrixRecs = records.filter((r: any) => r.in_matrix);
     let globalApproved = 0;
-    let globalExecuted = 0;
+    let globalDisp = 0;
     matrixRecs.forEach((r: any) => {
       globalApproved += Number(r.valor_aprovado) || 0;
-      globalExecuted += Number(r.total_executado_matriz) || 0;
+      globalDisp += Number(r.credito_disponivel_tg) || 0;
     });
+    const globalExecuted = globalApproved - globalDisp;
     const globalRate = globalApproved > 0 ? (globalExecuted / globalApproved) * 100 : 0;
     
     // Unit stats
     const aprovado = stats.valor_aprovado;
-    const executado = stats.total_executado_matriz;
+    const executado = stats.executado_tg;
     const rate = aprovado > 0 ? (executado / aprovado) * 100 : 0;
-    const disponivel = stats.credito_disponivel_matriz;
-    const empenhado = stats.despesas_empenhadas_matriz;
-    const debitado = stats.despesas_debitadas_matriz;
+    const disponivel = stats.credito_disponivel_tg;
+    const empenhado = stats.despesas_empenhadas_tg;
+    const debitado = stats.debitado_tg;
     
     // Compare rate with global
     const diff = rate - globalRate;
@@ -220,23 +228,23 @@ function DetailPanel({ cc, onBack, records }: { cc: any; onBack: ()=>void; recor
         </div>
         <div style={{ ...s.card, borderLeft:"3px solid #f59e0b", padding:"8px 10px" }}>
           <div style={{ fontSize:8.5, fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.04em", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>📈 Empenhado</div>
-          <div style={{ fontSize:13.5, fontWeight:800, color:"#0f172a", marginTop:4, fontFamily:"monospace", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{fmt(stats.despesas_empenhadas_matriz)}</div>
-          <div style={{ fontSize:8.5, color:"#94a3b8", marginTop:3, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>Lançamentos empenhados</div>
+          <div style={{ fontSize:13.5, fontWeight:800, color:"#0f172a", marginTop:4, fontFamily:"monospace", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{fmt(stats.despesas_empenhadas_tg)}</div>
+          <div style={{ fontSize:8.5, color:"#94a3b8", marginTop:3, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>Empenhado TG</div>
         </div>
         <div style={{ ...s.card, borderLeft:"3px solid #14b8a6", padding:"8px 10px" }}>
           <div style={{ fontSize:8.5, fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.04em", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>🎯 Debitado</div>
-          <div style={{ fontSize:13.5, fontWeight:800, color:"#0f172a", marginTop:4, fontFamily:"monospace", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{fmt(stats.despesas_debitadas_matriz)}</div>
-          <div style={{ fontSize:8.5, color:"#94a3b8", marginTop:3, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>Provisionado na planilha</div>
+          <div style={{ fontSize:13.5, fontWeight:800, color:"#0f172a", marginTop:4, fontFamily:"monospace", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{fmt(stats.debitado_tg)}</div>
+          <div style={{ fontSize:8.5, color:"#94a3b8", marginTop:3, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>Dotação - Disp. TG - Emp. TG</div>
         </div>
         <div style={{ ...s.card, borderLeft:"3px solid #64748b", padding:"8px 10px" }}>
           <div style={{ fontSize:8.5, fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.04em", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>💵 Disponível</div>
-          <div style={{ fontSize:13.5, fontWeight:800, color:"#0f172a", marginTop:4, fontFamily:"monospace", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{fmt(stats.credito_disponivel_matriz)}</div>
-          <div style={{ fontSize:8.5, color:"#94a3b8", marginTop:3, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>Saldo livre restante</div>
+          <div style={{ fontSize:13.5, fontWeight:800, color:"#0f172a", marginTop:4, fontFamily:"monospace", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{fmt(stats.credito_disponivel_tg)}</div>
+          <div style={{ fontSize:8.5, color:"#94a3b8", marginTop:3, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>Crédito disponível TG</div>
         </div>
         <div style={{ ...s.card, borderLeft: "3px solid #8b5cf6", padding:"8px 10px" }}>
           <div style={{ fontSize:8.5, fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.04em", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>⚡ Execução</div>
           <div style={{ fontSize:13.5, fontWeight:800, color: "#8b5cf6", marginTop:4, fontFamily:"monospace", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
-            {pct(stats.total_executado_matriz, stats.valor_aprovado)}
+            {pct(stats.executado_tg, stats.valor_aprovado)}
           </div>
           <div style={{ fontSize:8.5, color:"#94a3b8", marginTop:3, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>Percentual de utilização</div>
         </div>
@@ -309,14 +317,14 @@ function DetailPanel({ cc, onBack, records }: { cc: any; onBack: ()=>void; recor
                     </td>
                     <td style={{ ...s.td, fontSize: "9px", whiteSpace: "nowrap", width: "120px", minWidth: "120px" }}><span style={{ color:"#374151" }}>{d.sei||"—"}</span></td>
                     <td style={{ ...s.td, fontWeight:600, width: "85px" }}>{fmtK(d.valor_aprovado)}</td>
-                    <td style={{ ...s.td, width: "85px" }}>{fmtK(d.despesas_empenhadas_matriz)}</td>
-                    <td style={{ ...s.td, width: "85px" }}>{fmtK(d.despesas_debitadas_matriz)}</td>
-                    <td style={{ ...s.td, color:"#f59e0b", fontWeight:700, width: "85px" }}>{fmtK(d.credito_disponivel_matriz)}</td>
+                    <td style={{ ...s.td, width: "85px" }}>{fmtK(d.despesas_empenhadas_tg)}</td>
+                    <td style={{ ...s.td, width: "85px" }}>{fmtK((Number(d.valor_aprovado)||0) - (Number(d.credito_disponivel_tg)||0) - (Number(d.despesas_empenhadas_tg)||0))}</td>
+                    <td style={{ ...s.td, color:"#f59e0b", fontWeight:700, width: "85px" }}>{fmtK(d.credito_disponivel_tg)}</td>
                     <td style={{ ...s.td, width: "100px" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 3 }}>
-                        <span style={{ fontWeight: 700, color: "#8b5cf6" }}>{pct(d.total_executado_matriz, d.valor_aprovado)}</span>
+                        <span style={{ fontWeight: 700, color: "#8b5cf6" }}>{pct((Number(d.valor_aprovado)||0) - (Number(d.credito_disponivel_tg)||0), d.valor_aprovado)}</span>
                       </div>
-                      <Bar value={Number(d.total_executado_matriz) || 0} max={Number(d.valor_aprovado) || 0} color="#8b5cf6" />
+                      <Bar value={(Number(d.valor_aprovado)||0) - (Number(d.credito_disponivel_tg)||0)} max={Number(d.valor_aprovado) || 0} color="#8b5cf6" />
                     </td>
                   </tr>
                 );

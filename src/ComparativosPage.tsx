@@ -143,52 +143,56 @@ function buildData(records: any[], labelMatriz: string = "Matriz Total") {
   const byCC: Record<string,any> = {};
   records.forEach(d => {
     const cc = (d.unidade||"Outras Unidades").trim();
-    if (!byCC[cc]) byCC[cc] = { cc, valor_aprovado:0, emp_matriz:0, deb_matriz:0, disp_matriz:0, exec_matriz:0, n:0 };
+    if (!byCC[cc]) byCC[cc] = { cc, valor_aprovado:0, emp_tg:0, disp_tg:0, n:0 };
     byCC[cc].valor_aprovado += Number(d.valor_aprovado)||0;
-    byCC[cc].emp_matriz     += Number(d.despesas_empenhadas_matriz)||0;
-    byCC[cc].deb_matriz     += Number(d.despesas_debitadas_matriz)||0;
-    byCC[cc].disp_matriz    += Number(d.credito_disponivel_matriz)||0;
-    byCC[cc].exec_matriz    += Number(d.total_executado_matriz)||0;
+    byCC[cc].emp_tg         += Number(d.despesas_empenhadas_tg)||0;
+    byCC[cc].disp_tg        += Number(d.credito_disponivel_tg)||0;
     byCC[cc].n++;
+  });
+
+  // Derive deb and exec from TG formula
+  Object.values(byCC).forEach((r: any) => {
+    r.deb_tg  = r.valor_aprovado - r.disp_tg - r.emp_tg;
+    r.exec_tg = r.valor_aprovado - r.disp_tg;
   });
 
   const ccArr = Object.values(byCC).sort((a:any,b:any)=>b.valor_aprovado-a.valor_aprovado);
 
-  const totAprovado = ccArr.reduce((s:number,r:any)=>s+r.valor_aprovado,0);
-  const totEmpMatriz = ccArr.reduce((s:number,r:any)=>s+r.emp_matriz,0);
-  const totDebMatriz = ccArr.reduce((s:number,r:any)=>s+r.deb_matriz,0);
-  const totDispMatriz = ccArr.reduce((s:number,r:any)=>s+r.disp_matriz,0);
-  const totExecMatriz = ccArr.reduce((s:number,r:any)=>s+r.exec_matriz,0);
+  const totAprovado  = ccArr.reduce((s:number,r:any)=>s+r.valor_aprovado,0);
+  const totEmpMatriz = ccArr.reduce((s:number,r:any)=>s+r.emp_tg,0);
+  const totDebMatriz = ccArr.reduce((s:number,r:any)=>s+r.deb_tg,0);
+  const totDispMatriz= ccArr.reduce((s:number,r:any)=>s+r.disp_tg,0);
+  const totExecMatriz= ccArr.reduce((s:number,r:any)=>s+r.exec_tg,0);
 
   // Top 15 para gráficos e tabelas com siglas
   const top15 = ccArr.slice(0,15).map((r:any)=>({
     name: getUnitAbbreviation(r.cc),
     fullName: r.cc,
     [`Aprovado (${labelMatriz})`]: r.valor_aprovado,
-    [`Executado (${labelMatriz})`]: r.exec_matriz,
-    [`Empenhado (${labelMatriz})`]: r.emp_matriz,
-    [`Debitado (${labelMatriz})`]: r.deb_matriz,
-    [`Disponível (${labelMatriz})`]: r.disp_matriz,
+    [`Executado (${labelMatriz})`]: r.exec_tg,
+    [`Empenhado (${labelMatriz})`]: r.emp_tg,
+    [`Debitado (${labelMatriz})`]: r.deb_tg,
+    [`Disponível (${labelMatriz})`]: r.disp_tg,
     registros: r.n,
   }));
 
   // Scatter/Bubble Data
   const scatterData = ccArr.map((r:any)=>({
     x: r.valor_aprovado,
-    y: r.valor_aprovado > 0 ? (r.exec_matriz / r.valor_aprovado) * 100 : 0,
-    z: r.disp_matriz,
+    y: r.valor_aprovado > 0 ? (r.exec_tg / r.valor_aprovado) * 100 : 0,
+    z: r.disp_tg,
     name: getUnitAbbreviation(r.cc),
     fullName: r.cc,
     aprovado: r.valor_aprovado,
-    executado: r.exec_matriz,
-    disponivel: r.disp_matriz,
+    executado: r.exec_tg,
+    disponivel: r.disp_tg,
   }));
 
   // Insights
-  const ccExec = [...ccArr].sort((a:any, b:any) => b.exec_matriz - a.exec_matriz);
+  const ccExec = [...ccArr].sort((a:any, b:any) => b.exec_tg - a.exec_tg);
   const liderExec = ccExec[0];
 
-  const ccDisp = [...ccArr].sort((a:any, b:any) => b.disp_matriz - a.disp_matriz);
+  const ccDisp = [...ccArr].sort((a:any, b:any) => b.disp_tg - a.disp_tg);
   const maiorSaldoLivre = ccDisp[0];
 
   return {
@@ -204,6 +208,7 @@ function buildData(records: any[], labelMatriz: string = "Matriz Total") {
     nCC: ccArr.length
   };
 }
+
 
 export default function ComparativosPage() {
   const { records, loading } = useData();
