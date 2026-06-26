@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useData } from "./DataProvider";
+import { PI_GROUPS, PI_GROUP_NAMES, PI_ALLOWED } from "./App";
 import DashboardLayout from "./components/DashboardLayout";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -54,15 +55,15 @@ function MultiSel({ label, opts, sel, set, formatVal }: { label: string; opts: s
   const renderLabel = (val: string) => formatVal ? formatVal(val) : val;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 3, alignItems: "center" }}>
-      <span style={{ fontSize: 11, fontWeight: 700, color: "#475569" }}>{label}</span>
+    <div style={{ display: "flex", flexDirection: "column", gap: 2, alignItems: "center" }}>
+      <span style={{ fontSize: 9.5, fontWeight: 700, color: "#475569" }}>{label}</span>
       <Popover>
         <PopoverTrigger asChild>
-          <button style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "4px 8px", border: "1px solid #cbd5e1", borderRadius: 6, background: "white", fontSize: 11, cursor: "pointer", width: 170, gap: 6, textAlign: "center", boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}>
+          <button style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "3px 6px", border: "1px solid #cbd5e1", borderRadius: 5, background: "white", fontSize: 9.5, cursor: "pointer", width: 140, gap: 4, textAlign: "center", boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}>
             <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", textAlign: "center", flex: 1 }}>
               {sel.length > 0 ? sel.map(renderLabel).join(", ") : "Todos"}
             </span>
-            <ChevronDown size={13} style={{ opacity: 0.5, flexShrink: 0 }} />
+            <ChevronDown size={11} style={{ opacity: 0.5, flexShrink: 0 }} />
           </button>
         </PopoverTrigger>
         <PopoverContent style={{ width: 240, padding: 0 }}>
@@ -138,7 +139,7 @@ const ScatterTooltip = ({ active, payload }: any) => {
 };
 
 /* ── aggregation ── */
-function buildData(records: any[]) {
+function buildData(records: any[], labelMatriz: string = "Matriz Total") {
   const byCC: Record<string,any> = {};
   records.forEach(d => {
     const cc = (d.unidade||"Outras Unidades").trim();
@@ -163,11 +164,11 @@ function buildData(records: any[]) {
   const top15 = ccArr.slice(0,15).map((r:any)=>({
     name: getUnitAbbreviation(r.cc),
     fullName: r.cc,
-    "Aprovado (Matriz)": r.valor_aprovado,
-    "Executado (Matriz)": r.exec_matriz,
-    "Empenhado (Matriz)": r.emp_matriz,
-    "Debitado (Matriz)": r.deb_matriz,
-    "Disponível (Matriz)": r.disp_matriz,
+    [`Aprovado (${labelMatriz})`]: r.valor_aprovado,
+    [`Executado (${labelMatriz})`]: r.exec_matriz,
+    [`Empenhado (${labelMatriz})`]: r.emp_matriz,
+    [`Debitado (${labelMatriz})`]: r.deb_matriz,
+    [`Disponível (${labelMatriz})`]: r.disp_matriz,
     registros: r.n,
   }));
 
@@ -209,8 +210,9 @@ export default function ComparativosPage() {
   const [activeTab, setActiveTab] = useState<"ranking" | "eficiencia">("ranking");
   const [barView, setBarView] = useState<"execucao" | "desmembramento">("execucao");
   
-  // Estado de Filtro de Unidade
+  // Estado de Filtro de Unidade e PI
   const [selUnidade, setSelUnidade] = useState<string[]>([]);
+  const [selPI, setSelPI] = useState<string[]>([]);
   const [animationTick, setAnimationTick] = useState(0);
 
   useEffect(() => {
@@ -228,23 +230,63 @@ export default function ComparativosPage() {
     };
   }, [activeTab]);
 
-  // Filtro de unidades da Matriz ordenadas por sigla
-  const unidades = useMemo(() => {
-    const matrixRecs = records.filter((d: any) => d.in_matrix);
-    const raw = Array.from(new Set(matrixRecs.map((d: any) => (d.unidade || "").trim()).filter(Boolean))) as string[];
-    return raw.sort((a, b) => getUnitAbbreviation(a).localeCompare(getUnitAbbreviation(b)));
+  // Filtro cascata: PIs permitidos presentes na Matriz
+  const baseMatrixRecords = useMemo(() => {
+    return records.filter((d: any) => d.in_matrix && PI_ALLOWED.includes((d.plano_interno || "").trim()));
   }, [records]);
 
+  const unidades = useMemo(() => {
+    const codesFromNames = selPI.length > 0
+      ? selPI.flatMap(name => PI_GROUPS[name] ?? [])
+      : [];
+    const filteredForUnidades = codesFromNames.length > 0
+      ? baseMatrixRecords.filter((d: any) => codesFromNames.includes((d.plano_interno || "").trim()))
+      : baseMatrixRecords;
+    const raw = Array.from(new Set(filteredForUnidades.map((d: any) => (d.unidade || "").trim()).filter(Boolean))) as string[];
+    return raw.sort((a, b) => getUnitAbbreviation(a).localeCompare(getUnitAbbreviation(b)));
+  }, [baseMatrixRecords, selPI]);
+
+  const planosInternos = useMemo(() => {
+    const filteredForPIs = selUnidade.length > 0
+      ? baseMatrixRecords.filter((d: any) => selUnidade.includes((d.unidade || "").trim()))
+      : baseMatrixRecords;
+    const codesPresent = new Set(filteredForPIs.map((d: any) => (d.plano_interno || "").trim()));
+    return PI_GROUP_NAMES.filter(name =>
+      (PI_GROUPS[name] ?? []).some(code => codesPresent.has(code))
+    );
+  }, [baseMatrixRecords, selUnidade]);
+
+  // Limpa seleções inválidas quando as opções do filtro cascata mudam
+  useEffect(() => {
+    if (selUnidade.length > 0) {
+      const valid = selUnidade.filter(u => unidades.includes(u));
+      if (valid.length !== selUnidade.length) setSelUnidade(valid);
+    }
+  }, [unidades, selUnidade]);
+
+  useEffect(() => {
+    if (selPI.length > 0) {
+      const valid = selPI.filter(pi => planosInternos.includes(pi));
+      if (valid.length !== selPI.length) setSelPI(valid);
+    }
+  }, [planosInternos, selPI]);
+
   const filteredRecords = useMemo(() => {
-    return records.filter((d: any) => {
-      if (!d.in_matrix) return false;
+    return baseMatrixRecords.filter((d: any) => {
       const u = (d.unidade || "").trim();
+      const pi = (d.plano_interno || "").trim();
       if (selUnidade.length > 0 && !selUnidade.includes(u)) return false;
+      
+      if (selPI.length > 0) {
+        const codesFromNames = selPI.flatMap(name => PI_GROUPS[name] ?? []);
+        if (!codesFromNames.includes(pi)) return false;
+      }
       return true;
     });
-  }, [records, selUnidade]);
+  }, [baseMatrixRecords, selUnidade, selPI]);
 
-  const D = useMemo(() => buildData(filteredRecords), [filteredRecords]);
+  const labelMatriz = selPI.length > 0 ? selPI.join(" + ") : "Matriz Total";
+  const D = useMemo(() => buildData(filteredRecords, labelMatriz), [filteredRecords, labelMatriz]);
 
   // Análise conceitual gerada dinamicamente baseada nos filtros
   const dynamicAnalysis = useMemo(() => {
@@ -297,10 +339,21 @@ export default function ComparativosPage() {
     }
   }, [selUnidade, D, records]);
 
+  // Filtro de matriz para análise de eficiência
+  const matrixFilteredRecords = useMemo(() => {
+    return baseMatrixRecords.filter((d: any) => {
+      const pi = (d.plano_interno || "").trim();
+      if (selPI.length > 0) {
+        const codesFromNames = selPI.flatMap(name => PI_GROUPS[name] ?? []);
+        if (!codesFromNames.includes(pi)) return false;
+      }
+      return true;
+    });
+  }, [baseMatrixRecords, selPI]);
+
   // Análise específica de eficiência para a segunda aba
   const efficiencyAnalysis = useMemo(() => {
-    const allRecs = records.filter((d: any) => d.in_matrix);
-    const ccData = buildData(allRecs);
+    const ccData = buildData(matrixFilteredRecords, labelMatriz);
     const totalUnits = ccData.scatterData.length;
     
     // Concentração do Orçamento (Pareto)
@@ -327,10 +380,10 @@ export default function ComparativosPage() {
 
     if (selUnidade.length === 0) {
       return {
-        title: "Diagnóstico de Eficiência da Matriz (Geral)",
-        text: `O gráfico de dispersão exibe a eficiência de alocação das ${totalUnits} unidades. Observa-se que as 3 maiores unidades concentram ${paretoPct.toFixed(1)}% de todo o orçamento aprovado da Matriz, indicando alta concentração orçamentária. Com relação ao aproveitamento: ${lowExec} unidades (${pctLow.toFixed(1)}%) estão com desempenho baixo (vermelho), ${midExec} intermediário (amarelo) e ${highExec} (${pctHigh.toFixed(1)}%) alto (verde). Este cenário indica uma ${dispersionDesc}`,
+        title: `Diagnóstico de Eficiência — ${labelMatriz} (Geral)`,
+        text: `O gráfico de dispersão exibe a eficiência de alocação das ${totalUnits} unidades. Observa-se que as 3 maiores unidades concentram ${paretoPct.toFixed(1)}% de todo o orçamento aprovado da ${labelMatriz}, indicando alta concentração orçamentária. Com relação ao aproveitamento: ${lowExec} unidades (${pctLow.toFixed(1)}%) estão com desempenho baixo (vermelho), ${midExec} intermediário (amarelo) e ${highExec} (${pctHigh.toFixed(1)}%) alto (verde). Este cenário indica uma ${dispersionDesc}`,
         recommendations: [
-          "Promover remanejamentos preventivos de saldos ociosos (unidades com baixa taxa) para aquelas com alta taxa de execução.",
+          `Promover remanejamentos preventivos de saldos ociosos (unidades com baixa taxa) para aquelas com alta taxa de execução dentro da ${labelMatriz}.`,
           "Padronizar os fluxos de contratação e capacitar gestores das unidades com execução crítica.",
           "Realizar monitoramento quinzenal com as 3 maiores unidades detentoras de recursos para garantir a execução das grandes metas."
         ]
@@ -346,7 +399,7 @@ export default function ComparativosPage() {
       let recs: string[] = [];
 
       if (rate < 35) {
-        diagText = `A unidade ${abbrev} apresenta eficiência crítica com apenas ${rate.toFixed(1)}% de execução do seu orçamento de ${fmt(uData.aprovado)} (que representa ${budgetShare.toFixed(1)}% de toda a Matriz). O saldo disponível restante é significativo (${fmt(uData.disponivel)}), indicando recursos parados.`;
+        diagText = `A unidade ${abbrev} apresenta eficiência crítica com apenas ${rate.toFixed(1)}% de execução do seu orçamento de ${fmt(uData.aprovado)} (que representa ${budgetShare.toFixed(1)}% de toda a ${labelMatriz}). O saldo disponível restante é significativo (${fmt(uData.disponivel)}), indicando recursos parados.`;
         recs = [
           "Identificar imediatamente gargalos licitatórios ou contratuais específicos desta unidade.",
           "Verificar a viabilidade de liberação de saldos não utilizados para remanejamento antes do fechamento das janelas orçamentárias.",
@@ -361,7 +414,7 @@ export default function ComparativosPage() {
       } else {
         diagText = `A unidade ${abbrev} apresenta excelente eficiência com ${rate.toFixed(1)}% de execução do seu orçamento de ${fmt(uData.aprovado)}. O saldo livre restante é de apenas ${fmt(uData.disponivel)}, demonstrando excelente aproveitamento.`;
         recs = [
-          "Utilizar os processos de gestão desta unidade como referência (benchmark) para as demais da Matriz.",
+          `Utilizar os processos de gestão desta unidade como referência (benchmark) para as demais da ${labelMatriz}.`,
           "Priorizar esta unidade para novos aportes financeiros se houver recursos remanescentes de outras áreas."
         ];
       }
@@ -375,7 +428,7 @@ export default function ComparativosPage() {
       const avgRate = D.totAprovado > 0 ? (D.totExecMatriz / D.totAprovado) * 100 : 0;
       const budgetShare = ccData.totAprovado > 0 ? (D.totAprovado / ccData.totAprovado) * 100 : 0;
 
-      let diagText = `O grupo selecionado (${selUnidade.length} unidades) responde por ${budgetShare.toFixed(1)}% do orçamento total da Matriz. A taxa de execução média consolidada do grupo é de ${avgRate.toFixed(1)}%, com saldo livre acumulado de ${fmt(D.totDispMatriz)}.`;
+      let diagText = `O grupo selecionado (${selUnidade.length} unidades) responde por ${budgetShare.toFixed(1)}% do orçamento total da ${labelMatriz}. A taxa de execução média consolidada do grupo é de ${avgRate.toFixed(1)}%, com saldo livre acumulado de ${fmt(D.totDispMatriz)}.`;
       let recs: string[] = [];
 
       if (avgRate < 35) {
@@ -394,7 +447,7 @@ export default function ComparativosPage() {
         diagText += " O grupo demonstra alto nível de maturidade e eficiência na execução dos recursos alocados.";
         recs = [
           "Utilizar este grupo como modelo interno de boa gestão de suprimentos e planejamento.",
-          "Favorecer o grupo em futuras distribuições orçamentárias devido à alta velocidade de resposta."
+          "Favorecer o grupo em futures distribuições orçamentárias devido à alta velocidade de resposta."
         ];
       }
 
@@ -404,7 +457,7 @@ export default function ComparativosPage() {
         recommendations: recs
       };
     }
-  }, [selUnidade, D, records]);
+  }, [selUnidade, D, matrixFilteredRecords, labelMatriz]);
 
   const animatedScatterData = useMemo(() => {
     return D.scatterData.map((d: any, idx: number) => {
@@ -428,78 +481,92 @@ export default function ComparativosPage() {
     tabBtn: (active: boolean) => ({
       display: "flex",
       alignItems: "center",
+      justifyContent: "center",
       gap: 6,
-      padding: "8px 16px",
-      fontSize: 12,
-      fontWeight: 700,
-      border: "none",
+      padding: "6px 14px",
+      fontSize: 11.5,
+      fontWeight: 800,
+      border: active ? "1px solid transparent" : "1px solid #cbd5e1",
       cursor: "pointer",
       borderRadius: 8,
-      transition: "all 0.2s",
-      background: active ? "#0f172a" : "transparent",
-      color: active ? "white" : "#64748b",
-      boxShadow: active ? "0 4px 12px rgba(15,23,42,0.15)" : "none"
+      transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+      background: active ? "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)" : "white",
+      color: active ? "white" : "#475569",
+      boxShadow: active ? "0 6px 16px -4px rgba(15,23,42,0.3), inset 0 1px 0 rgba(255,255,255,0.1)" : "0 1px 3px rgba(0,0,0,0.05)",
+      textTransform: "uppercase",
+      letterSpacing: "0.5px"
     }) as React.CSSProperties
   };
 
   return (
     <DashboardLayout>
       {loading ? (
-        <div style={{ padding: "40px", textAlign: "center", color: "#64748b", fontWeight: 600 }}>Carregando dados comparativos da Matriz...</div>
+        <div style={{ padding: "40px", textAlign: "center", color: "#64748b", fontWeight: 600 }}>Carregando dados comparativos...</div>
       ) : (
-      <div style={{ display:"flex", flexDirection:"column", gap:24 }}>
+      <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
 
         {/* Cabeçalho */}
-        <div style={{ borderBottom:"1px solid #e2e8f0", paddingBottom:14, display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:14 }}>
+        <div style={{ borderBottom:"1px solid #e2e8f0", paddingBottom:10, display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:12 }}>
           <div>
-            <h1 style={{ fontSize:26, fontWeight:800, color:"#0f172a", margin:0, letterSpacing:"-0.5px" }}>
-              Painel de Comparativos — Gestão da Matriz
+            <h1 style={{ fontSize:20, fontWeight:800, color:"#0f172a", margin:0, letterSpacing:"-0.5px" }}>
+              Painel de Comparativos — Gestão: {labelMatriz}
             </h1>
-            <p style={{ fontSize:13, color:"#64748b", marginTop:4 }}>
-              Análise comparativa de alocação, despesas provisionadas, saldo disponível e taxas de execução entre as unidades organizacionais da Matriz.
+            <p style={{ fontSize:11.5, color:"#64748b", marginTop:3 }}>
+              Análise comparativa de alocação, despesas provisionadas, saldo disponível e taxas de execução entre as unidades.
             </p>
           </div>
 
           {/* Abas Principais (Navegação Dinâmica) */}
-          <div style={{ display:"flex", background:"#f1f5f9", padding:4, borderRadius:10, gap:4 }}>
-            <button onClick={() => setActiveTab("ranking")} style={s.tabBtn(activeTab === "ranking")}>
+          <div style={{ display:"flex", background:"#f8fafc", padding:4, borderRadius:10, gap:6, border: "1px solid #e2e8f0", boxShadow: "inset 0 2px 4px rgba(0,0,0,0.02)" }}>
+            <button 
+              onClick={() => setActiveTab("ranking")} 
+              style={{ ...s.tabBtn(activeTab === "ranking"), minWidth: 190 }}
+              onMouseEnter={(e) => { if (activeTab !== "ranking") e.currentTarget.style.background = "#f1f5f9" }}
+              onMouseLeave={(e) => { if (activeTab !== "ranking") e.currentTarget.style.background = "white" }}
+            >
               <BarChart3 size={14}/> Desempenho & Participação
             </button>
-            <button onClick={() => setActiveTab("eficiencia")} style={s.tabBtn(activeTab === "eficiencia")}>
+            <button 
+              onClick={() => setActiveTab("eficiencia")} 
+              style={{ ...s.tabBtn(activeTab === "eficiencia"), minWidth: 190 }}
+              onMouseEnter={(e) => { if (activeTab !== "eficiencia") e.currentTarget.style.background = "#f1f5f9" }}
+              onMouseLeave={(e) => { if (activeTab !== "eficiencia") e.currentTarget.style.background = "white" }}
+            >
               <LineChart size={14}/> Matriz de Eficiência
             </button>
           </div>
         </div>
 
         {/* Painel de Filtros */}
-        <div style={{ background: "white", borderRadius: 12, border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", padding: "10px 14px", display: "flex", flexWrap: "wrap", gap: 10, alignItems: "center" }}>
+        <div style={{ background: "white", borderRadius: 8, border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", padding: "6px 10px", display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
+          <MultiSel label="Plano Interno" opts={planosInternos} sel={selPI} set={setSelPI} />
           <MultiSel label="Unidade Organizacional" opts={unidades} sel={selUnidade} set={setSelUnidade} formatVal={getUnitAbbreviation} />
 
-          {selUnidade.length > 0 && (
-            <button onClick={() => setSelUnidade([])}
-              style={{ display: "flex", alignItems: "center", gap: 4, padding: "5px 10px", border: "1px solid #cbd5e1", borderRadius: 6, background: "white", fontSize: 11, cursor: "pointer", alignSelf: "center", fontWeight: 600, color: "#ef4444", marginTop: 14 }}>
-              <X size={12} /> Limpar Filtro
+          {(selUnidade.length > 0 || selPI.length > 0) && (
+            <button onClick={() => { setSelUnidade([]); setSelPI([]); }}
+              style={{ display: "flex", alignItems: "center", gap: 3, padding: "3px 8px", border: "1px solid #cbd5e1", borderRadius: 5, background: "white", fontSize: 9.5, cursor: "pointer", alignSelf: "center", fontWeight: 600, color: "#ef4444", marginTop: 11 }}>
+              <X size={10} /> Limpar
             </button>
           )}
         </div>
 
         {/* KPIs de Cruzamento na mesma sequência do gráfico */}
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))", gap:14 }}>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(6,1fr)", gap:8 }}>
           {[
-            { label:"Orçamento Aprovado", value:fmt(D.totAprovado), color:C.blue, icon:<DollarSign size={16}/>, sub:"Total aprovado" },
-            { label:"Empenhado (Matriz)", value:fmt(D.totEmpMatriz), color:C.amber, icon:<TrendingUp size={16}/>, sub:"Provisionado em sistema" },
-            { label:"Debitado (Matriz)", value:fmt(D.totDebMatriz), color:C.teal, icon:<Target size={16}/>, sub:"Provisionado em planilha" },
-            { label:"Disponível (Matriz)", value:fmt(D.totDispMatriz), color:C.slate, icon:<Wallet size={16}/>, sub:"Saldo livre restante" },
-            { label:"Taxa de Execução Média", value:pct(D.totExecMatriz, D.totAprovado), color:C.purple, icon:<Percent size={16}/>, sub:"Aproveitamento total" },
-            { label:"Unidades Mapeadas", value:`${D.nCC} unidades`, color:C.slate, icon:<ArrowUpRight size={16}/>, sub:"Mapeadas na planilha" },
+            { label:"Dotação", value:fmt(D.totAprovado), color:C.blue, icon:<DollarSign size={14}/>, sub:"Total aprovado" },
+            { label:"Empenhado", value:fmt(D.totEmpMatriz), color:C.amber, icon:<TrendingUp size={14}/>, sub:"Provisionado em sistema" },
+            { label:"Debitado", value:fmt(D.totDebMatriz), color:C.teal, icon:<Target size={14}/>, sub:"Provisionado em planilha" },
+            { label:"Disponível", value:fmt(D.totDispMatriz), color:C.slate, icon:<Wallet size={14}/>, sub:"Saldo livre restante" },
+            { label:"Execução Média", value:pct(D.totExecMatriz, D.totAprovado), color:C.purple, icon:<Percent size={14}/>, sub:"Aproveitamento total" },
+            { label:"Unidades Mapeadas", value:`${D.nCC} unidades`, color:C.slate, icon:<ArrowUpRight size={14}/>, sub:"Mapeadas na planilha" },
           ].map(k=>(
-            <div key={k.label} style={{ ...s.card, borderLeft:`4px solid ${k.color}`, padding:"14px 16px" }}>
-              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6, gap: 8 }}>
-                <div style={{ fontSize:9, fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.04em", flex:1, overflow:"hidden" }}>{k.label}</div>
+            <div key={k.label} style={{ ...s.card, borderLeft:`3px solid ${k.color}`, padding:"8px 10px" }}>
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:4, gap: 4 }}>
+                <div style={{ fontSize:8.5, fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.04em", flex:1, overflow:"hidden" }} title={k.label}>{k.label}</div>
                 <span style={{ color:k.color, opacity:0.7, flexShrink:0 }}>{k.icon}</span>
               </div>
-              <div style={{ fontSize:17, fontWeight:800, color:"#0f172a", lineHeight:1, fontFamily:"monospace" }}>{k.value}</div>
-              <div style={{ fontSize:10, color:"#94a3b8", marginTop:4 }}>{k.sub}</div>
+              <div style={{ fontSize:13.5, fontWeight:800, color:"#0f172a", lineHeight:1.1, fontFamily:"monospace", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }} title={k.value}>{k.value}</div>
+              <div style={{ fontSize:8.5, color:"#94a3b8", marginTop:3, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }} title={k.sub}>{k.sub}</div>
             </div>
           ))}
         </div>
@@ -511,7 +578,7 @@ export default function ComparativosPage() {
             {/* Gráfico de Barras Principal */}
             <div style={{ ...s.card, padding:0, overflow:"hidden", display:"flex", flexDirection:"column" }}>
               <div style={{ padding:"14px 18px", borderBottom:"1px solid #e2e8f0" }}>
-                <div style={s.section}>Top 15 Unidades da Matriz — Cenário Comparativo</div>
+                <div style={s.section}>Top 15 Unidades — Cenário Comparativo ({labelMatriz})</div>
                 <div style={{ fontSize:11, color:"#64748b" }}>Ordenado por volume total aprovado · Exibido por Sigla de Unidade</div>
               </div>
               
@@ -523,8 +590,8 @@ export default function ComparativosPage() {
                     <YAxis type="category" dataKey="name" width={60} tick={{ fontSize:10, fill:"#374151", fontWeight:800 }} tickLine={false} axisLine={false} interval={0} />
                     <Tooltip content={<DarkTooltip/>} cursor={{ fill:"#f8fafc" }} />
                     <Legend iconType="circle" wrapperStyle={{ fontSize:11, paddingTop:10 }} />
-                    <Bar dataKey="Aprovado (Matriz)" fill={C.blue} radius={[0,4,4,0]} barSize={11} isAnimationActive={true} animationDuration={800} />
-                    <Bar dataKey="Executado (Matriz)" fill={C.green} radius={[0,4,4,0]} barSize={11} isAnimationActive={true} animationDuration={800} />
+                    <Bar dataKey={`Aprovado (${labelMatriz})`} fill={C.blue} radius={[0,4,4,0]} barSize={11} isAnimationActive={true} animationDuration={800} />
+                    <Bar dataKey={`Executado (${labelMatriz})`} fill={C.green} radius={[0,4,4,0]} barSize={11} isAnimationActive={true} animationDuration={800} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -546,7 +613,7 @@ export default function ComparativosPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <div style={{ ...s.card, padding:0, overflow:"hidden" }}>
               <div style={{ padding:"14px 18px", borderBottom:"1px solid #e2e8f0" }}>
-                <div style={s.section}>Matriz de Eficiência Orçamentária</div>
+                <div style={s.section}>Matriz de Eficiência Orçamentária ({labelMatriz})</div>
                 <div style={{ fontSize:11, color:"#64748b" }}>
                   Relação entre <strong>Orçamento Aprovado (X)</strong> e <strong>Taxa de Execução (Y)</strong> · O tamanho da bola representa o <strong>Saldo Disponível</strong>
                 </div>

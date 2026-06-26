@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useData } from "./DataProvider";
 import DashboardLayout from "./components/DashboardLayout";
 import { Popover, PopoverContent, PopoverTrigger } from "./components/ui/popover";
@@ -10,6 +10,25 @@ import { FonteBadge } from "./components/ui/FonteBadge";
 const fmt = (v: number) => isNaN(v) ? "R$ 0" : new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v || 0);
 const fmtK = (v: number) => !v || isNaN(v) ? "—" : new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", notation: "compact", maximumFractionDigits: 1 }).format(v);
 const pct = (a: number, b: number) => b > 0 ? ((a / b) * 100).toFixed(1) + "%" : "0%";
+
+// ── PIs permitidos e seus nomes amigáveis ────────────────────────────────
+export const PI_ALLOWED = ["VGY01N0103N", "VGY01N0107N", "VGY01N0101N", "MGY01N0104N", "VGY01N0105N"];
+export const PI_NAMES: Record<string, string> = {
+  VGY01N0103N: "Custos Indiretos",
+  VGY01N0107N: "Custos Indiretos",
+  VGY01N0101N: "Custos Indiretos",
+  MGY01N0104N: "Matriz Acadêmica",
+  VGY01N0105N: "Matriz Administrativa",
+};
+// Agrupamento inverso: nome → lista de códigos
+export const PI_GROUPS: Record<string, string[]> = {
+  "Custos Indiretos":     ["VGY01N0103N", "VGY01N0107N", "VGY01N0101N"],
+  "Matriz Acadêmica":    ["MGY01N0104N"],
+  "Matriz Administrativa": ["VGY01N0105N"],
+};
+export const PI_GROUP_NAMES = Object.keys(PI_GROUPS);
+
+const piLabel = (code: string) => PI_NAMES[code?.trim()] ?? code;
 
 const STATUS_MAP: Record<string, { bg: string; border: string; color: string; label: string; icon: string }> = {
   verde: { bg: "#ecfdf5", border: "#a7f3d0", color: "#065f46", label: "Empenhos Batem", icon: "●" },
@@ -54,35 +73,35 @@ function MultiSel({ label, opts, sel, set, formatVal }: { label: string; opts: s
   const renderLabel = (val: string) => formatVal ? formatVal(val) : val;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 3, alignItems: "center" }}>
-      <span style={{ fontSize: 11, fontWeight: 700, color: "#475569" }}>{label}</span>
+    <div style={{ display: "flex", flexDirection: "column", gap: 2, alignItems: "center" }}>
+      <span style={{ fontSize: 8.5, fontWeight: 700, color: "#475569" }}>{label}</span>
       <Popover>
         <PopoverTrigger asChild>
-          <button style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "4px 8px", border: "1px solid #cbd5e1", borderRadius: 6, background: "white", fontSize: 11, cursor: "pointer", width: 170, gap: 6, textAlign: "center", boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}>
+          <button style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "3px 6px", border: "1px solid #cbd5e1", borderRadius: 5, background: "white", fontSize: 9, cursor: "pointer", width: 130, gap: 4, textAlign: "center", boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}>
             <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", textAlign: "center", flex: 1 }}>
               {sel.length > 0 ? sel.map(renderLabel).join(", ") : "Todos"}
             </span>
-            <ChevronDown size={13} style={{ opacity: 0.5, flexShrink: 0 }} />
+            <ChevronDown size={10} style={{ opacity: 0.5, flexShrink: 0 }} />
           </button>
         </PopoverTrigger>
-        <PopoverContent style={{ width: 240, padding: 0 }}>
+        <PopoverContent style={{ width: 210, padding: 0 }}>
           <Command>
             <CommandInput placeholder="Buscar…" />
             {opts.length > 0 && (
-              <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", borderBottom: "1px solid #f1f5f9", background: "#f8fafc", cursor: "pointer" }}
+              <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 10px", borderBottom: "1px solid #f1f5f9", background: "#f8fafc", cursor: "pointer" }}
                 onClick={() => set(sel.length === opts.length ? [] : [...opts])}>
                 <Checkbox checked={sel.length === opts.length && opts.length > 0} style={{ pointerEvents: "none" }} />
-                <span style={{ fontSize: 12, fontWeight: 700, color: "#2563eb" }}>Selecionar Todos</span>
+                <span style={{ fontSize: 11, fontWeight: 700, color: "#2563eb" }}>Selecionar Todos</span>
               </div>
             )}
-            <CommandList style={{ maxHeight: 220, overflowY: "auto" }}>
+            <CommandList style={{ maxHeight: 200, overflowY: "auto" }}>
               <CommandEmpty>Nenhum resultado.</CommandEmpty>
               <CommandGroup>
                 {opts.map(o => (
-                  <CommandItem key={o} value={o} onSelect={() => set(sel.includes(o) ? sel.filter(x => x !== o) : [...sel, o])} style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", padding: "6px 12px" }}>
+                  <CommandItem key={o} value={o} onSelect={() => set(sel.includes(o) ? sel.filter(x => x !== o) : [...sel, o])} style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", padding: "5px 10px" }}>
                     <Checkbox checked={sel.includes(o)} style={{ pointerEvents: "none" }} />
-                    <span style={{ fontSize: 11, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={o}>
-                      {formatVal ? `${formatVal(o)} - ${o}` : o}
+                    <span style={{ fontSize: 10, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={o}>
+                      {formatVal ? formatVal(o) : o}
                     </span>
                   </CommandItem>
                 ))}
@@ -99,27 +118,23 @@ function TaxaExecFilter({ sel, set }: { sel: string[]; set: (v: string[]) => voi
   const options = [
     { value: "baixo", label: "Baixo", color: "#ef4444" },
     { value: "medio", label: "Média", color: "#eab308" },
-    { value: "alto", label: "Alta", color: "#22c55e" }
+    { value: "alto",  label: "Alta",  color: "#22c55e" }
   ];
-
-  const renderLabel = (val: string) => {
-    const found = options.find(o => o.value === val);
-    return found ? found.label : val;
-  };
+  const renderLabel = (val: string) => options.find(o => o.value === val)?.label ?? val;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 3, alignItems: "center" }}>
-      <span style={{ fontSize: 11, fontWeight: 700, color: "#475569" }}>Taxa de Execução</span>
+    <div style={{ display: "flex", flexDirection: "column", gap: 2, alignItems: "center" }}>
+      <span style={{ fontSize: 8.5, fontWeight: 700, color: "#475569" }}>Taxa de Execução</span>
       <Popover>
         <PopoverTrigger asChild>
-          <button style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "4px 8px", border: "1px solid #cbd5e1", borderRadius: 6, background: "white", fontSize: 11, cursor: "pointer", width: 170, gap: 6, textAlign: "center", boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}>
+          <button style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "3px 6px", border: "1px solid #cbd5e1", borderRadius: 5, background: "white", fontSize: 9, cursor: "pointer", width: 130, gap: 4, textAlign: "center", boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}>
             <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", textAlign: "center", flex: 1 }}>
               {sel.length > 0 ? sel.map(renderLabel).join(", ") : "Todos"}
             </span>
-            <ChevronDown size={13} style={{ opacity: 0.5, flexShrink: 0 }} />
+            <ChevronDown size={10} style={{ opacity: 0.5, flexShrink: 0 }} />
           </button>
         </PopoverTrigger>
-        <PopoverContent style={{ width: 180, padding: 0 }}>
+        <PopoverContent style={{ width: 160, padding: 0 }}>
           <Command>
             <CommandList>
               <CommandGroup>
@@ -128,11 +143,11 @@ function TaxaExecFilter({ sel, set }: { sel: string[]; set: (v: string[]) => voi
                     key={o.value}
                     value={o.value}
                     onSelect={() => set(sel.includes(o.value) ? sel.filter(x => x !== o.value) : [...sel, o.value])}
-                    style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", padding: "8px 12px" }}
+                    style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", padding: "6px 10px" }}
                   >
                     <Checkbox checked={sel.includes(o.value)} style={{ pointerEvents: "none" }} />
-                    <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11 }}>
-                      <span style={{ display: "inline-block", width: 9, height: 9, borderRadius: "50%", background: o.color }} />
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 10 }}>
+                      <span style={{ display: "inline-block", width: 8, height: 8, borderRadius: "50%", background: o.color }} />
                       <span style={{ fontWeight: 600, color: "#334155" }}>{o.label}</span>
                     </div>
                   </CommandItem>
@@ -148,19 +163,25 @@ function TaxaExecFilter({ sel, set }: { sel: string[]; set: (v: string[]) => voi
 
 function KpiCard({ title, value, sub, color, icon, tooltip }: { title: React.ReactNode; value: string; sub?: string; color: string; icon: string; tooltip?: string }) {
   return (
-    <div style={{ background: "white", borderRadius: 10, border: "1px solid #e2e8f0", borderLeft: `4px solid ${color}`, boxShadow: "0 1px 2px rgba(0,0,0,0.05)", padding: "8px 12px", position: "relative" }}>
-      <div style={{ fontSize: 9.5, fontWeight: 700, color: "#64748b", letterSpacing: "0.04em", display: "flex", alignItems: "center", gap: 4, textTransform: "uppercase" }} title={tooltip}>
-        <span style={{ fontSize: 13 }}>{icon}</span> {title}
-        {tooltip && <HelpIcon size={11} style={{ color: "#94a3b8", cursor: "help", marginLeft: "auto" }} />}
+    <div style={{ background: "white", borderRadius: 8, border: "1px solid #e2e8f0", borderLeft: `3px solid ${color}`, boxShadow: "0 1px 2px rgba(0,0,0,0.05)", padding: "6px 8px", position: "relative", minWidth: 0 }}>
+      <div style={{ fontSize: 8.5, fontWeight: 700, color: "#64748b", letterSpacing: "0.04em", display: "flex", alignItems: "center", gap: 3, textTransform: "uppercase", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={tooltip ?? String(title)}>
+        <span style={{ fontSize: 11 }}>{icon}</span>
+        <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>{title}</span>
+        {tooltip && <HelpIcon size={9} style={{ color: "#94a3b8", cursor: "help", marginLeft: "auto", flexShrink: 0 }} />}
       </div>
-      <div style={{ fontSize: 18, fontWeight: 800, color: "#0f172a", marginTop: 4, lineHeight: 1.1, fontFamily: "monospace" }}>{value}</div>
-      {sub && <div style={{ fontSize: 10, color: "#64748b", marginTop: 4, fontWeight: 500 }}>{sub}</div>}
+      <div style={{ fontSize: 13, fontWeight: 800, color: "#0f172a", marginTop: 2, lineHeight: 1.1, fontFamily: "monospace", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{value}</div>
+      {sub && <div style={{ fontSize: 8.5, color: "#94a3b8", marginTop: 2, fontWeight: 500, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{sub}</div>}
     </div>
   );
 }
 
 export default function App() {
-  const { records, adiantamentos, loading } = useData();
+  const { records: rawRecords, adiantamentos, loading } = useData();
+  // Filtra apenas os PIs permitidos
+  const records = useMemo(
+    () => rawRecords.filter((d: any) => PI_ALLOWED.includes((d.plano_interno || "").trim())),
+    [rawRecords]
+  );
 
   // Estados dos filtros
   const [selUnidade, setSelUnidade] = useState<string[]>([]);
@@ -174,19 +195,42 @@ export default function App() {
 
   // Massa de dados única para os filtros (Filtros Cascata / Dependentes)
   const unidades = useMemo(() => {
-    const filteredForUnidades = selPI.length > 0
-      ? records.filter((d: any) => selPI.includes((d.plano_interno || "").trim()))
+    // Expande os nomes selecionados de PI de volta para os códigos para filtrar unidades
+    const codesFromNames = selPI.length > 0
+      ? selPI.flatMap(name => PI_GROUPS[name] ?? [])
+      : [];
+    const filteredForUnidades = codesFromNames.length > 0
+      ? records.filter((d: any) => codesFromNames.includes((d.plano_interno || "").trim()))
       : records;
     const raw = Array.from(new Set(filteredForUnidades.map((d: any) => (d.unidade || "").trim()).filter(Boolean))) as string[];
     return raw.sort((a, b) => getUnitAbbreviation(a).localeCompare(getUnitAbbreviation(b)));
   }, [records, selPI]);
 
   const planosInternos = useMemo(() => {
+    // Retorna apenas os nomes amigáveis únicos presentes nos dados filtrados por unidade
     const filteredForPIs = selUnidade.length > 0
       ? records.filter((d: any) => selUnidade.includes((d.unidade || "").trim()))
       : records;
-    return Array.from(new Set(filteredForPIs.map((d: any) => (d.plano_interno || "").trim()).filter(Boolean))).sort() as string[];
+    const codesPresent = new Set(filteredForPIs.map((d: any) => (d.plano_interno || "").trim()));
+    return PI_GROUP_NAMES.filter(name =>
+      (PI_GROUPS[name] ?? []).some(code => codesPresent.has(code))
+    );
   }, [records, selUnidade]);
+
+  // Limpa seleções inválidas quando as opções do filtro cascata mudam
+  useEffect(() => {
+    if (selUnidade.length > 0) {
+      const valid = selUnidade.filter(u => unidades.includes(u));
+      if (valid.length !== selUnidade.length) setSelUnidade(valid);
+    }
+  }, [unidades, selUnidade]);
+
+  useEffect(() => {
+    if (selPI.length > 0) {
+      const valid = selPI.filter(pi => planosInternos.includes(pi));
+      if (valid.length !== selPI.length) setSelPI(valid);
+    }
+  }, [planosInternos, selPI]);
 
   // Filtros aplicados sobre a tabela principal
   const filteredRecords = useMemo(() => {
@@ -195,7 +239,11 @@ export default function App() {
       const pi = (d.plano_interno || "").trim();
       
       if (selUnidade.length > 0 && !selUnidade.includes(u)) return false;
-      if (selPI.length > 0 && !selPI.includes(pi)) return false;
+      // Filtro de PI: expande nomes selecionados para os códigos correspondentes
+      if (selPI.length > 0) {
+        const codesFromNames = selPI.flatMap(name => PI_GROUPS[name] ?? []);
+        if (!codesFromNames.includes(pi)) return false;
+      }
       
       // Filtro de origem
       if (selOrigem === "matriz" && !d.in_matrix) return false;
@@ -458,92 +506,104 @@ export default function App() {
           {/* Cabeçalho */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12 }}>
             <div>
-              <h1 style={{ fontSize: 26, fontWeight: 800, color: "#0f172a", margin: 0, display: "flex", alignItems: "center", gap: 10 }}>
-                Execução Financeira da Matriz <FonteBadge fonte={selOrigem} size="lg" />
+              <h1 style={{ fontSize: 28, fontWeight: 800, margin: 0, display: "flex", alignItems: "center", gap: 12, lineHeight: 1 }}>
+                <span style={{ display: "inline-flex", alignItems: "center", letterSpacing: "-0.03em", background: "linear-gradient(90deg, #0f172a 0%, #4338ca 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", color: "#0f172a" }}>
+                  Execução Orçamentária
+                </span>
+                <FonteBadge fonte={selOrigem} size="lg" />
               </h1>
-              <p style={{ fontSize: 13, color: "#64748b", marginTop: 6, margin: "6px 0 0" }}>
-                Cruzamento inteligente de controle manual (Planilha Matriz) com lançamentos do Tesouro Gerencial.
-              </p>
             </div>
           </div>
 
           {/* Filtros Globais */}
-          <div style={{ ...s.panel, padding: "10px 14px", display: "flex", flexWrap: "wrap", gap: 10, alignItems: "center" }}>
+          <div style={{ ...s.panel, padding: "6px 10px", display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
             <MultiSel label="Unidade Organizacional" opts={unidades} sel={selUnidade} set={setSelUnidade} formatVal={getUnitAbbreviation} />
             <MultiSel label="PI" opts={planosInternos} sel={selPI} set={setSelPI} />
             <TaxaExecFilter sel={selTaxaExec} set={setSelTaxaExec} />
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 3, alignItems: "center" }}>
-              <span style={{ fontSize: 10, fontWeight: 700, color: "#475569" }}>Origem do Dado</span>
-              <select value={selOrigem} onChange={e => setSelOrigem(e.target.value)}
-                style={{ padding: "5px 10px", border: "1px solid #cbd5e1", borderRadius: 6, fontSize: 11, background: "white", cursor: "pointer", width: 170, textAlign: "center", textAlignLast: "center", boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}>
-                <option value="all">Todos</option>
-                <option value="matriz">Matriz</option>
-                <option value="tg">Tesouro Gerencial</option>
-              </select>
-            </div>
+
+
 
             {hasFilter && (
-              <button onClick={cleanFilters}
-                style={{ display: "flex", alignItems: "center", gap: 4, padding: "5px 10px", border: "1px solid #cbd5e1", borderRadius: 6, background: "white", fontSize: 11, cursor: "pointer", alignSelf: "center", fontWeight: 600, color: "#ef4444" }}>
-                <X size={12} /> Limpar Filtros
-              </button>
+              <div style={{ display: "flex", flexDirection: "column", gap: 2, alignItems: "center" }}>
+                <span style={{ fontSize: 8.5, fontWeight: 700, color: "transparent" }}>·</span>
+                <button onClick={cleanFilters}
+                  style={{ display: "flex", alignItems: "center", gap: 3, padding: "3px 8px", border: "1px solid #fecaca", borderRadius: 5, background: "white", fontSize: 9, cursor: "pointer", fontWeight: 600, color: "#ef4444", boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}>
+                  <X size={10} /> Limpar Filtros
+                </button>
+              </div>
             )}
           </div>
 
 
 
-          {/* Seção 1: Cruzamento Matriz x Tesouro Gerencial */}
-          <div>
-            <div style={{ fontSize: 11, fontWeight: 800, color: "#475569", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 10, display: "flex", alignItems: "center", gap: 6 }}>
-              <Layers size={13} /> 📂 CONTROLE DA MATRIZ DE EXECUÇÃO (PLANILHA)
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 14 }}>
-              <KpiCard title="Valor Aprovado Geral" value={fmt(T.valor_aprovado)} sub="Valor fixado aprovado" color="#3b82f6" icon="💰" tooltip="Valor aprovado fixado no planejamento inicial." />
-              <KpiCard title="Despesas Debitadas" value={fmt(T.despesas_debitadas_matriz)} sub="Cálculo: Aprovado - Disp. - Emp." color="#f59e0b" icon="🧾" tooltip="Calculado por fórmula: VALOR APROVADO - Crédito Disponível - Despesas empenhadas" />
-              <KpiCard title="Total Executado (Matriz)" value={fmt(T.total_executado_matriz)} sub="Soma: Empenhado + Debitado" color="#10b981" icon="⚡" tooltip="Calculado por fórmula: Despesas empenhadas + Despesas debitadas" />
-              <KpiCard title="Percentual Executado" value={T.pct_exec.toFixed(2) + "%"} sub="Em relação ao aprovado" color="#8b5cf6" icon="📈" tooltip="Calculado por fórmula: Total Executado / VALOR APROVADO" />
-            </div>
+          {/* KPIs — linha única */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {(() => {
+              const parts = [];
+              if (selUnidade.length > 0) parts.push(selUnidade.join(", "));
+              if (selPI.length > 0) parts.push(selPI.join(", "));
+              const label = parts.length > 0 ? parts.join(" | ") : "Matriz + Custos Indiretos";
+              return (
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                  <span style={{ fontSize: 10.5, fontWeight: 700, color: "#1e293b", background: "#f1f5f9", padding: "4px 12px", borderRadius: 12, border: "1px solid #cbd5e1", display: "flex", alignItems: "center", gap: 6, boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}>
+                    <Layers size={12} style={{ color: "#64748b" }} />
+                    {label}
+                  </span>
+                </div>
+              );
+            })()}
+            {(() => {
+              const isOnlyCustosIndiretos = selPI.length === 1 && selPI[0] === "Custos Indiretos";
+              
+              if (isOnlyCustosIndiretos) {
+                return (
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16, maxWidth: 450, margin: "0 auto", width: "100%" }}>
+                    <KpiCard title="Disponível"    value={fmt(T.credito_disponivel_tg)}   sub="Crédito disponível (TG)"    color="#6366f1" icon="📥" tooltip="Crédito disponível no Tesouro Gerencial." />
+                    <KpiCard title="Empenhado"     value={fmt(T.despesas_empenhadas_tg)}  sub="Reservado oficialmente"     color="#0ea5e9" icon="📋" tooltip="Despesas empenhadas no Tesouro Gerencial." />
+                  </div>
+                );
+              }
+
+              return (
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 8 }}>
+                  <KpiCard title="Dotação"       value={fmt(T.valor_aprovado)}          sub="Valor fixado aprovado"       color="#3b82f6" icon="💰" tooltip="Valor aprovado fixado no planejamento inicial." />
+                  <KpiCard title="Disponível"    value={fmt(T.credito_disponivel_tg)}   sub="Crédito disponível (TG)"    color="#6366f1" icon="📥" tooltip="Crédito disponível no Tesouro Gerencial." />
+                  <KpiCard title="Empenhado"     value={fmt(T.despesas_empenhadas_tg)}  sub="Reservado oficialmente"     color="#0ea5e9" icon="📋" tooltip="Despesas empenhadas no Tesouro Gerencial." />
+                  <KpiCard title="Debitado"      value={fmt(T.despesas_debitadas_matriz)} sub="Cálculo: Aprov. - Disp. - Emp." color="#f59e0b" icon="🧾" tooltip="Calculado por fórmula: VALOR APROVADO - Crédito Disponível - Despesas empenhadas." />
+                  <KpiCard title="Executado"     value={fmt(T.total_executado_matriz)}  sub="Soma: Empenhado + Debitado" color="#10b981" icon="⚡" tooltip="Calculado por fórmula: Despesas empenhadas + Despesas debitadas." />
+                  <KpiCard title="% Executado"   value={T.pct_exec.toFixed(2) + "%"}    sub="Em relação à dotação"       color="#8b5cf6" icon="📈" tooltip="Calculado por fórmula: Total Executado / VALOR APROVADO." />
+                </div>
+              );
+            })()}
           </div>
 
-          {/* KPIs Row 2 — Tesouro Gerencial (Dados de Sistema) */}
-          <div>
-            <div style={{ fontSize: 11, fontWeight: 800, color: "#475569", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 10, display: "flex", alignItems: "center", gap: 6 }}>
-              <ShieldCheck size={13} /> 🏛️ EXECUÇÃO NO TESOURO GERENCIAL (SISTEMA)
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 14 }}>
-              <KpiCard title="Crédito Disponível (TG)" value={fmt(T.credito_disponivel_tg)} sub="Disponível no sistema" color="#6366f1" icon="📥" />
-              <KpiCard title="Despesas Empenhadas (TG)" value={fmt(T.despesas_empenhadas_tg)} sub="Reservado oficialmente" color="#0ea5e9" icon="📋" />
-              <KpiCard title="Despesas Liquidadas (TG)" value={fmt(T.despesas_liquidadas_tg)} sub="Serviços atestados" color="#14b8a6" icon="💳" />
-              <KpiCard title="Total Geral do Tesouro" value={fmt(T.total_tg)} sub="Movimentação total no TG" color="#64748b" icon="🏛️" />
-            </div>
-          </div>
 
           {/* Tabela Principal (Cruzamento) */}
           <div style={s.panel}>
-            <div style={{ ...s.sectionTitle, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
-              <span style={{ display: "flex", alignItems: "center", gap: 6 }}>Tabela de Cruzamento Matriz x Tesouro Gerencial</span>
-              <span style={{ fontSize: 12, color: "#64748b", fontWeight: 500 }}>
-                Exibindo <strong>{filteredRecords.length}</strong> de <strong>{records.length}</strong> chaves <code>(UGR, PI)</code>
+            <div style={{ padding: "14px 18px", borderBottom: "1px solid #e2e8f0", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
+              <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 800, color: "#334155", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                <FileText size={15} style={{ color: "#6366f1" }} /> Detalhamento de Execução Orçamentária
+              </span>
+              <span style={{ fontSize: 11, color: "#64748b", fontWeight: 500 }}>
+                Exibindo <strong style={{ color: "#0f172a" }}>{filteredRecords.length}</strong> de <strong style={{ color: "#0f172a" }}>{records.length}</strong> chaves <code>(UGR, PI)</code>
               </span>
             </div>
-            <div style={{ overflowX: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 10, tableLayout: "fixed" }}>
+            <div style={{ width: "100%" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 10, tableLayout: "fixed", wordBreak: "break-word" }}>
                 <thead>
                   <tr style={{ background: "#f8fafc" }}>
                     {[
-                      { name: "UGR", width: "45px" },
-                      { name: "Unidade", width: "110px" },
-                      { name: "Descrição", width: "150px" },
-                      { name: "Processo SEI", width: "95px" },
-                      { name: "Aprovado (M)", width: "72px" },
-                      { name: "Debitado (M)", width: "72px" },
-                      { name: "Executado (M)", width: "85px" },
-                      { name: "Empenhado (TG)", width: "80px" },
-                      { name: "Disponível (TG)", width: "80px" },
-                      { name: "Ações", width: "60px" }
+                      { name: "UGR", width: "6%" },
+                      { name: "UNIDADE", width: "16%" },
+                      { name: "DESCRIÇÃO", width: "24%" },
+                      { name: "DOTAÇÃO", width: "11%" },
+                      { name: "DISPONÍVEL", width: "11%" },
+                      { name: "DEBITADO", width: "11%" },
+                      { name: "EXECUTADO", width: "12%" },
+                      { name: "AÇÕES", width: "9%" }
                     ].map(h => (
-                      <th key={h.name} style={{ ...s.th, padding: "6px 2px", fontSize: "9px", width: h.width, minWidth: h.width }}>{h.name}</th>
+                      <th key={h.name} style={{ ...s.th, padding: "6px 2px", fontSize: "9px", width: h.width }}>{h.name}</th>
                     ))}
                   </tr>
                 </thead>
@@ -553,22 +613,21 @@ export default function App() {
                     
                     return (
                       <tr key={i} style={{ background: i % 2 === 0 ? "white" : "#fafbfc" }}>
-                        <td style={{ ...s.td, padding: "6px 2px", fontSize: "9.5px", width: "45px", minWidth: "45px", fontWeight: 700 }}>{d.ugr}</td>
-                        <td style={{ ...s.td, padding: "6px 2px", fontSize: "9.5px", width: "110px", minWidth: "110px", maxWidth: "110px", whiteSpace: "normal", wordBreak: "break-word", lineHeight: 1.2 }} title={d.unidade}>
+                        <td style={{ ...s.td, padding: "6px 2px", fontSize: "9.5px", fontWeight: 700 }}>{d.ugr}</td>
+                        <td style={{ ...s.td, padding: "6px 2px", fontSize: "9.5px", whiteSpace: "normal", wordBreak: "break-word", lineHeight: 1.2 }} title={d.unidade}>
                           <span style={{ fontWeight: 600, color: "#0f172a" }}>{d.unidade || "—"}</span>
                         </td>
-                          <td style={{ ...s.td, padding: "6px 2px", fontSize: "9.5px", width: "150px", minWidth: "150px", maxWidth: "150px", whiteSpace: "normal", wordBreak: "break-word", lineHeight: 1.2, textAlign: "center" }} title={`${d.plano_interno} - ${d.plano_interno_nome || ""}`}>
-                          <span style={{ fontWeight: 600, color: "#4f46e5" }}>{d.plano_interno_nome || "—"}</span>
+                        <td style={{ ...s.td, padding: "6px 2px", fontSize: "9.5px", whiteSpace: "normal", wordBreak: "break-word", lineHeight: 1.2, textAlign: "center" }} title={`${d.plano_interno} - ${piLabel(d.plano_interno)}`}>
+                          <span style={{ fontWeight: 600, color: "#4f46e5" }}>{piLabel(d.plano_interno)}</span>
                           <div style={{ fontSize: "8px", color: "#64748b", marginTop: "2px", fontFamily: "monospace" }}>{d.plano_interno}</div>
                         </td>
-                        <td style={{ ...s.td, padding: "6px 2px", fontSize: "9px", width: "95px", minWidth: "95px", maxWidth: "95px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={d.sei}>
-                          <span style={{ color: "#374151" }}>{d.sei || "—"}</span>
-                        </td>
-                        <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", width: "72px", minWidth: "72px", fontWeight: 600, color: "#0f172a" }}>{d.in_matrix ? fmt(d.valor_aprovado) : "—"}</td>
-                        <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", width: "72px", minWidth: "72px", color: "#0f172a", fontWeight: 700 }}>
+
+                        <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", fontWeight: 600, color: "#0f172a" }}>{d.in_matrix ? fmt(d.valor_aprovado) : "—"}</td>
+                        <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", fontWeight: 700 }}>{d.in_tg ? fmt(d.credito_disponivel_tg) : "—"}</td>
+                        <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", color: "#0f172a", fontWeight: 700 }}>
                           {d.in_matrix ? fmt(d.despesas_debitadas_matriz) : "—"}
                         </td>
-                        <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", width: "85px", minWidth: "85px", fontWeight: 700, position: "relative" }}>
+                        <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", fontWeight: 700, position: "relative" }}>
                           {d.in_matrix ? (() => {
                             const aprovado = Number(d.valor_aprovado) || 0;
                             const executado = Number(d.total_executado_matriz) || 0;
@@ -601,19 +660,15 @@ export default function App() {
                             );
                           })() : "—"}
                         </td>
-                        <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", width: "80px", minWidth: "80px", color: diff > 10 ? "#b45309" : "#0f172a", fontWeight: 700, whiteSpace: "nowrap" }}>
-                          {d.in_tg ? fmt(d.despesas_empenhadas_tg) : "—"}
-                        </td>
-                        <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", width: "80px", minWidth: "80px", fontWeight: 700, whiteSpace: "nowrap" }}>{d.in_tg ? fmt(d.credito_disponivel_tg) : "—"}</td>
-                        <td style={{ ...s.td, padding: "6px 2px", fontSize: "9px", width: "60px", minWidth: "60px" }}>
+                        <td style={{ ...s.td, padding: "6px 2px", fontSize: "9px" }}>
                           {d.in_tg ? (
                             <button
                               onClick={() => setSelectedRecord(d)}
-                              style={{ background: "#4f46e5", color: "white", border: "none", borderRadius: 4, padding: "3px 6px", fontSize: "9px", fontWeight: 700, cursor: "pointer", transition: "background 0.2s" }}
+                              style={{ background: "#4f46e5", color: "white", border: "none", borderRadius: 4, padding: "3px 5px", fontSize: "8.5px", fontWeight: 700, cursor: "pointer", transition: "background 0.2s", whiteSpace: "nowrap" }}
                               onMouseEnter={(e) => e.currentTarget.style.background = "#4338ca"}
                               onMouseLeave={(e) => e.currentTarget.style.background = "#4f46e5"}
                             >
-                              Ver ND
+                              Nat. Desp.
                             </button>
                           ) : (
                             <span style={{ color: "#94a3b8", fontSize: "9px" }}>—</span>
@@ -627,61 +682,8 @@ export default function App() {
             </div>
           </div>
 
-          {/* Diagnóstico Situacional e Eficiência da Unidade */}
-          {unitMatrixDiagnostic && (
-            <div style={{ ...s.panel, padding: "20px 24px", borderLeft: `6px solid ${unitMatrixDiagnostic.statusColor}`, display: "flex", flexDirection: "column", gap: 20 }}>
-              
-              {/* Cabeçalho do Diagnóstico */}
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #f1f5f9", paddingBottom: 12, flexWrap: "wrap", gap: 10 }}>
-                <div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <TrendingUp size={18} style={{ color: unitMatrixDiagnostic.statusColor }} />
-                    <h3 style={{ fontSize: 16, fontWeight: 800, color: "#0f172a", margin: 0 }}>
-                      Análise de Desempenho e Eficiência da Matriz: {unitMatrixDiagnostic.unitsText}
-                    </h3>
-                  </div>
-                  <p style={{ fontSize: 11.5, color: "#64748b", margin: "4px 0 0" }}>
-                    Análise exclusiva baseada nos limites e execuções cadastrados na planilha física da Matriz.
-                  </p>
-                </div>
-                <span style={{ fontSize: 11, fontWeight: 700, padding: "4px 10px", borderRadius: 12, background: unitMatrixDiagnostic.statusBg, color: unitMatrixDiagnostic.statusColor, border: `1px solid ${unitMatrixDiagnostic.statusColor}20` }}>
-                  {unitMatrixDiagnostic.statusLabel}
-                </span>
-              </div>
-
-              {/* Grid 1: Indicadores e Métricas Centrais */}
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14 }}>
-                <div style={{ background: "#f8fafc", borderRadius: 8, padding: "12px 14px", border: "1px solid #e2e8f0" }}>
-                  <span style={{ fontSize: 10, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase" }}>Orçamento Aprovado</span>
-                  <div style={{ fontSize: 18, fontWeight: 800, color: "#1e293b", marginTop: 4, fontFamily: "monospace" }}>{unitMatrixDiagnostic.approvedText}</div>
-                  <span style={{ fontSize: 10, color: "#64748b", marginTop: 2, display: "block" }}>Representa {unitMatrixDiagnostic.shareApprovedText} do total geral</span>
-                </div>
-                <div style={{ background: "#f8fafc", borderRadius: 8, padding: "12px 14px", border: "1px solid #e2e8f0" }}>
-                  <span style={{ fontSize: 10, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase" }}>Executado (Matriz)</span>
-                  <div style={{ fontSize: 18, fontWeight: 800, color: "#10b981", marginTop: 4, fontFamily: "monospace" }}>{unitMatrixDiagnostic.executedText}</div>
-                  <span style={{ fontSize: 10, color: "#64748b", marginTop: 2, display: "block" }}>Representa {unitMatrixDiagnostic.shareExecutedText} do executado total</span>
-                </div>
-                <div style={{ background: "#f8fafc", borderRadius: 8, padding: "12px 14px", border: "1px solid #e2e8f0" }}>
-                  <span style={{ fontSize: 10, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase" }}>Taxa de Execução Real</span>
-                  <div style={{ fontSize: 18, fontWeight: 800, color: unitMatrixDiagnostic.statusColor, marginTop: 4, fontFamily: "monospace" }}>{unitMatrixDiagnostic.executionRateText}</div>
-                  <span style={{ fontSize: 10, color: "#64748b", marginTop: 2, display: "block" }}>Média da Matriz: {unitMatrixDiagnostic.globalRateText}</span>
-                </div>
-                <div style={{ background: "#f8fafc", borderRadius: 8, padding: "12px 14px", border: "1px solid #e2e8f0" }}>
-                  <span style={{ fontSize: 10, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase" }}>Saldo Livre Disponível</span>
-                  <div style={{ fontSize: 18, fontWeight: 800, color: "#ef4444", marginTop: 4, fontFamily: "monospace" }}>{unitMatrixDiagnostic.availableText}</div>
-                  <span style={{ fontSize: 10, color: "#64748b", marginTop: 2, display: "block" }}>Recursos não comprometidos</span>
-                </div>
-              </div>
-
-              {/* Comparação Texto */}
-              <div style={{ fontSize: 12.5, color: "#334155", lineHeight: 1.5, background: `${unitMatrixDiagnostic.statusColor}08`, padding: "12px 16px", borderRadius: 8, borderLeft: `4px solid ${unitMatrixDiagnostic.statusColor}` }}>
-                📢 <strong>Diagnóstico de Escala:</strong> A UGR selecionada ({unitMatrixDiagnostic.unitsText}) responde por <strong>{unitMatrixDiagnostic.shareApprovedText}</strong> de todo o orçamento da Matriz, mas atinge <strong>{unitMatrixDiagnostic.shareExecutedText}</strong> de participação da execução global. Seu índice interno de utilização <strong>{unitMatrixDiagnostic.comparisonText}</strong>.
-              </div>
 
 
-
-            </div>
-          )}
 
           {/* Modal Overlay para Naturezas de Despesa */}
           {selectedRecord && (

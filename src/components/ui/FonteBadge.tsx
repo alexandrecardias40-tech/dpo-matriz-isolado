@@ -17,7 +17,6 @@ export function FonteBadge({ fonte, size = "md" }: FonteBadgeProps) {
     fontSize: fs,
     fontWeight: 800,
     letterSpacing: "0.05em",
-    verticalAlign: "middle",
     marginLeft: ml,
     display: "inline-flex",
     alignItems: "center",
@@ -51,7 +50,7 @@ export function FonteBadge({ fonte, size = "md" }: FonteBadgeProps) {
   // Default/all
   return (
     <span style={{ ...baseStyle, background: "#f8fafc", color: "#475569", border: "1px solid #e2e8f0" }}>
-      MATRIZ <span style={{ color: "#6366f1", margin: "0 4px", fontSize: "1.1em" }}>+</span> TESOURO
+      Matriz <span style={{ color: "#6366f1", margin: "0 4px", fontSize: "1.1em" }}>+</span> Custos Indiretos
     </span>
   );
 }

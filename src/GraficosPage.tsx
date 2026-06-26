@@ -3,6 +3,9 @@ import { useData } from "./DataProvider";
 import DashboardLayout from "./components/DashboardLayout";
 import CINetworkChart from "./components/CINetworkChart";
 import { ArrowLeft, TrendingUp, AlertTriangle } from "lucide-react";
+import { PI_NAMES } from "./App";
+
+const piLabel = (code: string) => PI_NAMES[code?.trim()] ?? code;
 
 const fmt  = (v: number) => isNaN(v)||!v ? "R$ 0,00" : new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL",minimumFractionDigits:2,maximumFractionDigits:2}).format(v);
 const fmtK = (v: number) => {
@@ -195,47 +198,47 @@ function DetailPanel({ cc, onBack, records }: { cc: any; onBack: ()=>void; recor
     <div style={{ display:"flex", flexDirection:"column", gap:18, padding:"0 2px" }}>
       
       {/* Cabeçalho */}
-      <div style={{ display:"flex", alignItems:"center", gap:14, flexWrap: "wrap", justifyContent: "space-between" }}>
-        <div style={{ display:"flex", alignItems:"center", gap:14 }}>
+      <div style={{ display:"flex", alignItems:"center", gap:10, flexWrap: "wrap", justifyContent: "space-between" }}>
+        <div style={{ display:"flex", alignItems:"center", gap:10 }}>
           <button onClick={onBack}
-            style={{ display:"flex", alignItems:"center", gap:6, padding:"6px 12px", border:"1px solid #e2e8f0", borderRadius:8, background:"white", fontSize:12, cursor:"pointer", fontWeight:600, color:"#374151", boxShadow:"0 1px 3px rgba(0,0,0,0.06)" }}>
-            <ArrowLeft size={14}/> Voltar ao Grafo
+            style={{ display:"flex", alignItems:"center", gap:4, padding:"4px 8px", border:"1px solid #e2e8f0", borderRadius:6, background:"white", fontSize:11, cursor:"pointer", fontWeight:600, color:"#374151", boxShadow:"0 1px 2px rgba(0,0,0,0.05)" }}>
+            <ArrowLeft size={13}/> Voltar ao Grafo
           </button>
           <div>
-            <h2 style={{ fontSize:22, fontWeight:800, color:"#0f172a", margin:0 }}>{cc.centro_custo}</h2>
-            <p style={{ fontSize:12, color:"#64748b", margin:"2px 0 0" }}>{stats.total} registros · Detalhamento por Unidade</p>
+            <h2 style={{ fontSize:16, fontWeight:800, color:"#0f172a", margin:0 }}>{cc.centro_custo}</h2>
+            <p style={{ fontSize:11, color:"#64748b", margin:"2px 0 0" }}>{stats.total} registros · Detalhamento por Unidade</p>
           </div>
         </div>
       </div>
 
       {/* KPIs Principais da Unidade na mesma sequência do gráfico */}
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))", gap:12 }}>
-        <div style={{ ...s.card, borderLeft:"4px solid #3b82f6", padding:"12px" }}>
-          <div style={{ fontSize:9, fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.04em" }}>💰 Orçamento Aprovado</div>
-          <div style={{ fontSize:18, fontWeight:800, color:"#0f172a", marginTop:4, fontFamily:"monospace" }}>{fmt(stats.valor_aprovado)}</div>
-          <div style={{ fontSize:10, color:"#94a3b8", marginTop:3 }}>Planejado na Matriz</div>
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(5,1fr)", gap:8 }}>
+        <div style={{ ...s.card, borderLeft:"3px solid #3b82f6", padding:"8px 10px" }}>
+          <div style={{ fontSize:8.5, fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.04em", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>💰 Dotação</div>
+          <div style={{ fontSize:13.5, fontWeight:800, color:"#0f172a", marginTop:4, fontFamily:"monospace", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{fmt(stats.valor_aprovado)}</div>
+          <div style={{ fontSize:8.5, color:"#94a3b8", marginTop:3, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>Planejado na Matriz</div>
         </div>
-        <div style={{ ...s.card, borderLeft:"4px solid #f59e0b", padding:"12px" }}>
-          <div style={{ fontSize:9, fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.04em" }}>📈 Empenhado (Matriz)</div>
-          <div style={{ fontSize:18, fontWeight:800, color:"#0f172a", marginTop:4, fontFamily:"monospace" }}>{fmt(stats.despesas_empenhadas_matriz)}</div>
-          <div style={{ fontSize:10, color:"#94a3b8", marginTop:3 }}>Lançamentos empenhados</div>
+        <div style={{ ...s.card, borderLeft:"3px solid #f59e0b", padding:"8px 10px" }}>
+          <div style={{ fontSize:8.5, fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.04em", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>📈 Empenhado</div>
+          <div style={{ fontSize:13.5, fontWeight:800, color:"#0f172a", marginTop:4, fontFamily:"monospace", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{fmt(stats.despesas_empenhadas_matriz)}</div>
+          <div style={{ fontSize:8.5, color:"#94a3b8", marginTop:3, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>Lançamentos empenhados</div>
         </div>
-        <div style={{ ...s.card, borderLeft:"4px solid #14b8a6", padding:"12px" }}>
-          <div style={{ fontSize:9, fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.04em" }}>🎯 Debitado (Matriz)</div>
-          <div style={{ fontSize:18, fontWeight:800, color:"#0f172a", marginTop:4, fontFamily:"monospace" }}>{fmt(stats.despesas_debitadas_matriz)}</div>
-          <div style={{ fontSize:10, color:"#94a3b8", marginTop:3 }}>Provisionado na planilha</div>
+        <div style={{ ...s.card, borderLeft:"3px solid #14b8a6", padding:"8px 10px" }}>
+          <div style={{ fontSize:8.5, fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.04em", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>🎯 Debitado</div>
+          <div style={{ fontSize:13.5, fontWeight:800, color:"#0f172a", marginTop:4, fontFamily:"monospace", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{fmt(stats.despesas_debitadas_matriz)}</div>
+          <div style={{ fontSize:8.5, color:"#94a3b8", marginTop:3, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>Provisionado na planilha</div>
         </div>
-        <div style={{ ...s.card, borderLeft:"4px solid #64748b", padding:"12px" }}>
-          <div style={{ fontSize:9, fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.04em" }}>💵 Disponível (Matriz)</div>
-          <div style={{ fontSize:18, fontWeight:800, color:"#0f172a", marginTop:4, fontFamily:"monospace" }}>{fmt(stats.credito_disponivel_matriz)}</div>
-          <div style={{ fontSize:10, color:"#94a3b8", marginTop:3 }}>Saldo livre restante</div>
+        <div style={{ ...s.card, borderLeft:"3px solid #64748b", padding:"8px 10px" }}>
+          <div style={{ fontSize:8.5, fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.04em", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>💵 Disponível</div>
+          <div style={{ fontSize:13.5, fontWeight:800, color:"#0f172a", marginTop:4, fontFamily:"monospace", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{fmt(stats.credito_disponivel_matriz)}</div>
+          <div style={{ fontSize:8.5, color:"#94a3b8", marginTop:3, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>Saldo livre restante</div>
         </div>
-        <div style={{ ...s.card, borderLeft: "4px solid #8b5cf6", padding:"12px" }}>
-          <div style={{ fontSize:9, fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.04em" }}>⚡ Taxa de Execução</div>
-          <div style={{ fontSize:18, fontWeight:800, color: "#8b5cf6", marginTop:4, fontFamily:"monospace" }}>
+        <div style={{ ...s.card, borderLeft: "3px solid #8b5cf6", padding:"8px 10px" }}>
+          <div style={{ fontSize:8.5, fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.04em", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>⚡ Execução</div>
+          <div style={{ fontSize:13.5, fontWeight:800, color: "#8b5cf6", marginTop:4, fontFamily:"monospace", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
             {pct(stats.total_executado_matriz, stats.valor_aprovado)}
           </div>
-          <div style={{ fontSize:10, color:"#94a3b8", marginTop:3 }}>Percentual de utilização</div>
+          <div style={{ fontSize:8.5, color:"#94a3b8", marginTop:3, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>Percentual de utilização</div>
         </div>
       </div>
 
@@ -278,16 +281,6 @@ function DetailPanel({ cc, onBack, records }: { cc: any; onBack: ()=>void; recor
             <span style={{ fontSize:11, color:"#94a3b8", fontWeight:400 }}>{stats.total} planos internos</span>
           </div>
 
-          <div style={{ display:"flex", alignItems:"center", gap:14, flexWrap:"wrap" }}>
-            <div style={{ display:"flex", flexDirection:"column", gap:3, alignItems:"flex-start" }}>
-              <span style={{ fontSize:10, fontWeight:700, color: "#475569" }}>Plano Interno</span>
-              <select value={selPI} onChange={e=>setSelPI(e.target.value)}
-                style={{ padding:"4px 8px", border:"1px solid #d1d5db", borderRadius:6, fontSize:11, background:"white", cursor:"pointer", minWidth:120 }}>
-                <option value="all">Todos</option>
-                {planosInternos.map(a=><option key={a} value={a}>{a}</option>)}
-              </select>
-            </div>
-          </div>
         </div>
         <div style={{ overflowX:"auto", maxHeight:320, overflowY:"auto" }}>
           <table style={{ width:"100%", borderCollapse:"collapse", fontSize:11, tableLayout:"fixed" }}>
@@ -296,7 +289,7 @@ function DetailPanel({ cc, onBack, records }: { cc: any; onBack: ()=>void; recor
                 {[
                   { name: "Descrição", width: "160px" },
                   { name: "Processo SEI", width: "120px" },
-                  { name: "Aprovado (Matriz)", width: "85px" },
+                  { name: "Dotação (Matriz)", width: "85px" },
                   { name: "Empenhado (Matriz)", width: "85px" },
                   { name: "Debitado (Matriz)", width: "85px" },
                   { name: "Disponível (Matriz)", width: "85px" },
@@ -310,8 +303,8 @@ function DetailPanel({ cc, onBack, records }: { cc: any; onBack: ()=>void; recor
               {filteredRegistros.map((d:any, i:number) => {
                 return (
                   <tr key={i} style={{ background:i%2===0?"white":"#fafbfc" }}>
-                    <td style={{ ...s.td, textAlign: "center", fontWeight: 700, color: "#4f46e5", width: "160px", minWidth: "160px", maxWidth: "160px", whiteSpace: "normal", wordBreak: "break-word" }} title={`${d.plano_interno} - ${d.plano_interno_nome || ""}`}>
-                      <span>{d.plano_interno_nome || "—"}</span>
+                    <td style={{ ...s.td, textAlign: "center", fontWeight: 700, color: "#4f46e5", width: "160px", minWidth: "160px", maxWidth: "160px", whiteSpace: "normal", wordBreak: "break-word" }} title={`${d.plano_interno} - ${piLabel(d.plano_interno)}`}>
+                      <span>{piLabel(d.plano_interno)}</span>
                       <div style={{ fontSize: 8.5, color: "#64748b", fontWeight: 400, marginTop: 2, fontFamily: "monospace" }}>{d.plano_interno}</div>
                     </td>
                     <td style={{ ...s.td, fontSize: "9px", whiteSpace: "nowrap", width: "120px", minWidth: "120px" }}><span style={{ color:"#374151" }}>{d.sei||"—"}</span></td>
