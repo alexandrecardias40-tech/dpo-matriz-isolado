@@ -140,17 +140,26 @@ const ScatterTooltip = ({ active, payload }: any) => {
 
 /* ── aggregation ── */
 function buildData(records: any[], labelMatriz: string = "Matriz Total") {
+  // Códigos de Custos Indiretos — excluídos do Debitado e Executado
+  const CI_CODES = new Set(PI_GROUPS["Custos Indiretos"] || []);
+
   const byCC: Record<string,any> = {};
   records.forEach(d => {
     const cc = (d.unidade||"Outras Unidades").trim();
     if (!byCC[cc]) byCC[cc] = { cc, valor_aprovado:0, emp_tg:0, disp_tg:0, n:0 };
+
+    const pi = (d.plano_interno || "").trim();
     byCC[cc].valor_aprovado += Number(d.valor_aprovado)||0;
-    byCC[cc].emp_tg         += Number(d.despesas_empenhadas_tg)||0;
-    byCC[cc].disp_tg        += Number(d.credito_disponivel_tg)||0;
     byCC[cc].n++;
+
+    // Emp e Disp TG apenas para Matriz (exclui CI)
+    if (!CI_CODES.has(pi)) {
+      byCC[cc].emp_tg  += Number(d.despesas_empenhadas_tg)||0;
+      byCC[cc].disp_tg += Number(d.credito_disponivel_tg)||0;
+    }
   });
 
-  // Derive deb and exec from TG formula
+  // Derive deb and exec from TG formula (CI já excluído)
   Object.values(byCC).forEach((r: any) => {
     r.deb_tg  = r.valor_aprovado - r.disp_tg - r.emp_tg;
     r.exec_tg = r.valor_aprovado - r.disp_tg;
@@ -208,6 +217,7 @@ function buildData(records: any[], labelMatriz: string = "Matriz Total") {
     nCC: ccArr.length
   };
 }
+
 
 
 export default function ComparativosPage() {

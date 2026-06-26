@@ -372,6 +372,12 @@ export default function App() {
     let despesas_liquidadas_tg = 0;
     let total_tg = 0;
 
+    // Somas apenas para Matriz (exclui Custos Indiretos) — usadas em Debitado e Executado
+    const CI_CODES = new Set(PI_GROUPS["Custos Indiretos"] || []);
+    let mtz_aprovado = 0;
+    let mtz_disp_tg  = 0;
+    let mtz_emp_tg   = 0;
+
     let count_ambos = 0;
     let count_matriz = 0;
     let count_tg = 0;
@@ -389,21 +395,32 @@ export default function App() {
       despesas_liquidadas_tg += Number(d.despesas_liquidadas_tg) || 0;
       total_tg += Number(d.total_tg) || 0;
 
+      // Acumula apenas registros que NÃO são Custos Indiretos
+      const pi = (d.plano_interno || "").trim();
+      if (!CI_CODES.has(pi)) {
+        mtz_aprovado += Number(d.valor_aprovado) || 0;
+        mtz_disp_tg  += Number(d.credito_disponivel_tg) || 0;
+        mtz_emp_tg   += Number(d.despesas_empenhadas_tg) || 0;
+      }
+
       if (d.in_matrix && d.in_tg) count_ambos++;
       else if (d.in_matrix) count_matriz++;
       else if (d.in_tg) count_tg++;
     });
 
-    const executado_tg = valor_aprovado - credito_disponivel_tg;
-    const pct_exec = valor_aprovado > 0 ? (executado_tg / valor_aprovado) * 100 : 0;
+    // Debitado e Executado excluem CI (somente Matriz Acadêmica + Administrativa)
+    const debitado_tg  = mtz_aprovado - mtz_disp_tg - mtz_emp_tg;
+    const executado_tg = mtz_aprovado - mtz_disp_tg;
+    const pct_exec = mtz_aprovado > 0 ? (executado_tg / mtz_aprovado) * 100 : 0;
 
     return {
       valor_aprovado, despesas_empenhadas_matriz, credito_disponivel_matriz, despesas_debitadas_matriz, total_executado_matriz, pct_exec,
       credito_disponivel_tg, despesas_empenhadas_tg, despesas_empenhadas_a_liquidar_tg, despesas_liquidadas_tg, total_tg,
-      executado_tg,
+      debitado_tg, executado_tg,
       count_ambos, count_matriz, count_tg, total_count: filteredRecords.length
     };
   }, [filteredRecords]);
+
 
   // Totais de Adiantamentos
   const TAdiantamentos = useMemo(() => {
@@ -647,7 +664,7 @@ export default function App() {
                   <KpiCard title="Dotação"       value={fmt(T.valor_aprovado)}          sub="Valor fixado aprovado"       color="#3b82f6" icon="💰" tooltip="Valor aprovado fixado no planejamento inicial." />
                   <KpiCard title="Disponível"    value={fmt(T.credito_disponivel_tg)}   sub="Crédito disponível (TG)"    color="#6366f1" icon="📥" tooltip="Crédito disponível no Tesouro Gerencial." />
                   <KpiCard title="Empenhado"     value={fmt(T.despesas_empenhadas_tg)}  sub="Reservado oficialmente"     color="#0ea5e9" icon="📋" tooltip="Despesas empenhadas no Tesouro Gerencial." />
-                  <KpiCard title="Debitado"      value={fmt(T.valor_aprovado - T.credito_disponivel_tg - T.despesas_empenhadas_tg)} sub="Dotação - Disp. TG - Emp. TG" color="#f59e0b" icon="🧾" tooltip="Calculado por fórmula: Dotação (Valor Aprovado) − Crédito Disponível TG − Empenhado TG." />
+                  <KpiCard title="Debitado"      value={fmt(T.debitado_tg)} sub="Dotação - Disp. TG - Emp. TG (Matriz)" color="#f59e0b" icon="🧾" tooltip="Calculado por fórmula: Dotação − Crédito Disponível TG − Empenhado TG. Exclui Custos Indiretos." />
                   <KpiCard title="Executado"     value={fmt(T.executado_tg)}            sub="Dotação − Disponível TG"    color="#10b981" icon="⚡" tooltip="Calculado por fórmula: Valor Aprovado − Crédito Disponível TG." />
                   <KpiCard title="% Executado"   value={T.pct_exec.toFixed(2) + "%"}    sub="Em relação à dotação"       color="#8b5cf6" icon="📈" tooltip="Calculado por fórmula: Executado TG / Valor Aprovado." />
                 </div>
