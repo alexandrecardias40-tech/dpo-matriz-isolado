@@ -332,7 +332,7 @@ function DetailPanel({ cc, onBack, records }: { cc: any; onBack: ()=>void; recor
 export default function GraficosPage() {
   const { records, loading } = useData();
   const [selected, setSelected] = useState<any>(null);
-  const [activeMatrix, setActiveMatrix] = useState<"Matriz Acadêmica" | "Matriz Administrativa" | "Custos Indiretos">("Matriz Acadêmica");
+  const [activeMatrix, setActiveMatrix] = useState<"Matriz Acadêmica" | "Matriz Administrativa">("Matriz Acadêmica");
 
   const byCC = useMemo(() => {
     const codes = PI_GROUPS[activeMatrix] || [];
@@ -349,7 +349,6 @@ export default function GraficosPage() {
   const handleHubClick = () => {
     setActiveMatrix(prev => {
       if (prev === "Matriz Acadêmica") return "Matriz Administrativa";
-      if (prev === "Matriz Administrativa") return "Custos Indiretos";
       return "Matriz Acadêmica";
     });
   };

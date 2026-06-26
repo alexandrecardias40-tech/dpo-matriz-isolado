@@ -344,10 +344,26 @@ export default function CINetworkChart({
               {/* Specular highlight */}
               <circle cx={pos.x - n.size * 0.22} cy={pos.y - n.size * 0.24} r={n.size * 0.15} fill="white" opacity={0.32} style={{ pointerEvents: 'none' }} />
               {/* Label */}
-              <text x={pos.x} y={pos.y + labelSize * 0.32} textAnchor="middle" fontSize={labelSize} fontWeight={700} fill="#f8fafc"
-                style={{ letterSpacing: '0.2px', textShadow: '0 1px 4px rgba(0,0,0,0.7)', pointerEvents: 'none' }}>
-                {n.isHub ? n.label : getUnitAbbreviation(n.label)}
-              </text>
+              {n.isHub ? (
+                (() => {
+                  const words = n.label.split(" ");
+                  return (
+                    <text x={pos.x} y={pos.y} textAnchor="middle" fontSize={11} fontWeight={700} fill="#f8fafc"
+                      style={{ letterSpacing: '0.1px', textShadow: '0 1px 4px rgba(0,0,0,0.7)', pointerEvents: 'none' }}>
+                      {words.map((w, idx) => (
+                        <tspan key={idx} x={pos.x} dy={idx === 0 ? "-0.2em" : "1.1em"}>
+                          {w}
+                        </tspan>
+                      ))}
+                    </text>
+                  );
+                })()
+              ) : (
+                <text x={pos.x} y={pos.y + labelSize * 0.32} textAnchor="middle" fontSize={labelSize} fontWeight={700} fill="#f8fafc"
+                  style={{ letterSpacing: '0.2px', textShadow: '0 1px 4px rgba(0,0,0,0.7)', pointerEvents: 'none' }}>
+                  {getUnitAbbreviation(n.label)}
+                </text>
+              )}
               {/* Click hint on hover */}
               {isHov && !n.isHub && (
                 <text x={pos.x} y={pos.y + n.size + 18} textAnchor="middle" fontSize={9} fill="rgba(255,255,255,0.7)" style={{ pointerEvents: 'none' }}>
