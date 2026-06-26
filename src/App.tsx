@@ -114,12 +114,13 @@ function MultiSel({ label, opts, sel, set, formatVal }: { label: string; opts: s
   );
 }
 
-function TaxaExecFilter({ sel, set }: { sel: string[]; set: (v: string[]) => void }) {
+function TaxaExecFilter({ sel, set, disponiveis }: { sel: string[]; set: (v: string[]) => void; disponiveis: string[] }) {
   const options = [
     { value: "baixo", label: "Baixo", color: "#ef4444" },
     { value: "medio", label: "Média", color: "#eab308" },
     { value: "alto",  label: "Alta",  color: "#22c55e" }
   ];
+  const activeOptions = options.filter(o => disponiveis.includes(o.value));
   const renderLabel = (val: string) => options.find(o => o.value === val)?.label ?? val;
 
   return (
@@ -138,7 +139,7 @@ function TaxaExecFilter({ sel, set }: { sel: string[]; set: (v: string[]) => voi
           <Command>
             <CommandList>
               <CommandGroup>
-                {options.map(o => (
+                {activeOptions.map(o => (
                   <CommandItem
                     key={o.value}
                     value={o.value}
@@ -195,27 +196,94 @@ export default function App() {
 
   // Massa de dados única para os filtros (Filtros Cascata / Dependentes)
   const unidades = useMemo(() => {
-    // Expande os nomes selecionados de PI de volta para os códigos para filtrar unidades
-    const codesFromNames = selPI.length > 0
-      ? selPI.flatMap(name => PI_GROUPS[name] ?? [])
-      : [];
-    const filteredForUnidades = codesFromNames.length > 0
-      ? records.filter((d: any) => codesFromNames.includes((d.plano_interno || "").trim()))
-      : records;
-    const raw = Array.from(new Set(filteredForUnidades.map((d: any) => (d.unidade || "").trim()).filter(Boolean))) as string[];
+    let filtered = records;
+    
+    // Apply PI filter
+    if (selPI.length > 0) {
+      const codesFromNames = selPI.flatMap(name => PI_GROUPS[name] ?? []);
+      filtered = filtered.filter((d: any) => codesFromNames.includes((d.plano_interno || "").trim()));
+    }
+    
+    // Apply Taxa de Execução filter
+    if (selTaxaExec.length > 0) {
+      filtered = filtered.filter((d: any) => {
+        if (!d.in_matrix) return false;
+        const aprovado = Number(d.valor_aprovado) || 0;
+        const executado = Number(d.total_executado_matriz) || 0;
+        const taxa = aprovado > 0 ? (executado / aprovado) * 100 : 0;
+        
+        let cat = "baixo";
+        if (taxa >= 35 && taxa <= 75) cat = "medio";
+        else if (taxa > 75) cat = "alto";
+        
+        return selTaxaExec.includes(cat);
+      });
+    }
+
+    const raw = Array.from(new Set(filtered.map((d: any) => (d.unidade || "").trim()).filter(Boolean))) as string[];
     return raw.sort((a, b) => getUnitAbbreviation(a).localeCompare(getUnitAbbreviation(b)));
-  }, [records, selPI]);
+  }, [records, selPI, selTaxaExec]);
 
   const planosInternos = useMemo(() => {
-    // Retorna apenas os nomes amigáveis únicos presentes nos dados filtrados por unidade
-    const filteredForPIs = selUnidade.length > 0
-      ? records.filter((d: any) => selUnidade.includes((d.unidade || "").trim()))
-      : records;
-    const codesPresent = new Set(filteredForPIs.map((d: any) => (d.plano_interno || "").trim()));
+    let filtered = records;
+    
+    // Apply Unidade filter
+    if (selUnidade.length > 0) {
+      filtered = filtered.filter((d: any) => selUnidade.includes((d.unidade || "").trim()));
+    }
+    
+    // Apply Taxa de Execução filter
+    if (selTaxaExec.length > 0) {
+      filtered = filtered.filter((d: any) => {
+        if (!d.in_matrix) return false;
+        const aprovado = Number(d.valor_aprovado) || 0;
+        const executado = Number(d.total_executado_matriz) || 0;
+        const taxa = aprovado > 0 ? (executado / aprovado) * 100 : 0;
+        
+        let cat = "baixo";
+        if (taxa >= 35 && taxa <= 75) cat = "medio";
+        else if (taxa > 75) cat = "alto";
+        
+        return selTaxaExec.includes(cat);
+      });
+    }
+
+    const codesPresent = new Set(filtered.map((d: any) => (d.plano_interno || "").trim()));
     return PI_GROUP_NAMES.filter(name =>
       (PI_GROUPS[name] ?? []).some(code => codesPresent.has(code))
     );
-  }, [records, selUnidade]);
+  }, [records, selUnidade, selTaxaExec]);
+
+  const taxasDeExecucaoDisponiveis = useMemo(() => {
+    let filtered = records;
+    
+    // Apply Unidade filter
+    if (selUnidade.length > 0) {
+      filtered = filtered.filter((d: any) => selUnidade.includes((d.unidade || "").trim()));
+    }
+    
+    // Apply PI filter
+    if (selPI.length > 0) {
+      const codesFromNames = selPI.flatMap(name => PI_GROUPS[name] ?? []);
+      filtered = filtered.filter((d: any) => codesFromNames.includes((d.plano_interno || "").trim()));
+    }
+    
+    const cats = new Set<string>();
+    filtered.forEach((d: any) => {
+      if (!d.in_matrix) return;
+      const aprovado = Number(d.valor_aprovado) || 0;
+      const executado = Number(d.total_executado_matriz) || 0;
+      const taxa = aprovado > 0 ? (executado / aprovado) * 100 : 0;
+      
+      let cat = "baixo";
+      if (taxa >= 35 && taxa <= 75) cat = "medio";
+      else if (taxa > 75) cat = "alto";
+      
+      cats.add(cat);
+    });
+    
+    return Array.from(cats);
+  }, [records, selUnidade, selPI]);
 
   // Limpa seleções inválidas quando as opções do filtro cascata mudam
   useEffect(() => {
@@ -231,6 +299,13 @@ export default function App() {
       if (valid.length !== selPI.length) setSelPI(valid);
     }
   }, [planosInternos, selPI]);
+
+  useEffect(() => {
+    if (selTaxaExec.length > 0) {
+      const valid = selTaxaExec.filter(t => taxasDeExecucaoDisponiveis.includes(t));
+      if (valid.length !== selTaxaExec.length) setSelTaxaExec(valid);
+    }
+  }, [taxasDeExecucaoDisponiveis, selTaxaExec]);
 
   // Filtros aplicados sobre a tabela principal
   const filteredRecords = useMemo(() => {
@@ -519,7 +594,7 @@ export default function App() {
           <div style={{ ...s.panel, padding: "6px 10px", display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
             <MultiSel label="Unidade Organizacional" opts={unidades} sel={selUnidade} set={setSelUnidade} formatVal={getUnitAbbreviation} />
             <MultiSel label="PI" opts={planosInternos} sel={selPI} set={setSelPI} />
-            <TaxaExecFilter sel={selTaxaExec} set={setSelTaxaExec} />
+            <TaxaExecFilter sel={selTaxaExec} set={setSelTaxaExec} disponiveis={taxasDeExecucaoDisponiveis} />
 
 
 
