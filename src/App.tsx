@@ -688,14 +688,15 @@ export default function App() {
                 <thead>
                   <tr style={{ background: "#f8fafc" }}>
                     {[
-                      { name: "UGR", width: "6%" },
-                      { name: "UNIDADE", width: "16%" },
-                      { name: "DESCRIÇÃO", width: "24%" },
-                      { name: "DOTAÇÃO", width: "11%" },
-                      { name: "DISPONÍVEL", width: "11%" },
-                      { name: "DEBITADO", width: "11%" },
-                      { name: "EXECUTADO", width: "12%" },
-                      { name: "AÇÕES", width: "9%" }
+                      { name: "UGR", width: "5%" },
+                      { name: "UNIDADE", width: "13%" },
+                      { name: "DESCRIÇÃO", width: "18%" },
+                      { name: "DOTAÇÃO", width: "10%" },
+                      { name: "DISPONÍVEL", width: "10%" },
+                      { name: "EMPENHADO", width: "10%" },
+                      { name: "DEBITADO", width: "10%" },
+                      { name: "EXECUTADO", width: "11%" },
+                      { name: "AÇÕES", width: "7%" }
                     ].map(h => (
                       <th key={h.name} style={{ ...s.th, padding: "6px 2px", fontSize: "9px", width: h.width }}>{h.name}</th>
                     ))}
@@ -718,8 +719,14 @@ export default function App() {
 
                         <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", fontWeight: 600, color: "#0f172a" }}>{d.in_matrix ? fmt(d.valor_aprovado) : "—"}</td>
                         <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", fontWeight: 700 }}>{d.in_tg ? fmt(d.credito_disponivel_tg) : "—"}</td>
+                        <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", fontWeight: 700 }}>{d.in_tg ? fmt(d.despesas_empenhadas_tg) : "—"}</td>
                         <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", color: "#0f172a", fontWeight: 700 }}>
-                          {(d.in_matrix || d.in_tg) ? fmt((Number(d.valor_aprovado)||0) - (Number(d.credito_disponivel_tg)||0) - (Number(d.despesas_empenhadas_tg)||0)) : "—"}
+                          {(() => {
+                            const pi = (d.plano_interno || "").trim();
+                            const isCi = (PI_GROUPS["Custos Indiretos"] || []).includes(pi);
+                            if (isCi) return "—";
+                            return (d.in_matrix || d.in_tg) ? fmt((Number(d.valor_aprovado)||0) - (Number(d.credito_disponivel_tg)||0) - (Number(d.despesas_empenhadas_tg)||0)) : "—";
+                          })()}
                         </td>
                         <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", fontWeight: 700, position: "relative" }}>
                           {d.in_matrix ? (() => {
