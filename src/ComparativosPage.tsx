@@ -555,7 +555,7 @@ export default function ComparativosPage() {
         {/* Painel de Filtros */}
         <div style={{ background: "white", borderRadius: 8, border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", padding: "6px 10px", display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
           <MultiSel label="Plano Interno" opts={planosInternos} sel={selPI} set={setSelPI} />
-          <MultiSel label="Unidade Organizacional" opts={unidades} sel={selUnidade} set={setSelUnidade} formatVal={getUnitAbbreviation} />
+          <MultiSel label="Unidade (UGR)" opts={unidades} sel={selUnidade} set={setSelUnidade} formatVal={getUnitAbbreviation} />
 
           {(selUnidade.length > 0 || selPI.length > 0) && (
             <button onClick={() => { setSelUnidade([]); setSelPI([]); }}

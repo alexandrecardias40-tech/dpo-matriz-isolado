@@ -611,9 +611,8 @@ export default function App() {
 
           {/* Filtros Globais */}
           <div style={{ ...s.panel, padding: "6px 10px", display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
-            <MultiSel label="Unidade Organizacional" opts={unidades} sel={selUnidade} set={setSelUnidade} formatVal={getUnitAbbreviation} />
-            <MultiSel label="PI" opts={planosInternos} sel={selPI} set={setSelPI} />
-            <TaxaExecFilter sel={selTaxaExec} set={setSelTaxaExec} disponiveis={taxasDeExecucaoDisponiveis} />
+            <MultiSel label="Unidade (UGR)" opts={unidades} sel={selUnidade} set={setSelUnidade} formatVal={getUnitAbbreviation} />
+            <MultiSel label="Plano Interno" opts={planosInternos} sel={selPI} set={setSelPI} />
 
 
 
@@ -695,7 +694,7 @@ export default function App() {
                       { name: "DISPONÍVEL", width: "10%" },
                       { name: "EMPENHADO", width: "10%" },
                       { name: "DEBITADO", width: "10%" },
-                      { name: "EXECUTADO", width: "11%" },
+                      { name: "% EXECUTADO", width: "11%" },
                       { name: "AÇÕES", width: "7%" }
                     ].map(h => (
                       <th key={h.name} style={{ ...s.th, padding: "6px 2px", fontSize: "9px", width: h.width }}>{h.name}</th>
@@ -728,37 +727,13 @@ export default function App() {
                             return (d.in_matrix || d.in_tg) ? fmt((Number(d.valor_aprovado)||0) - (Number(d.credito_disponivel_tg)||0) - (Number(d.despesas_empenhadas_tg)||0)) : "—";
                           })()}
                         </td>
-                        <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", fontWeight: 700, position: "relative" }}>
+                        <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", fontWeight: 700, color: "#0f172a", textAlign: "center" }}>
                           {d.in_matrix ? (() => {
                             const aprovado = Number(d.valor_aprovado) || 0;
-                            const executado = Number(d.total_executado_matriz) || 0;
+                            const disponivel = Number(d.credito_disponivel_tg) || 0;
+                            const executado = aprovado - disponivel;
                             const taxa = aprovado > 0 ? (executado / aprovado) * 100 : 0;
-                            
-                            let dotColor = "#ef4444";
-                            if (taxa >= 35 && taxa <= 75) dotColor = "#eab308";
-                            else if (taxa > 75) dotColor = "#22c55e";
-
-                            return (
-                              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
-                                <span style={{ color: dotColor }}>{fmt(executado)}</span>
-                                <span className="instant-tooltip-container" style={{ position: "absolute", right: "6px", top: "50%", transform: "translateY(-50%)" }}>
-                                  <span 
-                                    style={{ 
-                                      display: "inline-block", 
-                                      width: 9, 
-                                      height: 9, 
-                                      borderRadius: "50%", 
-                                      background: dotColor, 
-                                      cursor: "help",
-                                      flexShrink: 0
-                                    }} 
-                                  />
-                                  <span className="tooltip-text">
-                                    Taxa de Execução: {taxa.toFixed(1)}%
-                                  </span>
-                                </span>
-                              </div>
-                            );
+                            return taxa.toFixed(1) + "%";
                           })() : "—"}
                         </td>
                         <td style={{ ...s.td, padding: "6px 2px", fontSize: "9px" }}>
