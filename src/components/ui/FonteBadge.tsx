@@ -50,7 +50,7 @@ export function FonteBadge({ fonte, size = "md" }: FonteBadgeProps) {
   // Default/all
   return (
     <span style={{ ...baseStyle, background: "#f8fafc", color: "#475569", border: "1px solid #e2e8f0" }}>
-      Matriz <span style={{ color: "#6366f1", margin: "0 4px", fontSize: "1.1em" }}>+</span> Custos Indiretos
+      Matriz <span style={{ color: "#6366f1", margin: "0 4px", fontSize: "1.1em" }}>+</span> C. Indiretos <span style={{ color: "#6366f1", margin: "0 4px", fontSize: "1.1em" }}>+</span> Arrecadação
     </span>
   );
 }

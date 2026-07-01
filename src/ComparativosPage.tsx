@@ -140,8 +140,11 @@ const ScatterTooltip = ({ active, payload }: any) => {
 
 /* ── aggregation ── */
 function buildData(records: any[], labelMatriz: string = "Matriz Total") {
-  // Códigos de Custos Indiretos — excluídos do Debitado e Executado
-  const CI_CODES = new Set(PI_GROUPS["Custos Indiretos"] || []);
+  // Códigos de Custos Indiretos e Arrecadação — excluídos do Debitado e Executado
+  const EXCLUDED_CODES = new Set([
+    ...(PI_GROUPS["Custos Indiretos"] || []),
+    ...(PI_GROUPS["Arrecadação"] || [])
+  ]);
 
   const byCC: Record<string,any> = {};
   records.forEach(d => {
@@ -152,8 +155,8 @@ function buildData(records: any[], labelMatriz: string = "Matriz Total") {
     byCC[cc].valor_aprovado += Number(d.valor_aprovado)||0;
     byCC[cc].n++;
 
-    // Emp e Disp TG apenas para Matriz (exclui CI)
-    if (!CI_CODES.has(pi)) {
+    // Emp e Disp TG apenas para Matriz (exclui CI e Arrecadação)
+    if (!EXCLUDED_CODES.has(pi)) {
       byCC[cc].emp_tg  += Number(d.despesas_empenhadas_tg)||0;
       byCC[cc].disp_tg += Number(d.credito_disponivel_tg)||0;
     }
