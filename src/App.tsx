@@ -6,6 +6,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Checkbox } from "./components/ui/checkbox";
 import { X, ChevronDown, Calendar, FileText, User, HelpCircle, ArrowRightLeft, Percent, Layers, ShieldCheck, HelpCircle as HelpIcon, Coins, TrendingUp, AlertTriangle } from "lucide-react";
 import { FonteBadge } from "./components/ui/FonteBadge";
+import UnitOrganogram, { CHILD_TO_PARENT, PARENT_TO_CHILDREN } from "./components/UnitOrganogram";
 
 const fmt = (v: number) => isNaN(v) ? "R$ 0" : new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v || 0);
 const fmtK = (v: number) => !v || isNaN(v) ? "—" : new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", notation: "compact", maximumFractionDigits: 1 }).format(v);
@@ -40,33 +41,66 @@ const STATUS_MAP: Record<string, { bg: string; border: string; color: string; la
 
 function getUnitAbbreviation(name: string): string {
   if (!name) return "";
-  const parenMatch = name.match(/\(([^)]+)\)/);
+  const nameStr = String(name).trim();
+
+  // Custom translation
+  if (nameStr.toUpperCase().includes("CTO DE POL DIR")) return "CCOM";
+  if (nameStr.toUpperCase().includes("CUSTOS INDIRETOS")) return "CI";
+
+  // Se contiver parênteses, a sigla normalmente está dentro deles
+  const parenMatch = nameStr.match(/\(([^)]+)\)/);
   if (parenMatch && parenMatch[1]) {
     return parenMatch[1].trim();
   }
-  const partsSlash = name.split("/");
+
+  // Ignora sufixo "/FUB" genérico
+  let cleanName = nameStr;
+  if (cleanName.toUpperCase().endsWith("/FUB")) {
+    cleanName = cleanName.slice(0, -4);
+  }
+
+  const partsSlash = cleanName.split("/");
   if (partsSlash.length > 1) {
+    const firstPart = partsSlash[0].trim();
+    if (firstPart.length <= 8) {
+      return firstPart;
+    }
     const lastPart = partsSlash[partsSlash.length - 1].trim();
-    if (lastPart.length <= 8) {
+    if (lastPart.length <= 8 && lastPart.toUpperCase() !== "FUB") {
       return lastPart;
     }
   }
-  const parts = name.split(" - ");
+
+  const parts = cleanName.split(" - ");
   if (parts.length > 1) {
     const lastPart = parts[parts.length - 1].trim();
-    if (lastPart.length <= 10) {
+    if (lastPart.length <= 10 && lastPart.toUpperCase() !== "FUB") {
+      return lastPart;
+    }
+    const firstPart = parts[0].trim();
+    if (firstPart.length <= 8) {
+      return firstPart;
+    }
+  }
+
+  const dashParts = cleanName.split("-");
+  if (dashParts.length > 1) {
+    const lastPart = dashParts[dashParts.length - 1].trim();
+    if (lastPart.length <= 6 && lastPart.toUpperCase() !== "FUB") {
       return lastPart;
     }
   }
-  if (name.length <= 12) {
-    return name;
+
+  if (cleanName.length <= 12) {
+    return cleanName;
   }
-  const words = name.replace(/[^a-zA-Z0-9 ]/g, "").split(" ").filter(w => w.length > 2);
+
+  const words = cleanName.replace(/[^a-zA-Z0-9 ]/g, "").split(" ").filter(w => w.length > 2);
   if (words.length > 1) {
     const initials = words.map(w => w[0]).join("").toUpperCase();
     if (initials.length >= 2 && initials.length <= 5) return initials;
   }
-  return name.slice(0, 12) + "...";
+  return cleanName.slice(0, 12) + "...";
 }
 
 function MultiSel({ label, opts, sel, set, formatVal }: { label: string; opts: string[]; sel: string[]; set: (v: string[]) => void; formatVal?: (v: string) => string }) {
@@ -184,12 +218,31 @@ export default function App() {
     [rawRecords]
   );
 
+  // Mapeamento UGR -> Nome completo
+  const ugrNames = useMemo(() => {
+    const map: Record<string, string> = {};
+    records.forEach((r: any) => {
+      const ugr = String(r.ugr || "").trim();
+      const name = String(r.unidade || "").trim();
+      if (ugr && name && !map[ugr]) {
+        map[ugr] = name;
+      }
+    });
+    return map;
+  }, [records]);
+
   // Estados dos filtros
   const [selUnidade, setSelUnidade] = useState<string[]>([]);
+  const [selSubUnidades, setSelSubUnidades] = useState<string[]>([]);
   const [selPI, setSelPI] = useState<string[]>([]);
   const [selOrigem, setSelOrigem] = useState<string>("all");
   const [selTaxaExec, setSelTaxaExec] = useState<string[]>([]);
   const selStatus = "all";
+
+  // Reseta a seleção fina do organograma quando o filtro principal de unidades muda
+  useEffect(() => {
+    setSelSubUnidades([]);
+  }, [selUnidade]);
 
   // Estado do registro selecionado para o modal de naturezas
   const [selectedRecord, setSelectedRecord] = useState<any | null>(null);
@@ -221,7 +274,12 @@ export default function App() {
     }
 
     const raw = Array.from(new Set(filtered.map((d: any) => (d.unidade || "").trim()).filter(Boolean))) as string[];
-    return raw.sort((a, b) => getUnitAbbreviation(a).localeCompare(getUnitAbbreviation(b)));
+    const filteredRaw = raw.filter((name: string) => {
+      const rec = records.find((r: any) => (r.unidade || "").trim() === name);
+      const ugr = rec ? String(rec.ugr || "").trim() : "";
+      return CHILD_TO_PARENT[ugr] === undefined;
+    });
+    return filteredRaw.sort((a, b) => getUnitAbbreviation(a).localeCompare(getUnitAbbreviation(b)));
   }, [records, selPI, selTaxaExec]);
 
   const planosInternos = useMemo(() => {
@@ -229,7 +287,13 @@ export default function App() {
     
     // Apply Unidade filter
     if (selUnidade.length > 0) {
-      filtered = filtered.filter((d: any) => selUnidade.includes((d.unidade || "").trim()));
+      filtered = filtered.filter((d: any) => {
+        const u = (d.unidade || "").trim();
+        const ugr = String(d.ugr || "").trim();
+        const parentUgr = CHILD_TO_PARENT[ugr];
+        const parentName = parentUgr ? ugrNames[parentUgr] : null;
+        return selUnidade.includes(u) || (parentName && selUnidade.includes(parentName));
+      });
     }
     
     // Apply Taxa de Execução filter
@@ -259,7 +323,13 @@ export default function App() {
     
     // Apply Unidade filter
     if (selUnidade.length > 0) {
-      filtered = filtered.filter((d: any) => selUnidade.includes((d.unidade || "").trim()));
+      filtered = filtered.filter((d: any) => {
+        const u = (d.unidade || "").trim();
+        const ugr = String(d.ugr || "").trim();
+        const parentUgr = CHILD_TO_PARENT[ugr];
+        const parentName = parentUgr ? ugrNames[parentUgr] : null;
+        return selUnidade.includes(u) || (parentName && selUnidade.includes(parentName));
+      });
     }
     
     // Apply PI filter
@@ -311,9 +381,19 @@ export default function App() {
   const filteredRecords = useMemo(() => {
     return records.filter((d: any) => {
       const u = (d.unidade || "").trim();
+      const ugr = String(d.ugr || "").trim();
       const pi = (d.plano_interno || "").trim();
       
-      if (selUnidade.length > 0 && !selUnidade.includes(u)) return false;
+      if (selUnidade.length > 0) {
+        const parentUgr = CHILD_TO_PARENT[ugr];
+        const parentName = parentUgr ? ugrNames[parentUgr] : null;
+        if (!selUnidade.includes(u) && !(parentName && selUnidade.includes(parentName))) {
+          return false;
+        }
+        if (selSubUnidades.length > 0 && !selSubUnidades.includes(ugr)) {
+          return false;
+        }
+      }
       // Filtro de PI: expande nomes selecionados para os códigos correspondentes
       if (selPI.length > 0) {
         const codesFromNames = selPI.flatMap(name => PI_GROUPS[name] ?? []);
@@ -343,20 +423,41 @@ export default function App() {
 
       return true;
     });
-  }, [records, selUnidade, selPI, selOrigem, selStatus, selTaxaExec]);
+  }, [records, selUnidade, selPI, selOrigem, selStatus, selTaxaExec, selSubUnidades]);
 
   // Filtros aplicados sobre a tabela de adiantamentos
   const filteredAdiantamentos = useMemo(() => {
     return adiantamentos.filter((d: any) => {
-      const u = (d.unidade || "").trim();
+      const u = (d.unidade || "").trim().toUpperCase();
       if (selUnidade.length > 0) {
-        // Verifica se a sigla da unidade de adiantamento está contida no nome completo selecionado
-        const matchesAny = selUnidade.some(su => su.toUpperCase().includes(u.toUpperCase()) || u.toUpperCase().includes(su.toUpperCase()));
+        const matchesAny = selUnidade.some(su => {
+          if (su.toUpperCase().includes(u) || u.includes(su.toUpperCase())) return true;
+          
+          const selUgr = Object.keys(ugrNames).find(k => ugrNames[k] === su);
+          if (selUgr) {
+            const children = PARENT_TO_CHILDREN[selUgr] || [];
+            return children.some(chUgr => {
+              const chName = ugrNames[chUgr] || "";
+              const chAbbrev = getUnitAbbreviation(chName).toUpperCase();
+              return chAbbrev === u || chName.toUpperCase().includes(u) || u.includes(chName.toUpperCase());
+            });
+          }
+          return false;
+        });
         if (!matchesAny) return false;
+
+        if (selSubUnidades.length > 0) {
+          const matchesSub = selSubUnidades.some(subUgr => {
+            const subName = ugrNames[subUgr] || "";
+            const subAbbrev = getUnitAbbreviation(subName).toUpperCase();
+            return subAbbrev === u || subName.toUpperCase().includes(u) || u.includes(subName.toUpperCase());
+          });
+          if (!matchesSub) return false;
+        }
       }
       return true;
     });
-  }, [adiantamentos, selUnidade]);
+  }, [adiantamentos, selUnidade, ugrNames, selSubUnidades]);
 
   // Totais agregados dos registros filtrados (Matriz x Tesouro)
   const T = useMemo(() => {
@@ -450,7 +551,13 @@ export default function App() {
     // Filtra os registros da unidade que estão na matriz
     const selectedUnitRecords = allMatrixRecords.filter((r: any) => {
       const u = (r.unidade || "").trim();
-      return selUnidade.includes(u);
+      const ugr = String(r.ugr || "").trim();
+      const parentUgr = CHILD_TO_PARENT[ugr];
+      const parentName = parentUgr ? ugrNames[parentUgr] : null;
+      const inHierarchy = selUnidade.includes(u) || (parentName && selUnidade.includes(parentName));
+      if (!inHierarchy) return false;
+      if (selSubUnidades.length > 0 && !selSubUnidades.includes(ugr)) return false;
+      return true;
     });
 
     if (selectedUnitRecords.length === 0) return null;
@@ -571,7 +678,7 @@ export default function App() {
       statusBg,
       recommendations
     };
-  }, [selUnidade, records, loading]);
+  }, [selUnidade, records, loading, selSubUnidades]);
 
   const hasFilter = selUnidade.length > 0 || selPI.length > 0 || selOrigem !== "all" || selTaxaExec.length > 0;
 
@@ -580,6 +687,16 @@ export default function App() {
     setSelPI([]);
     setSelOrigem("all");
     setSelTaxaExec([]);
+  };
+
+  const handleToggleSubUnit = (ugr: string) => {
+    setSelSubUnidades(prev => {
+      if (prev.includes(ugr)) {
+        return prev.filter(x => x !== ugr);
+      } else {
+        return [...prev, ugr];
+      }
+    });
   };
 
   const s: Record<string, React.CSSProperties> = {
@@ -671,6 +788,14 @@ export default function App() {
             })()}
           </div>
 
+          <UnitOrganogram 
+            selUnidade={selUnidade} 
+            ugrNames={ugrNames} 
+            formatVal={getUnitAbbreviation} 
+            records={records}
+            selSubUnidades={selSubUnidades}
+            onToggleSubUnit={handleToggleSubUnit}
+          />
 
           {/* Tabela Principal (Cruzamento) */}
           <div style={s.panel}>
@@ -695,14 +820,29 @@ export default function App() {
                       { name: "EMPENHADO", width: "10%" },
                       { name: "DEBITADO", width: "10%" },
                       { name: "% EXECUTADO", width: "11%" },
-                      { name: "AÇÕES", width: "7%" }
+                      { name: "DETALHAMENTO", width: "10%" }
                     ].map(h => (
                       <th key={h.name} style={{ ...s.th, padding: "6px 2px", fontSize: "9px", width: h.width }}>{h.name}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {[...filteredRecords].sort((a: any, b: any) => String(a.ugr ?? "").localeCompare(String(b.ugr ?? ""), "pt-BR", { numeric: true })).map((d: any, i: number) => {
+                  {[...filteredRecords].sort((a: any, b: any) => {
+                    const ugrA = String(a.ugr ?? "");
+                    const ugrB = String(b.ugr ?? "");
+                    const cmpUgr = ugrA.localeCompare(ugrB, "pt-BR", { numeric: true });
+                    if (cmpUgr !== 0) return cmpUgr;
+
+                    const labelA = piLabel(a.plano_interno) || "";
+                    const labelB = piLabel(b.plano_interno) || "";
+                    const hasMatrizA = labelA.toLowerCase().includes("matriz");
+                    const hasMatrizB = labelB.toLowerCase().includes("matriz");
+
+                    if (hasMatrizA && !hasMatrizB) return -1;
+                    if (!hasMatrizA && hasMatrizB) return 1;
+
+                    return labelA.localeCompare(labelB, "pt-BR");
+                  }).map((d: any, i: number) => {
                     const diff = Math.abs(d.despesas_empenhadas_matriz - d.despesas_empenhadas_tg);
                     
                     return (
