@@ -42,7 +42,10 @@ export default function DashboardLayout({ children, menuConfig, hideUpdateBadge 
             {
               key: "charts",
               title: "📈 Gráficos",
-              items: [{ href: "/graficos", label: "Fluxo de Crédito Matriz", icon: <Activity size={16} /> }],
+              items: [
+                { href: "/graficos/academica", label: "Matriz Acadêmica", icon: <Activity size={16} /> },
+                { href: "/graficos/administrativa", label: "Matriz Administrativo", icon: <Activity size={16} /> }
+              ],
             },
             {
               key: "comparatives",

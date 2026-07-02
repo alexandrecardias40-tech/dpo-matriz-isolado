@@ -316,9 +316,10 @@ export default function ComparativosPage() {
     } else if (selUnidade.length === 1) {
       const uName = selUnidade[0];
       const abbrev = getUnitAbbreviation(uName);
-      const uData = D.top15[0] || { "Aprovado (Matriz)": 0, "Executado (Matriz)": 0, "Disponível (Matriz)": 0, "Empenhado (Matriz)": 0, "Debitado (Matriz)": 0 };
-      const aprovado = Number(uData["Aprovado (Matriz)"]) || 0;
-      const executado = Number(uData["Executado (Matriz)"]) || 0;
+      const uData = D.top15[0];
+      const aprovado = uData ? (Number(uData[`Aprovado (${labelMatriz})`]) || 0) : 0;
+      const executado = uData ? (Number(uData[`Executado (${labelMatriz})`]) || 0) : 0;
+      const disponivel = uData ? (Number(uData[`Disponível (${labelMatriz})`]) || 0) : 0;
       const eRate = aprovado > 0 ? (executado / aprovado) * 100 : 0;
       
       let performanceSub = "";
@@ -334,7 +335,7 @@ export default function ComparativosPage() {
 
       return {
         title: `Análise Individual — ${abbrev}`,
-        text: `A unidade ${uName} (${abbrev}) possui um orçamento aprovado de ${fmt(aprovado)} na Matriz. Desse montante, executou ${fmt(executado)}, atingindo uma taxa de execução de ${eRate.toFixed(1)}%. Resta um saldo livre de ${fmt(uData["Disponível (Matriz)"])} disponível para novas programações. ${performanceSub}`
+        text: `A unidade ${uName} (${abbrev}) possui um orçamento aprovado de ${fmt(aprovado)} na Matriz. Desse montante, executou ${fmt(executado)}, atingindo uma taxa de execução de ${eRate.toFixed(1)}%. Resta um saldo livre de ${fmt(disponivel)} disponível para novas programações. ${performanceSub}`
       };
     } else {
       const globalData = buildData(records.filter((d: any) => d.in_matrix));

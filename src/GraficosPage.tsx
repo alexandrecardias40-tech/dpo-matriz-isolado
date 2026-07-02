@@ -337,10 +337,18 @@ function DetailPanel({ cc, onBack, records }: { cc: any; onBack: ()=>void; recor
   );
 }
 
-export default function GraficosPage() {
+export default function GraficosPage({
+  initialMatrix = "Matriz Acadêmica"
+}: {
+  initialMatrix?: "Matriz Acadêmica" | "Matriz Administrativa";
+}) {
   const { records, loading } = useData();
   const [selected, setSelected] = useState<any>(null);
-  const [activeMatrix, setActiveMatrix] = useState<"Matriz Acadêmica" | "Matriz Administrativa">("Matriz Acadêmica");
+  const [activeMatrix, setActiveMatrix] = useState<"Matriz Acadêmica" | "Matriz Administrativa">(initialMatrix);
+
+  useEffect(() => {
+    setActiveMatrix(initialMatrix);
+  }, [initialMatrix]);
 
   const byCC = useMemo(() => {
     const codes = PI_GROUPS[activeMatrix] || [];
@@ -352,13 +360,6 @@ export default function GraficosPage() {
     if (!nodeData) return;
     const cc = byCC.find((c:any) => c.centro_custo === nodeData.centro_custo);
     if (cc) setSelected(cc);
-  };
-
-  const handleHubClick = () => {
-    setActiveMatrix(prev => {
-      if (prev === "Matriz Acadêmica") return "Matriz Administrativa";
-      return "Matriz Acadêmica";
-    });
   };
 
   const chartHeight = typeof window !== "undefined" ? window.innerHeight - 72 : 600;
@@ -376,7 +377,7 @@ export default function GraficosPage() {
               Mapa do Fluxo de Créditos — {activeMatrix}
             </h1>
             <p style={{ fontSize:11, color:"#ffffff", margin:"2px 0 0" }}>
-              {byCC.length} unidades organizacionais · Clique nas unidades para detalhar ou na bola central para alternar Matrizes
+              {byCC.length} unidades organizacionais · Clique nas unidades para detalhar
             </p>
           </div>
           <CINetworkChart 
@@ -384,7 +385,6 @@ export default function GraficosPage() {
             height={chartHeight} 
             onNodeClick={handleNodeClick} 
             hubLabel={activeMatrix} 
-            onHubClick={handleHubClick} 
           />
         </div>
       )}

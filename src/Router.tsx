@@ -11,7 +11,15 @@ export default function Router() {
       <Switch>
         <Route path="/" component={LandingPage} />
         <Route path="/dashboard" component={App} />
-        <Route path="/graficos" component={GraficosPage} />
+        <Route path="/graficos/academica">
+          {() => <GraficosPage initialMatrix="Matriz Acadêmica" />}
+        </Route>
+        <Route path="/graficos/administrativa">
+          {() => <GraficosPage initialMatrix="Matriz Administrativa" />}
+        </Route>
+        <Route path="/graficos">
+          {() => <GraficosPage initialMatrix="Matriz Acadêmica" />}
+        </Route>
         <Route path="/comparisons" component={ComparativosPage} />
         <Route component={LandingPage} />
       </Switch>

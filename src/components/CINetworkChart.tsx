@@ -18,6 +18,7 @@ type NetworkNode = {
   ressarcido: number; a_ressarcir: number; total_ci: number;
   qtd_nes: number; semaforo_verde: number; semaforo_amarelo: number; semaforo_vermelho: number;
   size: number; color: string; phase: number; isHub: boolean; ringIndex: number;
+  indexInRing?: number; actualRingCount?: number;
   originalData: CINode;
 };
 
@@ -26,7 +27,7 @@ type Link = { id: string; source: string; target: string; speed: number; phase: 
 
 const W = 1200; const H = 680;
 const CX = W / 2; const CY = H / 2;
-const MAX = 16;
+const MAX = 999;
 
 const COLORS = ['#2f6bff','#13c7d6','#ff6b00','#f9d600','#2ed11e','#ff2d95','#7a4dff','#ff9f1c','#00d3a7','#d163ff','#4cc9f0','#f72585','#06d6a0','#ffd166','#e63946','#52b788'];
 const seed = (s: number) => { const v = Math.sin(s * 12.9898) * 43758.5453; return v - Math.floor(v); };
@@ -202,7 +203,22 @@ export default function CINetworkChart({
     const maxE = Math.max(...ordered.map(d => d.empenhado || 0), 1);
     const minE = Math.min(...ordered.map(d => d.empenhado || 0), maxE);
 
-    const sats = ordered.map((item, i) => {
+    // Pré-calcula quantos nós caem de fato em cada anel concêntrico
+    const nodesPerRing: Record<number, number> = {};
+    const precalculated = ordered.map((item, i) => {
+      let rIdx = 0;
+      let temp = i;
+      let cap = 6 + rIdx * 5;
+      while (temp >= cap) {
+        temp -= cap;
+        rIdx++;
+        cap = 6 + rIdx * 5;
+      }
+      nodesPerRing[rIdx] = (nodesPerRing[rIdx] || 0) + 1;
+      return { rIdx, indexInRing: temp, item };
+    });
+
+    const sats = precalculated.map(({ rIdx, indexInRing, item }, i) => {
       const norm = maxE === minE ? 0.5 : (item.empenhado - minE) / (maxE - minE);
       return {
         id: `ci-${i}`, label: item.centro_custo || `CC${i}`,
@@ -214,7 +230,11 @@ export default function CINetworkChart({
         semaforo_vermelho: item.semaforo_vermelho || 0,
         size: clamp(24 + norm * 30, 22, 56),
         color: COLORS[i % COLORS.length], phase: seed(i + 541) * Math.PI * 2,
-        isHub: false, ringIndex: i, originalData: item,
+        isHub: false,
+        ringIndex: rIdx,
+        indexInRing,
+        actualRingCount: nodesPerRing[rIdx] || 1,
+        originalData: item,
       };
     });
 
@@ -230,6 +250,7 @@ export default function CINetworkChart({
       semaforo_amarelo: sats.reduce((s, n) => s + n.semaforo_amarelo, 0),
       semaforo_vermelho: sats.reduce((s, n) => s + n.semaforo_vermelho, 0),
       size: 62, color: '#2f6bff', phase: 0, isHub: true, ringIndex: -1,
+      indexInRing: -1, actualRingCount: 1,
       originalData: { centro_custo: hubLabel, empenhado: 0, total_pago_tg: 0, ressarcido: 0, a_ressarcir: 0, total_ci: 0, qtd_nes: 0, semaforo_verde: 0, semaforo_amarelo: 0, semaforo_vermelho: 0 },
     };
     return [hub, ...sats];
@@ -246,13 +267,18 @@ export default function CINetworkChart({
         m.set(n.id, { x: CX + Math.sin(time * 0.00028) * 14, y: CY - 18 + Math.cos(time * 0.00024) * 8 });
         return;
       }
-      // If hovered, freeze at last computed position (stored in frozenPos ref)
-      const angle = (n.ringIndex / count) * Math.PI * 2 + time * 0.00014 + Math.sin(time * 0.00043 + n.phase) * 0.11;
-      const r = 190 + (n.ringIndex % 3) * 36;
-      const w = 9 + n.size * 0.16;
+      const ringIndex = n.ringIndex;
+      const indexInRing = n.indexInRing ?? 0;
+      const actualCount = n.actualRingCount ?? 1;
+
+      // Distribuição uniforme baseada no número real de elementos daquele anel específico, balanceando esquerda/direita e acima/abaixo
+      const angle = (indexInRing / actualCount) * Math.PI * 2 + ringIndex * 0.55 + time * (0.00012 / (ringIndex + 1)) + Math.sin(time * 0.0003 + n.phase) * 0.08;
+      
+      const r = 160 + ringIndex * 70;
+      const w = 8 + n.size * 0.14;
       m.set(n.id, {
-        x: CX + Math.cos(angle) * r + Math.sin(time * 0.0011 + n.phase) * w,
-        y: CY + Math.sin(angle) * (r * 0.58) + Math.cos(time * 0.0009 + n.phase) * w * 0.55
+        x: CX + Math.cos(angle) * r + Math.sin(time * 0.001 + n.phase) * w,
+        y: CY + Math.sin(angle) * (r * 0.65) + Math.cos(time * 0.0008 + n.phase) * w * 0.55
       });
     });
     return m;
