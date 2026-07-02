@@ -369,21 +369,6 @@ function EstruturaSearch({
                         background: isSelected ? "#eff6ff" : "transparent"
                       }}
                     >
-                      {o.type === "n1" && (
-                        <span style={{ fontSize: "7px", fontWeight: 800, padding: "1px 3px", borderRadius: 3, background: "#f1f5f9", color: "#475569", marginRight: 6, textTransform: "uppercase" }}>
-                          Área
-                        </span>
-                      )}
-                      {o.type === "n2" && (
-                        <span style={{ fontSize: "7px", fontWeight: 800, padding: "1px 3px", borderRadius: 3, background: "#ecfdf5", color: "#047857", marginRight: 6, textTransform: "uppercase" }}>
-                          Unid
-                        </span>
-                      )}
-                      {o.type === "n3" && (
-                        <span style={{ fontSize: "7px", fontWeight: 800, padding: "1px 3px", borderRadius: 3, background: "#f5f3ff", color: "#6d28d9", marginRight: 6, textTransform: "uppercase" }}>
-                          UGR
-                        </span>
-                      )}
                       <span style={{
                         fontSize: 9.5,
                         color: isSelected ? "#2563eb" : "#0f172a",
