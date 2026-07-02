@@ -326,14 +326,14 @@ function EstruturaSearch({
       <span style={{ fontSize: 8.5, fontWeight: 700, color: "#475569" }}>Estrutura</span>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <button style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "3px 6px", border: "1px solid #cbd5e1", borderRadius: 5, background: "white", fontSize: 9, cursor: "pointer", width: 140, gap: 4, textAlign: "center", boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}>
+          <button style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "3px 6px", border: "1px solid #cbd5e1", borderRadius: 5, background: "white", fontSize: 9, cursor: "pointer", width: 130, gap: 4, textAlign: "center", boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}>
             <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", textAlign: "center", flex: 1 }}>
               {buttonLabel}
             </span>
             <ChevronDown size={10} style={{ opacity: 0.5, flexShrink: 0 }} />
           </button>
         </PopoverTrigger>
-        <PopoverContent style={{ width: 280, padding: 0 }}>
+        <PopoverContent style={{ width: 210, padding: 0 }}>
           <Command>
             <CommandInput placeholder="Buscar por unidade, depto, UGR..." value={searchQuery} onValueChange={setSearchQuery} />
             <CommandList style={{ maxHeight: 250, overflowY: "auto" }}>
