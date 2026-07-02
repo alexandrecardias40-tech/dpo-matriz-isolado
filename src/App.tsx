@@ -206,11 +206,13 @@ function SingleSel({ label, opts, sel, set }: { label: string; opts: string[]; s
 function UnidadeFilter({
   selNivel1,
   selNivel2,
-  onSelect
+  onSelect,
+  recordsForOrganogram
 }: {
   selNivel1: string | null;
   selNivel2: string | null;
   onSelect: (n1: string | null, n2: string | null, n3: string | null) => void;
+  recordsForOrganogram: any[];
 }) {
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -240,25 +242,29 @@ function UnidadeFilter({
       "sem ugr",
       "ufpr"
     ];
-    Object.values(ugrHierarchy).forEach(h => {
-      const s2 = (h.sigla_n2 || "").toLowerCase();
-      const n1 = (h.nivel1 || "").toLowerCase();
-      const s3 = (h.sigla_n3 || "").toLowerCase();
-      if (
-        h.sigla_n2 &&
-        !excluded.includes(s2) &&
-        !excluded.includes(n1) &&
-        !excluded.includes(s3)
-      ) {
-        unitsMap[h.sigla_n2] = {
-          sigla_n2: h.sigla_n2,
-          name_n2: h.name_n2,
-          nivel1: h.nivel1
-        };
+    recordsForOrganogram.forEach((r: any) => {
+      const ugrCode = String(r.ugr || "").trim();
+      const h = ugrHierarchy[ugrCode];
+      if (h) {
+        const s2 = (h.sigla_n2 || "").toLowerCase();
+        const n1 = (h.nivel1 || "").toLowerCase();
+        const s3 = (h.sigla_n3 || "").toLowerCase();
+        if (
+          h.sigla_n2 &&
+          !excluded.includes(s2) &&
+          !excluded.includes(n1) &&
+          !excluded.includes(s3)
+        ) {
+          unitsMap[h.sigla_n2] = {
+            sigla_n2: h.sigla_n2,
+            name_n2: h.name_n2,
+            nivel1: h.nivel1
+          };
+        }
       }
     });
     return Object.values(unitsMap).sort((a, b) => a.sigla_n2.localeCompare(b.sigla_n2));
-  }, []);
+  }, [recordsForOrganogram]);
 
   // Filtragem conforme a Área selecionada (selNivel1)
   const filteredUnits = useMemo(() => {
@@ -1195,6 +1201,7 @@ export default function App() {
                 setSelNivel2(n2);
                 setSelNivel3(n3);
               }}
+              recordsForOrganogram={recordsForOrganogram}
             />
             <MultiSel label="Plano Interno" opts={planosInternos} sel={selPI} set={setSelPI} />
 
