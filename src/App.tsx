@@ -203,6 +203,209 @@ function SingleSel({ label, opts, sel, set }: { label: string; opts: string[]; s
   );
 }
 
+function EstruturaSearch({
+  selNivel1,
+  selNivel2,
+  selNivel3,
+  onSelect,
+  recordsForOrganogram
+}: {
+  selNivel1: string | null;
+  selNivel2: string | null;
+  selNivel3: string | null;
+  onSelect: (n1: string | null, n2: string | null, n3: string | null) => void;
+  recordsForOrganogram: any[];
+}) {
+  const searchOptions = useMemo(() => {
+    const list: Array<{
+      type: "n1" | "n2" | "n3";
+      id: string;
+      label: string;
+      n1: string;
+      n2?: string;
+      n3?: string;
+    }> = [];
+
+    const activeN1 = new Set<string>();
+    const activeN2 = new Map<string, { sigla: string; name: string; n1: string }>();
+    const activeN3 = new Map<string, { ugr: string; sigla: string; name: string; n1: string; n2: string }>();
+
+    recordsForOrganogram.forEach((r: any) => {
+      const ugrCode = String(r.ugr || "").trim();
+      const h = ugrHierarchy[ugrCode];
+      if (h) {
+        activeN1.add(h.nivel1);
+        
+        const n2Key = `${h.nivel1}:${h.sigla_n2}`;
+        if (!activeN2.has(n2Key)) {
+          activeN2.set(n2Key, { sigla: h.sigla_n2, name: h.name_n2, n1: h.nivel1 });
+        }
+
+        const n3Key = ugrCode;
+        if (!activeN3.has(n3Key)) {
+          activeN3.set(n3Key, { ugr: ugrCode, sigla: h.sigla_n3, name: h.name_n3, n1: h.nivel1, n2: h.sigla_n2 });
+        }
+      }
+    });
+
+    // 1. Nível 1
+    NIVEL1_CATEGORIES.forEach(cat => {
+      if (activeN1.has(cat)) {
+        list.push({
+          type: "n1",
+          id: `n1:${cat}`,
+          label: cat,
+          n1: cat
+        });
+      }
+    });
+
+    // 2. Nível 2
+    const sortedN2 = Array.from(activeN2.values()).sort((a, b) => a.sigla.localeCompare(b.sigla));
+    sortedN2.forEach(item => {
+      list.push({
+        type: "n2",
+        id: `n2:${item.n1}:${item.sigla}`,
+        label: `${item.sigla} - ${item.name}`,
+        n1: item.n1,
+        n2: item.sigla
+      });
+    });
+
+    // 3. Nível 3
+    const sortedN3 = Array.from(activeN3.values()).sort((a, b) => a.sigla.localeCompare(b.sigla));
+    sortedN3.forEach(item => {
+      list.push({
+        type: "n3",
+        id: `n3:${item.ugr}`,
+        label: `UGR ${item.ugr} - ${item.sigla} (${item.name})`,
+        n1: item.n1,
+        n2: item.n2,
+        n3: item.ugr
+      });
+    });
+
+    return list;
+  }, [recordsForOrganogram]);
+
+  const [open, setOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    if (!open) {
+      setSearchQuery("");
+    }
+  }, [open]);
+
+  const visibleOptions = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) {
+      // Quando não há busca, mostra APENAS o Nível 1 (as macro-áreas do jeito que estava)
+      return searchOptions.filter(o => o.type === "n1");
+    }
+    // Quando digita, pesquisa no label de todos os níveis (Nível 1, Nível 2 e Nível 3)
+    return searchOptions.filter(o => o.label.toLowerCase().includes(q));
+  }, [searchOptions, searchQuery]);
+
+  const buttonLabel = useMemo(() => {
+    if (selNivel3) {
+      const h = ugrHierarchy[selNivel3];
+      return h ? `UGR ${selNivel3} - ${h.sigla_n3}` : `UGR ${selNivel3}`;
+    }
+    if (selNivel2) {
+      return selNivel2;
+    }
+    if (selNivel1) {
+      return selNivel1;
+    }
+    return "Todas as Áreas";
+  }, [selNivel1, selNivel2, selNivel3]);
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 2, alignItems: "center" }}>
+      <span style={{ fontSize: 8.5, fontWeight: 700, color: "#475569" }}>Estrutura</span>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <button style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "3px 6px", border: "1px solid #cbd5e1", borderRadius: 5, background: "white", fontSize: 9, cursor: "pointer", width: 140, gap: 4, textAlign: "center", boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}>
+            <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", textAlign: "center", flex: 1 }}>
+              {buttonLabel}
+            </span>
+            <ChevronDown size={10} style={{ opacity: 0.5, flexShrink: 0 }} />
+          </button>
+        </PopoverTrigger>
+        <PopoverContent style={{ width: 280, padding: 0 }}>
+          <Command>
+            <CommandInput placeholder="Buscar por unidade, depto, UGR..." value={searchQuery} onValueChange={setSearchQuery} />
+            <CommandList style={{ maxHeight: 250, overflowY: "auto" }}>
+              <CommandEmpty>Nenhum resultado.</CommandEmpty>
+              <CommandGroup>
+                {visibleOptions.map(o => {
+                  let isSelected = false;
+                  if (o.type === "n1") {
+                    isSelected = selNivel1 === o.n1 && !selNivel2 && !selNivel3;
+                  } else if (o.type === "n2") {
+                    isSelected = selNivel2 === o.n2 && !selNivel3;
+                  } else if (o.type === "n3") {
+                    isSelected = selNivel3 === o.n3;
+                  }
+
+                  return (
+                    <CommandItem
+                      key={o.id}
+                      value={o.label}
+                      onSelect={() => {
+                        if (isSelected) {
+                          onSelect(null, null, null);
+                        } else {
+                          onSelect(o.n1, o.n2 || null, o.n3 || null);
+                        }
+                        setOpen(false);
+                      }}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        cursor: "pointer",
+                        padding: "5px 8px",
+                        background: isSelected ? "#eff6ff" : "transparent"
+                      }}
+                    >
+                      {o.type === "n1" && (
+                        <span style={{ fontSize: "7px", fontWeight: 800, padding: "1px 3px", borderRadius: 3, background: "#f1f5f9", color: "#475569", marginRight: 6, textTransform: "uppercase" }}>
+                          Área
+                        </span>
+                      )}
+                      {o.type === "n2" && (
+                        <span style={{ fontSize: "7px", fontWeight: 800, padding: "1px 3px", borderRadius: 3, background: "#ecfdf5", color: "#047857", marginRight: 6, textTransform: "uppercase" }}>
+                          Unid
+                        </span>
+                      )}
+                      {o.type === "n3" && (
+                        <span style={{ fontSize: "7px", fontWeight: 800, padding: "1px 3px", borderRadius: 3, background: "#f5f3ff", color: "#6d28d9", marginRight: 6, textTransform: "uppercase" }}>
+                          UGR
+                        </span>
+                      )}
+                      <span style={{
+                        fontSize: 9.5,
+                        color: isSelected ? "#2563eb" : "#0f172a",
+                        fontWeight: isSelected ? 700 : 500,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap"
+                      }} title={o.label}>
+                        {o.label}
+                      </span>
+                    </CommandItem>
+                  );
+                })}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+}
+
 function TaxaExecFilter({ sel, set, disponiveis }: { sel: string[]; set: (v: string[]) => void; disponiveis: string[] }) {
   const options = [
     { value: "baixo", label: "Baixo", color: "#ef4444" },
@@ -821,7 +1024,17 @@ export default function App() {
           </div>
 
           <div style={{ ...s.panel, padding: "6px 10px", display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
-            <SingleSel label="Estrutura" opts={activeNivel1Categories} sel={selNivel1} set={handleNivel1Change} />
+            <EstruturaSearch
+              selNivel1={selNivel1}
+              selNivel2={selNivel2}
+              selNivel3={selNivel3}
+              onSelect={(n1, n2, n3) => {
+                setSelNivel1(n1);
+                setSelNivel2(n2);
+                setSelNivel3(n3);
+              }}
+              recordsForOrganogram={recordsForOrganogram}
+            />
             <MultiSel label="Plano Interno" opts={planosInternos} sel={selPI} set={setSelPI} />
 
 
