@@ -6,7 +6,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Checkbox } from "./components/ui/checkbox";
 import { X, ChevronDown, Calendar, FileText, User, HelpCircle, ArrowRightLeft, Percent, Layers, ShieldCheck, HelpCircle as HelpIcon, Coins, TrendingUp, AlertTriangle } from "lucide-react";
 import { FonteBadge } from "./components/ui/FonteBadge";
-import UnitOrganogram, { CHILD_TO_PARENT, PARENT_TO_CHILDREN } from "./components/UnitOrganogram";
+import UnitOrganogram, { ugrHierarchy, NIVEL1_CATEGORIES } from "./components/UnitOrganogram";
 
 const fmt = (v: number) => isNaN(v) ? "R$ 0" : new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v || 0);
 const fmtK = (v: number) => !v || isNaN(v) ? "—" : new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", notation: "compact", maximumFractionDigits: 1 }).format(v);
@@ -168,6 +168,41 @@ function MultiSel({ label, opts, sel, set, formatVal }: { label: string; opts: s
   );
 }
 
+function SingleSel({ label, opts, sel, set }: { label: string; opts: string[]; sel: string | null; set: (v: string | null) => void }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 2, alignItems: "center" }}>
+      <span style={{ fontSize: 8.5, fontWeight: 700, color: "#475569" }}>{label}</span>
+      <Popover>
+        <PopoverTrigger asChild>
+          <button style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "3px 6px", border: "1px solid #cbd5e1", borderRadius: 5, background: "white", fontSize: 9, cursor: "pointer", width: 130, gap: 4, textAlign: "center", boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}>
+            <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", textAlign: "center", flex: 1 }}>
+              {sel || "Todas as Áreas"}
+            </span>
+            <ChevronDown size={10} style={{ opacity: 0.5, flexShrink: 0 }} />
+          </button>
+        </PopoverTrigger>
+        <PopoverContent style={{ width: 210, padding: 0 }}>
+          <Command>
+            <CommandInput placeholder="Buscar…" />
+            <CommandList style={{ maxHeight: 200, overflowY: "auto" }}>
+              <CommandEmpty>Nenhum resultado.</CommandEmpty>
+              <CommandGroup>
+                {opts.map(o => (
+                  <CommandItem key={o} value={o} onSelect={() => set(sel === o ? null : o)} style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", padding: "5px 10px", background: sel === o ? "#eff6ff" : "transparent" }}>
+                    <span style={{ fontSize: 10, color: sel === o ? "#2563eb" : "#0f172a", fontWeight: sel === o ? 700 : 500 }} title={o}>
+                      {o}
+                    </span>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+}
+
 function TaxaExecFilter({ sel, set, disponiveis }: { sel: string[]; set: (v: string[]) => void; disponiveis: string[] }) {
   const options = [
     { value: "baixo", label: "Baixo", color: "#ef4444" },
@@ -238,82 +273,42 @@ export default function App() {
     [rawRecords]
   );
 
-  // Mapeamento UGR -> Nome completo
-  const ugrNames = useMemo(() => {
-    const map: Record<string, string> = {};
-    records.forEach((r: any) => {
-      const ugr = String(r.ugr || "").trim();
-      const name = String(r.unidade || "").trim();
-      if (ugr && name && !map[ugr]) {
-        map[ugr] = name;
-      }
-    });
-    return map;
-  }, [records]);
+  // Estados dos filtros de estrutura (UGR)
+  const [selNivel1, setSelNivel1] = useState<string | null>(null);
+  const [selNivel2, setSelNivel2] = useState<string | null>(null);
+  const [selNivel3, setSelNivel3] = useState<string | null>(null);
 
-  // Estados dos filtros
-  const [selUnidade, setSelUnidade] = useState<string[]>([]);
-  const [selSubUnidades, setSelSubUnidades] = useState<string[]>([]);
   const [selPI, setSelPI] = useState<string[]>([]);
   const [selOrigem, setSelOrigem] = useState<string>("all");
   const [selTaxaExec, setSelTaxaExec] = useState<string[]>([]);
   const selStatus = "all";
 
-  // Reseta a seleção fina do organograma quando o filtro principal de unidades muda
-  useEffect(() => {
-    setSelSubUnidades([]);
-  }, [selUnidade]);
+  const handleNivel1Change = (val: string | null) => {
+    setSelNivel1(val);
+    setSelNivel2(null);
+    setSelNivel3(null);
+  };
+
+  const handleNivel2Change = (val: string | null) => {
+    setSelNivel2(val);
+    setSelNivel3(null);
+  };
 
   // Estado do registro selecionado para o modal de naturezas
   const [selectedRecord, setSelectedRecord] = useState<any | null>(null);
 
-  // Massa de dados única para os filtros (Filtros Cascata / Dependentes)
-  const unidades = useMemo(() => {
-    let filtered = records;
-    
-    // Apply PI filter
-    if (selPI.length > 0) {
-      const codesFromNames = selPI.flatMap(name => PI_GROUPS[name] ?? []);
-      filtered = filtered.filter((d: any) => codesFromNames.includes((d.plano_interno || "").trim()));
-    }
-    
-    // Apply Taxa de Execução filter
-    if (selTaxaExec.length > 0) {
-      filtered = filtered.filter((d: any) => {
-        if (!d.in_matrix) return false;
-        const aprovado = Number(d.valor_aprovado) || 0;
-        const executado = Number(d.total_executado_matriz) || 0;
-        const taxa = aprovado > 0 ? (executado / aprovado) * 100 : 0;
-        
-        let cat = "baixo";
-        if (taxa >= 35 && taxa <= 75) cat = "medio";
-        else if (taxa > 75) cat = "alto";
-        
-        return selTaxaExec.includes(cat);
-      });
-    }
-
-    const raw = Array.from(new Set(filtered.map((d: any) => (d.unidade || "").trim()).filter(Boolean))) as string[];
-    const filteredRaw = raw.filter((name: string) => {
-      const rec = records.find((r: any) => (r.unidade || "").trim() === name);
-      const ugr = rec ? String(rec.ugr || "").trim() : "";
-      return CHILD_TO_PARENT[ugr] === undefined;
-    });
-    return filteredRaw.sort((a, b) => getUnitAbbreviation(a).localeCompare(getUnitAbbreviation(b)));
-  }, [records, selPI, selTaxaExec]);
-
   const planosInternos = useMemo(() => {
     let filtered = records;
     
-    // Apply Unidade filter
-    if (selUnidade.length > 0) {
-      filtered = filtered.filter((d: any) => {
-        const u = (d.unidade || "").trim();
-        const ugr = String(d.ugr || "").trim();
-        const parentUgr = CHILD_TO_PARENT[ugr];
-        const parentName = parentUgr ? ugrNames[parentUgr] : null;
-        return selUnidade.includes(u) || (parentName && selUnidade.includes(parentName));
-      });
+    // Apply Nivel 1, 2, 3 filters
+    if (selNivel1) {
+      filtered = filtered.filter((d: any) => ugrHierarchy[String(d.ugr || "").trim()]?.nivel1 === selNivel1);
+    }
+    if (selNivel2) {
+      filtered = filtered.filter((d: any) => ugrHierarchy[String(d.ugr || "").trim()]?.sigla_n2 === selNivel2);
+    }
+    if (selNivel3) {
+      filtered = filtered.filter((d: any) => String(d.ugr || "").trim() === selNivel3);
     }
     
     // Apply Taxa de Execução filter
@@ -336,20 +331,20 @@ export default function App() {
     return PI_GROUP_NAMES.filter(name =>
       (PI_GROUPS[name] ?? []).some(code => codesPresent.has(code))
     );
-  }, [records, selUnidade, selTaxaExec]);
+  }, [records, selNivel1, selNivel2, selNivel3, selTaxaExec]);
 
   const taxasDeExecucaoDisponiveis = useMemo(() => {
     let filtered = records;
     
-    // Apply Unidade filter
-    if (selUnidade.length > 0) {
-      filtered = filtered.filter((d: any) => {
-        const u = (d.unidade || "").trim();
-        const ugr = String(d.ugr || "").trim();
-        const parentUgr = CHILD_TO_PARENT[ugr];
-        const parentName = parentUgr ? ugrNames[parentUgr] : null;
-        return selUnidade.includes(u) || (parentName && selUnidade.includes(parentName));
-      });
+    // Apply Nivel 1, 2, 3 filters
+    if (selNivel1) {
+      filtered = filtered.filter((d: any) => ugrHierarchy[String(d.ugr || "").trim()]?.nivel1 === selNivel1);
+    }
+    if (selNivel2) {
+      filtered = filtered.filter((d: any) => ugrHierarchy[String(d.ugr || "").trim()]?.sigla_n2 === selNivel2);
+    }
+    if (selNivel3) {
+      filtered = filtered.filter((d: any) => String(d.ugr || "").trim() === selNivel3);
     }
     
     // Apply PI filter
@@ -373,48 +368,13 @@ export default function App() {
     });
     
     return Array.from(cats);
-  }, [records, selUnidade, selPI]);
+  }, [records, selNivel1, selNivel2, selNivel3, selPI]);
 
-  // Limpa seleções inválidas quando as opções do filtro cascata mudam
-  useEffect(() => {
-    if (selUnidade.length > 0) {
-      const valid = selUnidade.filter(u => unidades.includes(u));
-      if (valid.length !== selUnidade.length) setSelUnidade(valid);
-    }
-  }, [unidades, selUnidade]);
-
-  useEffect(() => {
-    if (selPI.length > 0) {
-      const valid = selPI.filter(pi => planosInternos.includes(pi));
-      if (valid.length !== selPI.length) setSelPI(valid);
-    }
-  }, [planosInternos, selPI]);
-
-  useEffect(() => {
-    if (selTaxaExec.length > 0) {
-      const valid = selTaxaExec.filter(t => taxasDeExecucaoDisponiveis.includes(t));
-      if (valid.length !== selTaxaExec.length) setSelTaxaExec(valid);
-    }
-  }, [taxasDeExecucaoDisponiveis, selTaxaExec]);
-
-  // Filtros aplicados sobre a tabela principal
-  const filteredRecords = useMemo(() => {
+  const recordsForOrganogram = useMemo(() => {
     return records.filter((d: any) => {
-      const u = (d.unidade || "").trim();
-      const ugr = String(d.ugr || "").trim();
       const pi = (d.plano_interno || "").trim();
       
-      if (selUnidade.length > 0) {
-        const parentUgr = CHILD_TO_PARENT[ugr];
-        const parentName = parentUgr ? ugrNames[parentUgr] : null;
-        if (!selUnidade.includes(u) && !(parentName && selUnidade.includes(parentName))) {
-          return false;
-        }
-        if (selSubUnidades.length > 0 && !selSubUnidades.includes(ugr)) {
-          return false;
-        }
-      }
-      // Filtro de PI: expande nomes selecionados para os códigos correspondentes
+      // Filtro de PI
       if (selPI.length > 0) {
         const codesFromNames = selPI.flatMap(name => PI_GROUPS[name] ?? []);
         if (!codesFromNames.includes(pi)) return false;
@@ -443,41 +403,126 @@ export default function App() {
 
       return true;
     });
-  }, [records, selUnidade, selPI, selOrigem, selStatus, selTaxaExec, selSubUnidades]);
+  }, [records, selPI, selOrigem, selStatus, selTaxaExec]);
+
+  const activeNivel1Categories = useMemo(() => {
+    return NIVEL1_CATEGORIES.filter(cat => 
+      recordsForOrganogram.some((r: any) => {
+        const h = ugrHierarchy[String(r.ugr || "").trim()];
+        return h && h.nivel1 === cat;
+      })
+    );
+  }, [recordsForOrganogram]);
+
+  // Se a Área selecionada não estiver mais ativa por conta do filtro do PI, reseta os níveis de UGR
+  useEffect(() => {
+    if (selNivel1 && !activeNivel1Categories.includes(selNivel1)) {
+      setSelNivel1(null);
+      setSelNivel2(null);
+      setSelNivel3(null);
+    }
+  }, [activeNivel1Categories, selNivel1]);
+
+  useEffect(() => {
+    if (selPI.length > 0) {
+      const valid = selPI.filter(pi => planosInternos.includes(pi));
+      if (valid.length !== selPI.length) setSelPI(valid);
+    }
+  }, [planosInternos, selPI]);
+
+  useEffect(() => {
+    if (selTaxaExec.length > 0) {
+      const valid = selTaxaExec.filter(t => taxasDeExecucaoDisponiveis.includes(t));
+      if (valid.length !== selTaxaExec.length) setSelTaxaExec(valid);
+    }
+  }, [taxasDeExecucaoDisponiveis, selTaxaExec]);
+
+  // Filtros aplicados sobre a tabela principal
+  const filteredRecords = useMemo(() => {
+    return records.filter((d: any) => {
+      const ugr = String(d.ugr || "").trim();
+      const h = ugrHierarchy[ugr];
+      const pi = (d.plano_interno || "").trim();
+      
+      if (selNivel1) {
+        if (!h || h.nivel1 !== selNivel1) return false;
+      }
+      if (selNivel2) {
+        if (!h || h.sigla_n2 !== selNivel2) return false;
+      }
+      if (selNivel3) {
+        if (!h || h.ugr !== selNivel3) return false;
+      }
+
+      // Filtro de PI
+      if (selPI.length > 0) {
+        const codesFromNames = selPI.flatMap(name => PI_GROUPS[name] ?? []);
+        if (!codesFromNames.includes(pi)) return false;
+      }
+      
+      // Filtro de origem
+      if (selOrigem === "matriz" && !d.in_matrix) return false;
+      if (selOrigem === "tg" && d.in_matrix) return false;
+
+      // Filtro de status
+      if (selStatus !== "all" && d.semaforo !== selStatus) return false;
+
+      // Filtro de taxa de execução
+      if (selTaxaExec.length > 0) {
+        if (!d.in_matrix) return false;
+        const aprovado = Number(d.valor_aprovado) || 0;
+        const executado = Number(d.total_executado_matriz) || 0;
+        const taxa = aprovado > 0 ? (executado / aprovado) * 100 : 0;
+        
+        let cat = "baixo";
+        if (taxa >= 35 && taxa <= 75) cat = "medio";
+        else if (taxa > 75) cat = "alto";
+        
+        if (!selTaxaExec.includes(cat)) return false;
+      }
+
+      return true;
+    });
+  }, [records, selNivel1, selNivel2, selNivel3, selPI, selOrigem, selStatus, selTaxaExec]);
 
   // Filtros aplicados sobre a tabela de adiantamentos
   const filteredAdiantamentos = useMemo(() => {
+    if (!adiantamentos || adiantamentos.length === 0) return [];
     return adiantamentos.filter((d: any) => {
       const u = (d.unidade || "").trim().toUpperCase();
-      if (selUnidade.length > 0) {
-        const matchesAny = selUnidade.some(su => {
-          if (su.toUpperCase().includes(u) || u.includes(su.toUpperCase())) return true;
-          
-          const selUgr = Object.keys(ugrNames).find(k => ugrNames[k] === su);
-          if (selUgr) {
-            const children = PARENT_TO_CHILDREN[selUgr] || [];
-            return children.some(chUgr => {
-              const chName = ugrNames[chUgr] || "";
-              const chAbbrev = getUnitAbbreviation(chName).toUpperCase();
-              return chAbbrev === u || chName.toUpperCase().includes(u) || u.includes(chName.toUpperCase());
-            });
-          }
-          return false;
-        });
-        if (!matchesAny) return false;
+      const uClean = u === "FCTE" ? "FCE" : u;
 
-        if (selSubUnidades.length > 0) {
-          const matchesSub = selSubUnidades.some(subUgr => {
-            const subName = ugrNames[subUgr] || "";
-            const subAbbrev = getUnitAbbreviation(subName).toUpperCase();
-            return subAbbrev === u || subName.toUpperCase().includes(u) || u.includes(subName.toUpperCase());
-          });
-          if (!matchesSub) return false;
+      if (selNivel3) {
+        const h3 = ugrHierarchy[selNivel3];
+        if (h3) {
+          const sig3 = String(h3.sigla_n3 || "").toUpperCase();
+          if (uClean !== sig3) return false;
+        } else {
+          return false;
         }
+      } 
+      else if (selNivel2) {
+        const sig2 = selNivel2.toUpperCase();
+        if (uClean !== sig2) {
+          const belongsToN2 = Object.values(ugrHierarchy).some(h => 
+            String(h.sigla_n2 || "").toUpperCase() === sig2 && 
+            String(h.sigla_n3 || "").toUpperCase() === uClean
+          );
+          if (!belongsToN2) return false;
+        }
+      } 
+      else if (selNivel1) {
+        const belongsToN1 = Object.values(ugrHierarchy).some(h => 
+          h.nivel1 === selNivel1 && 
+          (String(h.sigla_n2 || "").toUpperCase() === uClean || 
+           String(h.sigla_n3 || "").toUpperCase() === uClean)
+        );
+        if (!belongsToN1) return false;
       }
+
       return true;
     });
-  }, [adiantamentos, selUnidade, ugrNames, selSubUnidades]);
+  }, [adiantamentos, selNivel1, selNivel2, selNivel3]);
 
   // Totais agregados dos registros filtrados (Matriz x Tesouro)
   const T = useMemo(() => {
@@ -557,7 +602,7 @@ export default function App() {
 
   // Análise diagnóstica e estatística dinâmica da unidade para a Matriz
   const unitMatrixDiagnostic = useMemo(() => {
-    if (loading || !records || records.length === 0 || selUnidade.length === 0) return null;
+    if (loading || !records || records.length === 0 || (!selNivel1 && !selNivel2 && !selNivel3)) return null;
 
     // Filtra todos os registros da base que pertencem à matriz
     const allMatrixRecords = records.filter((r: any) => r.in_matrix);
@@ -573,14 +618,18 @@ export default function App() {
 
     // Filtra os registros da unidade que estão na matriz
     const selectedUnitRecords = allMatrixRecords.filter((r: any) => {
-      const u = (r.unidade || "").trim();
       const ugr = String(r.ugr || "").trim();
-      const parentUgr = CHILD_TO_PARENT[ugr];
-      const parentName = parentUgr ? ugrNames[parentUgr] : null;
-      const inHierarchy = selUnidade.includes(u) || (parentName && selUnidade.includes(parentName));
-      if (!inHierarchy) return false;
-      if (selSubUnidades.length > 0 && !selSubUnidades.includes(ugr)) return false;
-      return true;
+      const h = ugrHierarchy[ugr];
+      if (selNivel3) {
+        return ugr === selNivel3;
+      }
+      if (selNivel2) {
+        return h && h.sigla_n2 === selNivel2;
+      }
+      if (selNivel1) {
+        return h && h.nivel1 === selNivel1;
+      }
+      return false;
     });
 
     if (selectedUnitRecords.length === 0) return null;
@@ -678,8 +727,22 @@ export default function App() {
       );
     }
 
+    const unitsText = (() => {
+      if (selNivel3) {
+        return ugrHierarchy[selNivel3]?.name_n3 || selNivel3;
+      }
+      if (selNivel2) {
+        const found = Object.values(ugrHierarchy).find(h => h.sigla_n2 === selNivel2);
+        return found ? found.name_n2 : selNivel2;
+      }
+      if (selNivel1) {
+        return selNivel1;
+      }
+      return "Universidade de Brasília";
+    })();
+
     return {
-      unitsText: selUnidade.map(getUnitAbbreviation).join(", "),
+      unitsText,
       approvedText: fmt(approved),
       executedText: fmt(executed),
       debitedText: fmt(debited),
@@ -701,26 +764,34 @@ export default function App() {
       statusBg,
       recommendations
     };
-  }, [selUnidade, records, loading, selSubUnidades]);
+  }, [selNivel1, selNivel2, selNivel3, records, loading]);
 
-  const hasFilter = selUnidade.length > 0 || selPI.length > 0 || selOrigem !== "all" || selTaxaExec.length > 0;
+  const hasFilter = selNivel1 !== null || selNivel2 !== null || selNivel3 !== null || selPI.length > 0 || selOrigem !== "all" || selTaxaExec.length > 0;
 
   const cleanFilters = () => {
-    setSelUnidade([]);
+    setSelNivel1(null);
+    setSelNivel2(null);
+    setSelNivel3(null);
     setSelPI([]);
     setSelOrigem("all");
     setSelTaxaExec([]);
   };
 
-  const handleToggleSubUnit = (ugr: string) => {
-    setSelSubUnidades(prev => {
-      if (prev.includes(ugr)) {
-        return prev.filter(x => x !== ugr);
-      } else {
-        return [...prev, ugr];
-      }
-    });
-  };
+  const selectionLabel = useMemo(() => {
+    const parts = [];
+    if (selNivel3) {
+      parts.push(ugrHierarchy[selNivel3]?.name_n3 || selNivel3);
+    } else if (selNivel2) {
+      const found = Object.values(ugrHierarchy).find(h => h.sigla_n2 === selNivel2);
+      parts.push(found ? found.name_n2 : selNivel2);
+    } else if (selNivel1) {
+      parts.push(selNivel1);
+    }
+    if (selPI.length > 0) {
+      parts.push(selPI.join(", "));
+    }
+    return parts.length > 0 ? parts.join(" | ") : "Matriz + Custos Indiretos + Arrecadação";
+  }, [selNivel1, selNivel2, selNivel3, selPI]);
 
   const s: Record<string, React.CSSProperties> = {
     panel: { background: "white", borderRadius: 12, border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" },
@@ -749,9 +820,8 @@ export default function App() {
             </div>
           </div>
 
-          {/* Filtros Globais */}
           <div style={{ ...s.panel, padding: "6px 10px", display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
-            <MultiSel label="Unidade (UGR)" opts={unidades} sel={selUnidade} set={setSelUnidade} formatVal={getUnitAbbreviation} />
+            <SingleSel label="Estrutura" opts={activeNivel1Categories} sel={selNivel1} set={handleNivel1Change} />
             <MultiSel label="Plano Interno" opts={planosInternos} sel={selPI} set={setSelPI} />
 
 
@@ -772,22 +842,19 @@ export default function App() {
 
           {/* KPIs — linha única */}
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <span style={{ fontSize: 10.5, fontWeight: 700, color: "#1e293b", background: "#f1f5f9", padding: "4px 12px", borderRadius: 12, border: "1px solid #cbd5e1", display: "flex", alignItems: "center", gap: 6, boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}>
+                <Layers size={12} style={{ color: "#64748b" }} />
+                {selectionLabel}
+              </span>
+            </div>
             {(() => {
-              const parts = [];
-              if (selUnidade.length > 0) parts.push(selUnidade.join(", "));
-              if (selPI.length > 0) parts.push(selPI.join(", "));
-              const label = parts.length > 0 ? parts.join(" | ") : "Matriz + Custos Indiretos + Arrecadação";
-              return (
-                <div style={{ display: "flex", justifyContent: "center" }}>
-                  <span style={{ fontSize: 10.5, fontWeight: 700, color: "#1e293b", background: "#f1f5f9", padding: "4px 12px", borderRadius: 12, border: "1px solid #cbd5e1", display: "flex", alignItems: "center", gap: 6, boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}>
-                    <Layers size={12} style={{ color: "#64748b" }} />
-                    {label}
-                  </span>
-                </div>
-              );
-            })()}
-            {(() => {
-              const isSimplifiedKpis = selPI.length === 1 && (selPI[0] === "Custos Indiretos" || selPI[0] === "Arrecadação");
+              const isSimplifiedKpis = (selPI.length === 1 && (selPI[0] === "Custos Indiretos" || selPI[0] === "Arrecadação")) || 
+                (filteredRecords.length > 0 && filteredRecords.every((d: any) => {
+                  const pi = (d.plano_interno || "").trim();
+                  const isCiOrArr = (PI_GROUPS["Custos Indiretos"] || []).includes(pi) || (PI_GROUPS["Arrecadação"] || []).includes(pi);
+                  return isCiOrArr || !d.in_matrix;
+                }));
               
               if (isSimplifiedKpis) {
                 return (
@@ -812,12 +879,13 @@ export default function App() {
           </div>
 
           <UnitOrganogram 
-            selUnidade={selUnidade} 
-            ugrNames={ugrNames} 
-            formatVal={getUnitAbbreviation} 
-            records={records}
-            selSubUnidades={selSubUnidades}
-            onToggleSubUnit={handleToggleSubUnit}
+            selNivel1={selNivel1}
+            selNivel2={selNivel2}
+            selNivel3={selNivel3}
+            onSelectNivel1={handleNivel1Change}
+            onSelectNivel2={handleNivel2Change}
+            onSelectNivel3={setSelNivel3}
+            records={recordsForOrganogram}
           />
 
           {/* Tabela Principal (Cruzamento) */}
@@ -871,8 +939,10 @@ export default function App() {
                     return (
                       <tr key={i} style={{ background: i % 2 === 0 ? "white" : "#fafbfc" }}>
                         <td style={{ ...s.td, padding: "6px 2px", fontSize: "9.5px", fontWeight: 700 }}>{d.ugr}</td>
-                        <td style={{ ...s.td, padding: "6px 2px", fontSize: "9.5px", whiteSpace: "normal", wordBreak: "break-word", lineHeight: 1.2 }} title={d.unidade}>
-                          <span style={{ fontWeight: 600, color: "#0f172a" }}>{d.unidade || "—"}</span>
+                        <td style={{ ...s.td, padding: "6px 2px", fontSize: "9.5px", whiteSpace: "normal", wordBreak: "break-word", lineHeight: 1.2 }} title={ugrHierarchy[String(d.ugr || "").trim()]?.name_n3 || d.unidade}>
+                          <span style={{ fontWeight: 600, color: "#0f172a" }}>
+                            {ugrHierarchy[String(d.ugr || "").trim()]?.name_n3 || d.unidade || "—"}
+                          </span>
                         </td>
                         <td style={{ ...s.td, padding: "6px 2px", fontSize: "9.5px", whiteSpace: "normal", wordBreak: "break-word", lineHeight: 1.2, textAlign: "center" }} title={`${d.plano_interno} - ${piLabel(d.plano_interno)}`}>
                           <span style={{ fontWeight: 600, color: "#4f46e5" }}>{piLabel(d.plano_interno)}</span>

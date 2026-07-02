@@ -1,0 +1,2198 @@
+{
+  "110156": {
+    "ugr": "110156",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "110784": {
+    "ugr": "110784",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "110785": {
+    "ugr": "110785",
+    "key": "EXTERNO",
+    "name_n3": "Externo",
+    "nivel1": "Externo",
+    "sigla_n2": "Externo",
+    "name_n2": "Externo",
+    "sigla_n3": "Externo"
+  },
+  "110786": {
+    "ugr": "110786",
+    "key": "EXTERNO",
+    "name_n3": "Externo",
+    "nivel1": "Externo",
+    "sigla_n2": "Externo",
+    "name_n2": "Externo",
+    "sigla_n3": "Externo"
+  },
+  "130002": {
+    "ugr": "130002",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "130149": {
+    "ugr": "130149",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "150241": {
+    "ugr": "150241",
+    "key": "CCOM",
+    "name_n3": "Centro de Políticas, Direito, Economia e Tecnologias das Comunicações",
+    "nivel1": "CENTROS",
+    "sigla_n2": "CCOM",
+    "name_n2": "Centro de Políticas, Direito, Economia e Tecnologias das Comunicações",
+    "sigla_n3": "CCOM"
+  },
+  "150242": {
+    "ugr": "150242",
+    "key": "FGA",
+    "name_n3": "Faculdade do Gama",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FGA",
+    "name_n2": "Faculdade do Gama",
+    "sigla_n3": "FGA"
+  },
+  "150243": {
+    "ugr": "150243",
+    "key": "FCE",
+    "name_n3": "Faculdade de Ceilândia",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FCE",
+    "name_n2": "Faculdade de Ceilândia",
+    "sigla_n3": "FCE"
+  },
+  "150245": {
+    "ugr": "150245",
+    "key": "CIRPS/FUB",
+    "name_n3": "SEM UGR",
+    "nivel1": "Outros",
+    "sigla_n2": "CIRPS/FUB",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "CIRPS/FUB"
+  },
+  "150414": {
+    "ugr": "150414",
+    "key": "PPGA",
+    "name_n3": "Programa de Pós Graduação em Administração",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FACE",
+    "name_n2": "Faculdade de Economia, Administração, Contabilidade e Gestão de Políticas Públicas",
+    "sigla_n3": "PPGA"
+  },
+  "150415": {
+    "ugr": "150415",
+    "key": "SEM CLASSIFICAÇÃO",
+    "name_n3": "A classificar",
+    "nivel1": "A classificar",
+    "sigla_n2": "A classificar",
+    "name_n2": "A classificar",
+    "sigla_n3": "A classificar"
+  },
+  "150417": {
+    "ugr": "150417",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "151075": {
+    "ugr": "151075",
+    "key": "BIOETICA",
+    "name_n3": "FS - Bioética",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FS",
+    "name_n2": "Faculdade de Ciências da Saúde",
+    "sigla_n3": "BIOETICA"
+  },
+  "151077": {
+    "ugr": "151077",
+    "key": "FAV",
+    "name_n3": "Faculdade de Agronomia e Medicina Veterinária",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FAV",
+    "name_n2": "Faculdade de Agronomia e Medicina Veterinária",
+    "sigla_n3": "FAV"
+  },
+  "151833": {
+    "ugr": "151833",
+    "key": "FCI",
+    "name_n3": "Faculdade de Ciência da Informação",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FCI",
+    "name_n2": "Faculdade de Ciência da Informação",
+    "sigla_n3": "FCI"
+  },
+  "152042": {
+    "ugr": "152042",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "152221": {
+    "ugr": "152221",
+    "key": "IQ",
+    "name_n3": "Instituto de Química",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IQ",
+    "name_n2": "Instituto de Química",
+    "sigla_n3": "IQ"
+  },
+  "152364": {
+    "ugr": "152364",
+    "key": "CER",
+    "name_n3": "Centro UnB Cerrado",
+    "nivel1": "CENTROS",
+    "sigla_n2": "CER",
+    "name_n2": "Centro UnB Cerrado",
+    "sigla_n3": "CER"
+  },
+  "152371": {
+    "ugr": "152371",
+    "key": "DOR",
+    "name_n3": "Diretoria de Orçamento",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DPO",
+    "name_n2": "Decanato de Planejamento, Orçamento e Avaliação Institucional",
+    "sigla_n3": "DOR"
+  },
+  "152383": {
+    "ugr": "152383",
+    "key": "OUV",
+    "name_n3": "Ouvidoria",
+    "nivel1": "REITORIA",
+    "sigla_n2": "OUV",
+    "name_n2": "Ouvidoria",
+    "sigla_n3": "OUV"
+  },
+  "152386": {
+    "ugr": "152386",
+    "key": "DGP",
+    "name_n3": "Decanato de Gestão de Pessoas",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DGP",
+    "name_n2": "Decanato de Gestão de Pessoas",
+    "sigla_n3": "DGP"
+  },
+  "152387": {
+    "ugr": "152387",
+    "key": "DPO",
+    "name_n3": "Decanato de Planejamento, Orçamento e Avaliação Institucional",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DPO",
+    "name_n2": "Decanato de Planejamento, Orçamento e Avaliação Institucional",
+    "sigla_n3": "DPO"
+  },
+  "152400": {
+    "ugr": "152400",
+    "key": "FAR",
+    "name_n3": "Departamento de Farmácia",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FS",
+    "name_n2": "Faculdade de Ciências da Saúde",
+    "sigla_n3": "FAR"
+  },
+  "152401": {
+    "ugr": "152401",
+    "key": "FGA",
+    "name_n3": "Faculdade do Gama",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FGA",
+    "name_n2": "Faculdade do Gama",
+    "sigla_n3": "FGA"
+  },
+  "152405": {
+    "ugr": "152405",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "152699": {
+    "ugr": "152699",
+    "key": "LET",
+    "name_n3": "Departamento de Línguas Estrangeiras e Tradução",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IL",
+    "name_n2": "Instituto de Letras",
+    "sigla_n3": "LET"
+  },
+  "153173": {
+    "ugr": "153173",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "153212": {
+    "ugr": "153212",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "154019": {
+    "ugr": "154019",
+    "key": "CDT",
+    "name_n3": "Centro de Apoio ao Desenvolvimento Tecnológico",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DPI",
+    "name_n2": "Decanato de Pesquisa e Inovação",
+    "sigla_n3": "CDT"
+  },
+  "154040": {
+    "ugr": "154040",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "154076": {
+    "ugr": "154076",
+    "key": "STI",
+    "name_n3": "Secretaria de Tecnologia da Informação",
+    "nivel1": "ÓRGÃOS COMPLEMENTARES",
+    "sigla_n2": "STI",
+    "name_n2": "Secretaria de Tecnologia da Informação",
+    "sigla_n3": "STI"
+  },
+  "154077": {
+    "ugr": "154077",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "154078": {
+    "ugr": "154078",
+    "key": "EDU",
+    "name_n3": "Editora Universidade de Brasília",
+    "nivel1": "ÓRGÃOS COMPLEMENTARES",
+    "sigla_n2": "EDU",
+    "name_n2": "Editora Universidade de Brasília",
+    "sigla_n3": "EDU"
+  },
+  "154079": {
+    "ugr": "154079",
+    "key": "CESPE",
+    "name_n3": "CESPE",
+    "nivel1": "CESPE",
+    "sigla_n2": "CESPE",
+    "name_n2": "CESPE",
+    "sigla_n3": "CESPE"
+  },
+  "154106": {
+    "ugr": "154106",
+    "key": "HUB",
+    "name_n3": "Hospital Universitário de Brasília",
+    "nivel1": "ÓRGÃOS COMPLEMENTARES",
+    "sigla_n2": "HUB",
+    "name_n2": "Hospital Universitário de Brasília",
+    "sigla_n3": "HUB"
+  },
+  "154151": {
+    "ugr": "154151",
+    "key": "DAF",
+    "name_n3": "Decanato de Administração",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DAF",
+    "name_n2": "Decanato de Administração",
+    "sigla_n3": "DAF"
+  },
+  "154152": {
+    "ugr": "154152",
+    "key": "DAC",
+    "name_n3": "Decanato de Assuntos Comunitários",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DAC",
+    "name_n2": "Decanato de Assuntos Comunitários",
+    "sigla_n3": "DAC"
+  },
+  "154153": {
+    "ugr": "154153",
+    "key": "DEX",
+    "name_n3": "Decanato de Extensão",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DEX",
+    "name_n2": "Decanato de Extensão",
+    "sigla_n3": "DEX"
+  },
+  "154154": {
+    "ugr": "154154",
+    "key": "DPG",
+    "name_n3": "Decanato de Pós-Graduação",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DPG",
+    "name_n2": "Decanato de Pós-Graduação",
+    "sigla_n3": "DPG"
+  },
+  "154155": {
+    "ugr": "154155",
+    "key": "SPI",
+    "name_n3": "Secretaria de Patrimônio Imobiliário",
+    "nivel1": "ÓRGÃOS AUXILIARES",
+    "sigla_n2": "SPI",
+    "name_n2": "Secretaria de Patrimônio Imobiliário",
+    "sigla_n3": "SPI"
+  },
+  "154156": {
+    "ugr": "154156",
+    "key": "GRE",
+    "name_n3": "Gabinete da Reitoria",
+    "nivel1": "ÓRGÃOS AUXILIARES",
+    "sigla_n2": "GRE",
+    "name_n2": "Gabinete da Reitoria",
+    "sigla_n3": "GRE"
+  },
+  "154157": {
+    "ugr": "154157",
+    "key": "IE",
+    "name_n3": "Instituto de Ciências Exatas",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IE",
+    "name_n2": "Instituto de Ciências Exatas",
+    "sigla_n3": "IE"
+  },
+  "154158": {
+    "ugr": "154158",
+    "key": "IB",
+    "name_n3": "Instituto de Ciências Biológicas",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IB",
+    "name_n2": "Instituto de Ciências Biológicas",
+    "sigla_n3": "IB"
+  },
+  "154159": {
+    "ugr": "154159",
+    "key": "IH",
+    "name_n3": "Instituto de Ciências Humanas",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IH",
+    "name_n2": "Instituto de Ciências Humanas",
+    "sigla_n3": "IH"
+  },
+  "154160": {
+    "ugr": "154160",
+    "key": "IL",
+    "name_n3": "Instituto de Letras",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IL",
+    "name_n2": "Instituto de Letras",
+    "sigla_n3": "IL"
+  },
+  "154161": {
+    "ugr": "154161",
+    "key": "FAU",
+    "name_n3": "Faculdade de Arquitetura e Urbanismo",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FAU",
+    "name_n2": "Faculdade de Arquitetura e Urbanismo",
+    "sigla_n3": "FAU"
+  },
+  "154162": {
+    "ugr": "154162",
+    "key": "FT",
+    "name_n3": "Faculdade de Tecnologia",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FT",
+    "name_n2": "Faculdade de Tecnologia",
+    "sigla_n3": "FT"
+  },
+  "154163": {
+    "ugr": "154163",
+    "key": "FS",
+    "name_n3": "Faculdade de Ciências da Saúde",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FS",
+    "name_n2": "Faculdade de Ciências da Saúde",
+    "sigla_n3": "FS"
+  },
+  "154164": {
+    "ugr": "154164",
+    "key": "FACE",
+    "name_n3": "Faculdade de Economia, Administração, Contabilidade e Gestão de Políticas Públicas",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FACE",
+    "name_n2": "Faculdade de Economia, Administração, Contabilidade e Gestão de Políticas Públicas",
+    "sigla_n3": "FACE"
+  },
+  "154165": {
+    "ugr": "154165",
+    "key": "FE",
+    "name_n3": "Faculdade de Educação",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FE",
+    "name_n2": "Faculdade de Educação",
+    "sigla_n3": "FE"
+  },
+  "154166": {
+    "ugr": "154166",
+    "key": "IP",
+    "name_n3": "Instituto de Psicologia",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IP",
+    "name_n2": "Instituto de Psicologia",
+    "sigla_n3": "IP"
+  },
+  "154167": {
+    "ugr": "154167",
+    "key": "IDA",
+    "name_n3": "Instituto de Artes",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IdA",
+    "name_n2": "Instituto de Artes",
+    "sigla_n3": "IdA"
+  },
+  "154168": {
+    "ugr": "154168",
+    "key": "DEG",
+    "name_n3": "Decanato de Ensino de Graduação",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DEG",
+    "name_n2": "Decanato de Ensino de Graduação",
+    "sigla_n3": "DEG"
+  },
+  "154169": {
+    "ugr": "154169",
+    "key": "FAC",
+    "name_n3": "Faculdade de Comunicação",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FAC",
+    "name_n2": "Faculdade de Comunicação",
+    "sigla_n3": "FAC"
+  },
+  "154172": {
+    "ugr": "154172",
+    "key": "CDT",
+    "name_n3": "Centro de Apoio ao Desenvolvimento Tecnológico",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DPI",
+    "name_n2": "Decanato de Pesquisa e Inovação",
+    "sigla_n3": "CDT"
+  },
+  "154173": {
+    "ugr": "154173",
+    "key": "CEAM",
+    "name_n3": "Centro de Estudos Avançados Multidisciplinares",
+    "nivel1": "CENTROS",
+    "sigla_n2": "CEAM",
+    "name_n2": "Centro de Estudos Avançados Multidisciplinares",
+    "sigla_n3": "CEAM"
+  },
+  "154175": {
+    "ugr": "154175",
+    "key": "CEAD",
+    "name_n3": "Centro de Educação a Distância",
+    "nivel1": "ÓRGÃOS COMPLEMENTARES",
+    "sigla_n2": "CEAD",
+    "name_n2": "Centro de Educação a Distância",
+    "sigla_n3": "CEAD"
+  },
+  "154186": {
+    "ugr": "154186",
+    "key": "DCO",
+    "name_n3": "Diretoria de Compras",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DAF",
+    "name_n2": "Decanato de Administração",
+    "sigla_n3": "DCO"
+  },
+  "154187": {
+    "ugr": "154187",
+    "key": "DCF",
+    "name_n3": "Diretoria de Contabilidade e Finanças",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DAF",
+    "name_n2": "Decanato de Administração",
+    "sigla_n3": "DCF"
+  },
+  "154188": {
+    "ugr": "154188",
+    "key": "IG",
+    "name_n3": "Instituto de Geociências",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IG",
+    "name_n2": "Instituto de Geociências",
+    "sigla_n3": "IG"
+  },
+  "154189": {
+    "ugr": "154189",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "154190": {
+    "ugr": "154190",
+    "key": "UNBTV",
+    "name_n3": "Rádio e Televisão Universitárias",
+    "nivel1": "ÓRGÃOS COMPLEMENTARES",
+    "sigla_n2": "UnBTV",
+    "name_n2": "Rádio e Televisão Universitárias",
+    "sigla_n3": "UnBTV"
+  },
+  "154191": {
+    "ugr": "154191",
+    "key": "PRC",
+    "name_n3": "Prefeitura da UnB",
+    "nivel1": "ÓRGÃOS AUXILIARES",
+    "sigla_n2": "PRC",
+    "name_n2": "Prefeitura da UnB",
+    "sigla_n3": "PRC"
+  },
+  "154192": {
+    "ugr": "154192",
+    "key": "DEAC",
+    "name_n3": "Diretoria de Esporte e Atividades Comunitárias",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DAC",
+    "name_n2": "Decanato de Assuntos Comunitários",
+    "sigla_n3": "DEAC"
+  },
+  "154193": {
+    "ugr": "154193",
+    "key": "DRU",
+    "name_n3": "Diretoria do Restaurante Universitário",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DAC",
+    "name_n2": "Decanato de Assuntos Comunitários",
+    "sigla_n3": "DRU"
+  },
+  "154195": {
+    "ugr": "154195",
+    "key": "DGM",
+    "name_n3": "Diretoria de Gestão de Materiais",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DAF",
+    "name_n2": "Decanato de Administração",
+    "sigla_n3": "DGM"
+  },
+  "154196": {
+    "ugr": "154196",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "154197": {
+    "ugr": "154197",
+    "key": "BCE",
+    "name_n3": "Biblioteca Central",
+    "nivel1": "ÓRGÃOS COMPLEMENTARES",
+    "sigla_n2": "BCE",
+    "name_n2": "Biblioteca Central",
+    "sigla_n3": "BCE"
+  },
+  "154198": {
+    "ugr": "154198",
+    "key": "CIFMC",
+    "name_n3": "Centro Internacional de Física da Matéria Condensada",
+    "nivel1": "CENTROS",
+    "sigla_n2": "CIFMC",
+    "name_n2": "Centro Internacional de Física da Matéria Condensada",
+    "sigla_n3": "CIFMC"
+  },
+  "154199": {
+    "ugr": "154199",
+    "key": "CCA",
+    "name_n3": "Departamento de Ciências Contábeis e Atuariais",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FACE",
+    "name_n2": "Faculdade de Economia, Administração, Contabilidade e Gestão de Políticas Públicas",
+    "sigla_n3": "CCA"
+  },
+  "154218": {
+    "ugr": "154218",
+    "key": "PF",
+    "name_n3": "Procuradoria Federal",
+    "nivel1": "REITORIA",
+    "sigla_n2": "PF",
+    "name_n2": "Procuradoria Federal",
+    "sigla_n3": "PF"
+  },
+  "154219": {
+    "ugr": "154219",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "154221": {
+    "ugr": "154221",
+    "key": "SECOM",
+    "name_n3": "Secretaria de Comunicação",
+    "nivel1": "ASSESSORIAS E SECRETARIAS",
+    "sigla_n2": "SECOM",
+    "name_n2": "Secretaria de Comunicação",
+    "sigla_n3": "SECOM"
+  },
+  "154222": {
+    "ugr": "154222",
+    "key": "AUD",
+    "name_n3": "Auditoria Interna",
+    "nivel1": "REITORIA",
+    "sigla_n2": "AUD",
+    "name_n2": "Auditoria Interna",
+    "sigla_n3": "AUD"
+  },
+  "154223": {
+    "ugr": "154223",
+    "key": "CEDOC",
+    "name_n3": "Centro de Documentação e Arquivo",
+    "nivel1": "ÓRGÃOS COMPLEMENTARES",
+    "sigla_n2": "ACE",
+    "name_n2": "Arquivo Central",
+    "sigla_n3": "CEDOC"
+  },
+  "154226": {
+    "ugr": "154226",
+    "key": "FAL",
+    "name_n3": "Fazenda Água Limpa",
+    "nivel1": "ÓRGÃOS COMPLEMENTARES",
+    "sigla_n2": "FAL",
+    "name_n2": "Fazenda Água Limpa",
+    "sigla_n3": "FAL"
+  },
+  "154227": {
+    "ugr": "154227",
+    "key": "VRT",
+    "name_n3": "Vice-Reitoria",
+    "nivel1": "REITORIA",
+    "sigla_n2": "VRT",
+    "name_n2": "Vice-Reitoria",
+    "sigla_n3": "VRT"
+  },
+  "154228": {
+    "ugr": "154228",
+    "key": "IF",
+    "name_n3": "Instituto de Física",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IF",
+    "name_n2": "Instituto de Física",
+    "sigla_n3": "IF"
+  },
+  "154229": {
+    "ugr": "154229",
+    "key": "MAT",
+    "name_n3": "Departamento de Matemática",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IE",
+    "name_n2": "Instituto de Ciências Exatas",
+    "sigla_n3": "MAT"
+  },
+  "154230": {
+    "ugr": "154230",
+    "key": "IQ",
+    "name_n3": "Instituto de Química",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IQ",
+    "name_n2": "Instituto de Química",
+    "sigla_n3": "IQ"
+  },
+  "154231": {
+    "ugr": "154231",
+    "key": "EST",
+    "name_n3": "Departamento de Estatística",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IE",
+    "name_n2": "Instituto de Ciências Exatas",
+    "sigla_n3": "EST"
+  },
+  "154232": {
+    "ugr": "154232",
+    "key": "CIC",
+    "name_n3": "Departamento de Ciência da Computação",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IE",
+    "name_n2": "Instituto de Ciências Exatas",
+    "sigla_n3": "CIC"
+  },
+  "154233": {
+    "ugr": "154233",
+    "key": "CEL",
+    "name_n3": "Departamento de Biologia Celular",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IB",
+    "name_n2": "Instituto de Ciências Biológicas",
+    "sigla_n3": "CEL"
+  },
+  "154234": {
+    "ugr": "154234",
+    "key": "CFS",
+    "name_n3": "Departamento de Ciências Fisiológicas",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IB",
+    "name_n2": "Instituto de Ciências Biológicas",
+    "sigla_n3": "CFS"
+  },
+  "154235": {
+    "ugr": "154235",
+    "key": "GEM",
+    "name_n3": "Departamento de Genética e Morfologia",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IB",
+    "name_n2": "Instituto de Ciências Biológicas",
+    "sigla_n3": "GEM"
+  },
+  "154236": {
+    "ugr": "154236",
+    "key": "ECL",
+    "name_n3": "Departamento de Ecologia",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IB",
+    "name_n2": "Instituto de Ciências Biológicas",
+    "sigla_n3": "ECL"
+  },
+  "154237": {
+    "ugr": "154237",
+    "key": "FIT",
+    "name_n3": "Departamento de Fitopatologia",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IB",
+    "name_n2": "Instituto de Ciências Biológicas",
+    "sigla_n3": "FIT"
+  },
+  "154238": {
+    "ugr": "154238",
+    "key": "BOT",
+    "name_n3": "Departamento de Botânica",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IB",
+    "name_n2": "Instituto de Ciências Biológicas",
+    "sigla_n3": "BOT"
+  },
+  "154239": {
+    "ugr": "154239",
+    "key": "ECO",
+    "name_n3": "Departamento de Economia",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FACE",
+    "name_n2": "Faculdade de Economia, Administração, Contabilidade e Gestão de Políticas Públicas",
+    "sigla_n3": "ECO"
+  },
+  "154240": {
+    "ugr": "154240",
+    "key": "SOL",
+    "name_n3": "Departamento de Sociologia",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "ICS",
+    "name_n2": "Instituto de Ciências Sociais",
+    "sigla_n3": "SOL"
+  },
+  "154241": {
+    "ugr": "154241",
+    "key": "DAN",
+    "name_n3": "Departamento de Antropologia",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "ICS",
+    "name_n2": "Instituto de Ciências Sociais",
+    "sigla_n3": "DAN"
+  },
+  "154242": {
+    "ugr": "154242",
+    "key": "SER",
+    "name_n3": "Departamento de Serviço Social",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IH",
+    "name_n2": "Instituto de Ciências Humanas",
+    "sigla_n3": "SER"
+  },
+  "154243": {
+    "ugr": "154243",
+    "key": "FIL",
+    "name_n3": "Departamento de Filosofia",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IH",
+    "name_n2": "Instituto de Ciências Humanas",
+    "sigla_n3": "FIL"
+  },
+  "154244": {
+    "ugr": "154244",
+    "key": "GEA",
+    "name_n3": "Departamento de Geografia",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IH",
+    "name_n2": "Instituto de Ciências Humanas",
+    "sigla_n3": "GEA"
+  },
+  "154245": {
+    "ugr": "154245",
+    "key": "HIS",
+    "name_n3": "Departamento de História",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IH",
+    "name_n2": "Instituto de Ciências Humanas",
+    "sigla_n3": "HIS"
+  },
+  "154246": {
+    "ugr": "154246",
+    "key": "LIP",
+    "name_n3": "Departamento de Linguística, Português e Línguas Clássicas",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IL",
+    "name_n2": "Instituto de Letras",
+    "sigla_n3": "LIP"
+  },
+  "154247": {
+    "ugr": "154247",
+    "key": "TEL",
+    "name_n3": "Departamento de Teoria Literária e Literaturas",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IL",
+    "name_n2": "Instituto de Letras",
+    "sigla_n3": "TEL"
+  },
+  "154248": {
+    "ugr": "154248",
+    "key": "LET",
+    "name_n3": "Departamento de Línguas Estrangeiras e Tradução",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IL",
+    "name_n2": "Instituto de Letras",
+    "sigla_n3": "LET"
+  },
+  "154250": {
+    "ugr": "154250",
+    "key": "TEC",
+    "name_n3": "Departamento de Tecnologia",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FAU",
+    "name_n2": "Faculdade de Arquitetura e Urbanismo",
+    "sigla_n3": "TEC"
+  },
+  "154251": {
+    "ugr": "154251",
+    "key": "FAV",
+    "name_n3": "Faculdade de Agronomia e Medicina Veterinária",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FAV",
+    "name_n2": "Faculdade de Agronomia e Medicina Veterinária",
+    "sigla_n3": "FAV"
+  },
+  "154252": {
+    "ugr": "154252",
+    "key": "ENC",
+    "name_n3": "Departamento de Engenharia Civil e Ambiental",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FT",
+    "name_n2": "Faculdade de Tecnologia",
+    "sigla_n3": "ENC"
+  },
+  "154253": {
+    "ugr": "154253",
+    "key": "ENE",
+    "name_n3": "Departamento de Engenharia Elétrica",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FT",
+    "name_n2": "Faculdade de Tecnologia",
+    "sigla_n3": "ENE"
+  },
+  "154254": {
+    "ugr": "154254",
+    "key": "ENM",
+    "name_n3": "Departamento de Engenharia Mecânica",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FT",
+    "name_n2": "Faculdade de Tecnologia",
+    "sigla_n3": "ENM"
+  },
+  "154255": {
+    "ugr": "154255",
+    "key": "EFL",
+    "name_n3": "Departamento de Engenharia Florestal",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FT",
+    "name_n2": "Faculdade de Tecnologia",
+    "sigla_n3": "EFL"
+  },
+  "154256": {
+    "ugr": "154256",
+    "key": "FEF",
+    "name_n3": "Faculdade de Educação Física",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FEF",
+    "name_n2": "Faculdade de Educação Física",
+    "sigla_n3": "FEF"
+  },
+  "154257": {
+    "ugr": "154257",
+    "key": "NUT",
+    "name_n3": "Departamento de Nutrição",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FS",
+    "name_n2": "Faculdade de Ciências da Saúde",
+    "sigla_n3": "NUT"
+  },
+  "154258": {
+    "ugr": "154258",
+    "key": "ENF",
+    "name_n3": "Departamento de Enfermagem",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FS",
+    "name_n2": "Faculdade de Ciências da Saúde",
+    "sigla_n3": "ENF"
+  },
+  "154259": {
+    "ugr": "154259",
+    "key": "ODT",
+    "name_n3": "Departamento de Odontologia",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FS",
+    "name_n2": "Faculdade de Ciências da Saúde",
+    "sigla_n3": "ODT"
+  },
+  "154260": {
+    "ugr": "154260",
+    "key": "DSC",
+    "name_n3": "Departamento de Saúde Coletiva",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FS",
+    "name_n2": "Faculdade de Ciências da Saúde",
+    "sigla_n3": "DSC"
+  },
+  "154261": {
+    "ugr": "154261",
+    "key": "ADM",
+    "name_n3": "Departamento de Administração",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FACE",
+    "name_n2": "Faculdade de Economia, Administração, Contabilidade e Gestão de Políticas Públicas",
+    "sigla_n3": "ADM"
+  },
+  "154262": {
+    "ugr": "154262",
+    "key": "FCI",
+    "name_n3": "Faculdade de Ciência da Informação",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FCI",
+    "name_n2": "Faculdade de Ciência da Informação",
+    "sigla_n3": "FCI"
+  },
+  "154263": {
+    "ugr": "154263",
+    "key": "FD",
+    "name_n3": "Faculdade de Direito",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FD",
+    "name_n2": "Faculdade de Direito",
+    "sigla_n3": "FD"
+  },
+  "154264": {
+    "ugr": "154264",
+    "key": "IREL",
+    "name_n3": "Instituto de Relações Internacionais",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IREL",
+    "name_n2": "Instituto de Relações Internacionais",
+    "sigla_n3": "IREL"
+  },
+  "154265": {
+    "ugr": "154265",
+    "key": "DIMEX",
+    "name_n3": "Diretoria de Importação e Exportação",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DAF",
+    "name_n2": "Decanato de Administração",
+    "sigla_n3": "DIMEX"
+  },
+  "154266": {
+    "ugr": "154266",
+    "key": "TEF",
+    "name_n3": "Departamento de Teoria e Fundamentos",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FE",
+    "name_n2": "Faculdade de Educação",
+    "sigla_n3": "TEF"
+  },
+  "154267": {
+    "ugr": "154267",
+    "key": "MTC",
+    "name_n3": "Departamento de Métodos e Técnicas",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FE",
+    "name_n2": "Faculdade de Educação",
+    "sigla_n3": "MTC"
+  },
+  "154268": {
+    "ugr": "154268",
+    "key": "PAD",
+    "name_n3": "Departamento de Planejamento e Administração",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FE",
+    "name_n2": "Faculdade de Educação",
+    "sigla_n3": "PAD"
+  },
+  "154269": {
+    "ugr": "154269",
+    "key": "SAA",
+    "name_n3": "Secretaria de Administração Acadêmica",
+    "nivel1": "ASSESSORIAS E SECRETARIAS",
+    "sigla_n2": "SAA",
+    "name_n2": "Secretaria de Administração Acadêmica",
+    "sigla_n3": "SAA"
+  },
+  "154270": {
+    "ugr": "154270",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "154271": {
+    "ugr": "154271",
+    "key": "CPAB",
+    "name_n3": "Centro de Pesquisa e Aplicação de Bambu e Fibras Naturais",
+    "nivel1": "CENTROS",
+    "sigla_n2": "CPAB",
+    "name_n2": "Centro de Pesquisa e Aplicação de Bambu e Fibras Naturais",
+    "sigla_n3": "CPAB"
+  },
+  "154272": {
+    "ugr": "154272",
+    "key": "SAA",
+    "name_n3": "Secretaria de Administração Acadêmica",
+    "nivel1": "ASSESSORIAS E SECRETARIAS",
+    "sigla_n2": "SAA",
+    "name_n2": "Secretaria de Administração Acadêmica",
+    "sigla_n3": "SAA"
+  },
+  "154273": {
+    "ugr": "154273",
+    "key": "DCO",
+    "name_n3": "Diretoria de Compras",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DAF",
+    "name_n2": "Decanato de Administração",
+    "sigla_n3": "DCO"
+  },
+  "154274": {
+    "ugr": "154274",
+    "key": "DGM",
+    "name_n3": "Diretoria de Gestão de Materiais",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DAF",
+    "name_n2": "Decanato de Administração",
+    "sigla_n3": "DGM"
+  },
+  "154275": {
+    "ugr": "154275",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "154276": {
+    "ugr": "154276",
+    "key": "ZOO",
+    "name_n3": "Departamento de Zoologia",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IB",
+    "name_n2": "Instituto de Ciências Biológicas",
+    "sigla_n3": "ZOO"
+  },
+  "154278": {
+    "ugr": "154278",
+    "key": "IPOL",
+    "name_n3": "Instituto de Ciência Política",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IPOL",
+    "name_n2": "Instituto de Ciência Política",
+    "sigla_n3": "IPOL"
+  },
+  "154280": {
+    "ugr": "154280",
+    "key": "DPA",
+    "name_n3": "Diretoria de Apoio a Projetos Acadêmicos",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DPI",
+    "name_n2": "Decanato de Pesquisa e Inovação",
+    "sigla_n3": "DPA"
+  },
+  "154281": {
+    "ugr": "154281",
+    "key": "DDS",
+    "name_n3": "Diretoria de Desenvolvimento Social",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DAC",
+    "name_n2": "Decanato de Assuntos Comunitários",
+    "sigla_n3": "DDS"
+  },
+  "154283": {
+    "ugr": "154283",
+    "key": "ICS",
+    "name_n3": "Instituto de Ciências Sociais",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "ICS",
+    "name_n2": "Instituto de Ciências Sociais",
+    "sigla_n3": "ICS"
+  },
+  "154284": {
+    "ugr": "154284",
+    "key": "CEFTRU",
+    "name_n3": "Centro Interdisciplinar de Estudos em Transportes",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FT",
+    "name_n2": "Faculdade de Tecnologia",
+    "sigla_n3": "CEFTRU"
+  },
+  "154285": {
+    "ugr": "154285",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "154286": {
+    "ugr": "154286",
+    "key": "DGP",
+    "name_n3": "Decanato de Gestão de Pessoas",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DGP",
+    "name_n2": "Decanato de Gestão de Pessoas",
+    "sigla_n3": "DGP"
+  },
+  "154287": {
+    "ugr": "154287",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "154288": {
+    "ugr": "154288",
+    "key": "SIS",
+    "name_n3": "Observatório Sismológico",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IG",
+    "name_n2": "Instituto de Geociências",
+    "sigla_n3": "SIS"
+  },
+  "154289": {
+    "ugr": "154289",
+    "key": "DAIA",
+    "name_n3": "Diretoria de Acompanhamento e Integração Acadêmica",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DEG",
+    "name_n2": "Decanato de Ensino de Graduação",
+    "sigla_n3": "DAIA"
+  },
+  "154292": {
+    "ugr": "154292",
+    "key": "CAEP",
+    "name_n3": "Centro de Atendimento e Estudos Psicológicos",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IP",
+    "name_n2": "Instituto de Psicologia",
+    "sigla_n3": "CAEP"
+  },
+  "154293": {
+    "ugr": "154293",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "154295": {
+    "ugr": "154295",
+    "key": "DTE",
+    "name_n3": "Diretoria Técnica de Extensão",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DEX",
+    "name_n2": "Decanato de Extensão",
+    "sigla_n3": "DTE"
+  },
+  "154296": {
+    "ugr": "154296",
+    "key": "DEX",
+    "name_n3": "Decanato de Extensão",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DEX",
+    "name_n2": "Decanato de Extensão",
+    "sigla_n3": "DEX"
+  },
+  "154297": {
+    "ugr": "154297",
+    "key": "INT",
+    "name_n3": "Secretaria de Assuntos Internacionais",
+    "nivel1": "ASSESSORIAS E SECRETARIAS",
+    "sigla_n2": "INT",
+    "name_n2": "Secretaria de Assuntos Internacionais",
+    "sigla_n3": "INT"
+  },
+  "154298": {
+    "ugr": "154298",
+    "key": "DDC",
+    "name_n3": "Diretoria de Difusão Cultural",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DEX",
+    "name_n2": "Decanato de Extensão",
+    "sigla_n3": "DDC"
+  },
+  "154299": {
+    "ugr": "154299",
+    "key": "FM",
+    "name_n3": "Faculdade de Medicina",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FM",
+    "name_n2": "Faculdade de Medicina",
+    "sigla_n3": "FM"
+  },
+  "154300": {
+    "ugr": "154300",
+    "key": "FM",
+    "name_n3": "Faculdade de Medicina",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FM",
+    "name_n2": "Faculdade de Medicina",
+    "sigla_n3": "FM"
+  },
+  "154301": {
+    "ugr": "154301",
+    "key": "CIORD",
+    "name_n3": "Centro Integrado de Ordenamento Territorial",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FACE",
+    "name_n2": "Faculdade de Economia, Administração, Contabilidade e Gestão de Políticas Públicas",
+    "sigla_n3": "CIORD"
+  },
+  "154302": {
+    "ugr": "154302",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "154303": {
+    "ugr": "154303",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "154304": {
+    "ugr": "154304",
+    "key": "CRAD",
+    "name_n3": "Centro de Referência em Conservação da Natureza e Recuperação de Áreas Degradadas",
+    "nivel1": "CENTROS",
+    "sigla_n2": "CRAD",
+    "name_n2": "Centro de Referência em Conservação da Natureza e Recuperação de Áreas Degradadas",
+    "sigla_n3": "CRAD"
+  },
+  "154305": {
+    "ugr": "154305",
+    "key": "INFRA",
+    "name_n3": "Secretaria de Infraestrutura",
+    "nivel1": "ÓRGÃOS AUXILIARES",
+    "sigla_n2": "INFRA",
+    "name_n2": "Secretaria de Infraestrutura",
+    "sigla_n3": "INFRA"
+  },
+  "154306": {
+    "ugr": "154306",
+    "key": "PPB",
+    "name_n3": "Departamento de Processos Psicológicos Básicos",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IP",
+    "name_n2": "Instituto de Psicologia",
+    "sigla_n3": "PPB"
+  },
+  "154307": {
+    "ugr": "154307",
+    "key": "PED",
+    "name_n3": "Departamento de Psicologia Escolar e do Desenvolvimento",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IP",
+    "name_n2": "Instituto de Psicologia",
+    "sigla_n3": "PED"
+  },
+  "154308": {
+    "ugr": "154308",
+    "key": "PCL",
+    "name_n3": "Departamento de Psicologia Clínica",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IP",
+    "name_n2": "Instituto de Psicologia",
+    "sigla_n3": "PCL"
+  },
+  "154309": {
+    "ugr": "154309",
+    "key": "PST",
+    "name_n3": "Departamento de Psicologia Social e do Trabalho",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IP",
+    "name_n2": "Instituto de Psicologia",
+    "sigla_n3": "PST"
+  },
+  "154310": {
+    "ugr": "154310",
+    "key": "VIS",
+    "name_n3": "Departamento de Artes Visuais",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IdA",
+    "name_n2": "Instituto de Artes",
+    "sigla_n3": "VIS"
+  },
+  "154311": {
+    "ugr": "154311",
+    "key": "CEN",
+    "name_n3": "Departamento de Artes Cênicas",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IdA",
+    "name_n2": "Instituto de Artes",
+    "sigla_n3": "CEN"
+  },
+  "154312": {
+    "ugr": "154312",
+    "key": "MUS",
+    "name_n3": "Departamento de Música",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IdA",
+    "name_n2": "Instituto de Artes",
+    "sigla_n3": "MUS"
+  },
+  "154313": {
+    "ugr": "154313",
+    "key": "JOR",
+    "name_n3": "Departamento de Jornalismo",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FAC",
+    "name_n2": "Faculdade de Comunicação",
+    "sigla_n3": "JOR"
+  },
+  "154314": {
+    "ugr": "154314",
+    "key": "DAPCOM",
+    "name_n3": "Departamento de Audiovisuais e Publicidade e Propaganda",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FAC",
+    "name_n2": "Faculdade de Comunicação",
+    "sigla_n3": "DAP"
+  },
+  "154315": {
+    "ugr": "154315",
+    "key": "IG",
+    "name_n3": "Instituto de Geociências",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IG",
+    "name_n2": "Instituto de Geociências",
+    "sigla_n3": "IG"
+  },
+  "154319": {
+    "ugr": "154319",
+    "key": "PRC",
+    "name_n3": "Prefeitura da UnB",
+    "nivel1": "ÓRGÃOS AUXILIARES",
+    "sigla_n2": "PRC",
+    "name_n2": "Prefeitura da UnB",
+    "sigla_n3": "PRC"
+  },
+  "154322": {
+    "ugr": "154322",
+    "key": "PRC",
+    "name_n3": "Prefeitura da UnB",
+    "nivel1": "ÓRGÃOS AUXILIARES",
+    "sigla_n2": "PRC",
+    "name_n2": "Prefeitura da UnB",
+    "sigla_n3": "PRC"
+  },
+  "154323": {
+    "ugr": "154323",
+    "key": "DPL",
+    "name_n3": "Diretoria de Planejamento",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DPO",
+    "name_n2": "Decanato de Planejamento, Orçamento e Avaliação Institucional",
+    "sigla_n3": "DPL"
+  },
+  "154324": {
+    "ugr": "154324",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "154325": {
+    "ugr": "154325",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "154327": {
+    "ugr": "154327",
+    "key": "FAV",
+    "name_n3": "Faculdade de Agronomia e Medicina Veterinária",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FAV",
+    "name_n2": "Faculdade de Agronomia e Medicina Veterinária",
+    "sigla_n3": "FAV"
+  },
+  "154329": {
+    "ugr": "154329",
+    "key": "FUP",
+    "name_n3": "Faculdade de Planaltina",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FUP",
+    "name_n2": "Faculdade de Planaltina",
+    "sigla_n3": "FUP"
+  },
+  "154330": {
+    "ugr": "154330",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "154331": {
+    "ugr": "154331",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "154342": {
+    "ugr": "154342",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "154361": {
+    "ugr": "154361",
+    "key": "DRU",
+    "name_n3": "Diretoria do Restaurante Universitário",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DAC",
+    "name_n2": "Decanato de Assuntos Comunitários",
+    "sigla_n3": "DRU"
+  },
+  "154362": {
+    "ugr": "154362",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "154363": {
+    "ugr": "154363",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "154364": {
+    "ugr": "154364",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "154365": {
+    "ugr": "154365",
+    "key": "PPGT",
+    "name_n3": "Programa de Pós-Graduação em Transportes PPGT",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FT",
+    "name_n2": "Faculdade de Tecnologia",
+    "sigla_n3": "PPGT"
+  },
+  "154366": {
+    "ugr": "154366",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "154368": {
+    "ugr": "154368",
+    "key": "CDS",
+    "name_n3": "Centro de Desenvolvimento Sustentável",
+    "nivel1": "CENTROS",
+    "sigla_n2": "CDS",
+    "name_n2": "Centro de Desenvolvimento Sustentável",
+    "sigla_n3": "CDS"
+  },
+  "154369": {
+    "ugr": "154369",
+    "key": "SPI",
+    "name_n3": "Secretaria de Patrimônio Imobiliário",
+    "nivel1": "ÓRGÃOS AUXILIARES",
+    "sigla_n2": "SPI",
+    "name_n2": "Secretaria de Patrimônio Imobiliário",
+    "sigla_n3": "SPI"
+  },
+  "154370": {
+    "ugr": "154370",
+    "key": "DOR",
+    "name_n3": "Diretoria de Orçamento",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DPO",
+    "name_n2": "Decanato de Planejamento, Orçamento e Avaliação Institucional",
+    "sigla_n3": "DOR"
+  },
+  "154371": {
+    "ugr": "154371",
+    "key": "CET",
+    "name_n3": "Centro de Excelência em Turismo",
+    "nivel1": "CENTROS",
+    "sigla_n2": "CET",
+    "name_n2": "Centro de Excelência em Turismo",
+    "sigla_n3": "CET"
+  },
+  "154387": {
+    "ugr": "154387",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "154426": {
+    "ugr": "154426",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "154506": {
+    "ugr": "154506",
+    "key": "FGA",
+    "name_n3": "Faculdade do Gama",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FGA",
+    "name_n2": "Faculdade do Gama",
+    "sigla_n3": "FGA"
+  },
+  "154507": {
+    "ugr": "154507",
+    "key": "FCE",
+    "name_n3": "Faculdade de Ceilândia",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FCE",
+    "name_n2": "Faculdade de Ceilândia",
+    "sigla_n3": "FCE"
+  },
+  "154509": {
+    "ugr": "154509",
+    "key": "CNANO",
+    "name_n3": "Centro de Nanociência e Nanobiotecnologia",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IB",
+    "name_n2": "Instituto de Ciências Biológicas",
+    "sigla_n3": "CNANO"
+  },
+  "154510": {
+    "ugr": "154510",
+    "key": "FAV",
+    "name_n3": "Faculdade de Agronomia e Medicina Veterinária",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FAV",
+    "name_n2": "Faculdade de Agronomia e Medicina Veterinária",
+    "sigla_n3": "FAV"
+  },
+  "154511": {
+    "ugr": "154511",
+    "key": "DIN",
+    "name_n3": "Departamento de Design",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IdA",
+    "name_n2": "Instituto de Artes",
+    "sigla_n3": "DIN"
+  },
+  "154531": {
+    "ugr": "154531",
+    "key": "CERME",
+    "name_n3": "CERME",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FACE",
+    "name_n2": "Faculdade de Economia, Administração, Contabilidade e Gestão de Políticas Públicas",
+    "sigla_n3": "CERME"
+  },
+  "154552": {
+    "ugr": "154552",
+    "key": "ZOO",
+    "name_n3": "Departamento de Zoologia",
+    "nivel1": "UA - INSTITUTOS",
+    "sigla_n2": "IB",
+    "name_n2": "Instituto de Ciências Biológicas",
+    "sigla_n3": "ZOO"
+  },
+  "154553": {
+    "ugr": "154553",
+    "key": "CEAM",
+    "name_n3": "Centro de Estudos Avançados Multidisciplinares",
+    "nivel1": "CENTROS",
+    "sigla_n2": "CEAM",
+    "name_n2": "Centro de Estudos Avançados Multidisciplinares",
+    "sigla_n3": "CEAM"
+  },
+  "154554": {
+    "ugr": "154554",
+    "key": "CEAM",
+    "name_n3": "Centro de Estudos Avançados Multidisciplinares",
+    "nivel1": "CENTROS",
+    "sigla_n2": "CEAM",
+    "name_n2": "Centro de Estudos Avançados Multidisciplinares",
+    "sigla_n3": "CEAM"
+  },
+  "154555": {
+    "ugr": "154555",
+    "key": "FAV",
+    "name_n3": "Faculdade de Agronomia e Medicina Veterinária",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FAV",
+    "name_n2": "Faculdade de Agronomia e Medicina Veterinária",
+    "sigla_n3": "FAV"
+  },
+  "154786": {
+    "ugr": "154786",
+    "key": "EPR",
+    "name_n3": "Departamento de Engenharia Produção",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FT",
+    "name_n2": "Faculdade de Tecnologia",
+    "sigla_n3": "EPR"
+  },
+  "154919": {
+    "ugr": "154919",
+    "key": "INFRA",
+    "name_n3": "Secretaria de Infraestrutura",
+    "nivel1": "ÓRGÃOS AUXILIARES",
+    "sigla_n2": "INFRA",
+    "name_n2": "Secretaria de Infraestrutura",
+    "sigla_n3": "INFRA"
+  },
+  "154920": {
+    "ugr": "154920",
+    "key": "INFRA",
+    "name_n3": "Secretaria de Infraestrutura",
+    "nivel1": "ÓRGÃOS AUXILIARES",
+    "sigla_n2": "INFRA",
+    "name_n2": "Secretaria de Infraestrutura",
+    "sigla_n3": "INFRA"
+  },
+  "154922": {
+    "ugr": "154922",
+    "key": "DCA",
+    "name_n3": "Diretoria de Contratos Administrativos",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DAF",
+    "name_n2": "Decanato de Administração",
+    "sigla_n3": "DCA"
+  },
+  "154989": {
+    "ugr": "154989",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "155027": {
+    "ugr": "155027",
+    "key": "ACE",
+    "name_n3": "Arquivo Central",
+    "nivel1": "ÓRGÃOS COMPLEMENTARES",
+    "sigla_n2": "ACE",
+    "name_n2": "Arquivo Central",
+    "sigla_n3": "ACE"
+  },
+  "155099": {
+    "ugr": "155099",
+    "key": "DIV",
+    "name_n3": "Diretoria da Diversidade",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DAC",
+    "name_n2": "Decanato de Assuntos Comunitários",
+    "sigla_n3": "DIV"
+  },
+  "155405": {
+    "ugr": "155405",
+    "key": "GPP",
+    "name_n3": "Departamento de Gestão de Políticas Públicas",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FACE",
+    "name_n2": "Faculdade de Economia, Administração, Contabilidade e Gestão de Políticas Públicas",
+    "sigla_n3": "GPP"
+  },
+  "155997": {
+    "ugr": "155997",
+    "key": "GPP",
+    "name_n3": "Departamento de Gestão de Políticas Públicas",
+    "nivel1": "UA - FACULDADES",
+    "sigla_n2": "FACE",
+    "name_n2": "Faculdade de Economia, Administração, Contabilidade e Gestão de Políticas Públicas",
+    "sigla_n3": "GPP"
+  },
+  "156047": {
+    "ugr": "156047",
+    "key": "DPI",
+    "name_n3": "Decanato de Pesquisa e Inovação",
+    "nivel1": "DECANATOS",
+    "sigla_n2": "DPI",
+    "name_n2": "Decanato de Pesquisa e Inovação",
+    "sigla_n3": "DPI"
+  },
+  "156247": {
+    "ugr": "156247",
+    "key": "PCTEC",
+    "name_n3": "Parque Científico e Tecnológico da Universidade de Brasília",
+    "nivel1": "ÓRGÃOS COMPLEMENTARES",
+    "sigla_n2": "PCTec",
+    "name_n2": "Parque Científico e Tecnológico da Universidade de Brasília",
+    "sigla_n3": "PCTec"
+  },
+  "156478": {
+    "ugr": "156478",
+    "key": "SEMA",
+    "name_n3": "Secretaria de Meio Ambiente",
+    "nivel1": "ÓRGÃOS AUXILIARES",
+    "sigla_n2": "SeMA",
+    "name_n2": "Secretaria de Meio Ambiente",
+    "sigla_n3": "SeMA"
+  },
+  "156850": {
+    "ugr": "156850",
+    "key": "CIBH",
+    "name_n3": "Centro Internacional de Bioética e Humanidades",
+    "nivel1": "CENTROS",
+    "sigla_n2": "CIBH",
+    "name_n2": "Centro Internacional de Bioética e Humanidades",
+    "sigla_n3": "CIBH"
+  },
+  "160503": {
+    "ugr": "160503",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "170008": {
+    "ugr": "170008",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "170010": {
+    "ugr": "170010",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "170016": {
+    "ugr": "170016",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "170607": {
+    "ugr": "170607",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "173057": {
+    "ugr": "173057",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "200006": {
+    "ugr": "200006",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "200143": {
+    "ugr": "200143",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "200146": {
+    "ugr": "200146",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "200246": {
+    "ugr": "200246",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "200273": {
+    "ugr": "200273",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "200324": {
+    "ugr": "200324",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "200406": {
+    "ugr": "200406",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "250931": {
+    "ugr": "250931",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "270003": {
+    "ugr": "270003",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "303001": {
+    "ugr": "303001",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "443008": {
+    "ugr": "443008",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "443016": {
+    "ugr": "443016",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "443999": {
+    "ugr": "443999",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "530009": {
+    "ugr": "530009",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "530023": {
+    "ugr": "530023",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "540019": {
+    "ugr": "540019",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "770000": {
+    "ugr": "770000",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "810007": {
+    "ugr": "810007",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "SEM UGR": {
+    "ugr": "SEM UGR",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "153335": {
+    "ugr": "153335",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "153816": {
+    "ugr": "153816",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "130148": {
+    "ugr": "130148",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "170593": {
+    "ugr": "170593",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "201009": {
+    "ugr": "201009",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "323043": {
+    "ugr": "323043",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "113245": {
+    "ugr": "113245",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "000000": {
+    "ugr": "000000",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "'-8": {
+    "ugr": "'-8",
+    "key": "SEM UGR",
+    "name_n3": "SEM UGR",
+    "nivel1": "SEM UGR",
+    "sigla_n2": "SEM UGR",
+    "name_n2": "SEM UGR",
+    "sigla_n3": "SEM UGR"
+  },
+  "150234": {
+    "ugr": "150234",
+    "key": "SEM CLASSIFICAÇÃO",
+    "name_n3": "A classificar",
+    "nivel1": "A classificar",
+    "sigla_n2": "A classificar",
+    "name_n2": "A classificar",
+    "sigla_n3": "A classificar"
+  },
+  "157250": {
+    "ugr": "157250",
+    "key": "AAMC",
+    "name_n3": "Assoc. de Acomp. e Mediação de Conduta (AAMC)",
+    "nivel1": "ASSESSORIAS E SECRETARIAS",
+    "sigla_n2": "AAMC",
+    "name_n2": "Assoc. de Acomp. e Mediação de Conduta",
+    "sigla_n3": "AAMC"
+  },
+  "151461": {
+    "ugr": "151461",
+    "key": "IFSUL",
+    "name_n3": "IF Sul-rio-grandense Reitoria",
+    "nivel1": "A classificar",
+    "sigla_n2": "IFSUL",
+    "name_n2": "IF Sul-rio-grandense Reitoria",
+    "sigla_n3": "IFSUL"
+  },
+  "153646": {
+    "ugr": "153646",
+    "key": "UFPR",
+    "name_n3": "Dep. Administração de Pessoal/UFPR",
+    "nivel1": "A classificar",
+    "sigla_n2": "UFPR",
+    "name_n2": "Dep. Administração de Pessoal/UFPR",
+    "sigla_n3": "UFPR"
+  },
+  "154014": {
+    "ugr": "154014",
+    "key": "IEF",
+    "name_n3": "Instituto de Educação Física",
+    "nivel1": "A classificar",
+    "sigla_n2": "IEF",
+    "name_n2": "Instituto de Educação Física",
+    "sigla_n3": "IEF"
+  },
+  "154427": {
+    "ugr": "154427",
+    "key": "FEFF",
+    "name_n3": "FEFF",
+    "nivel1": "A classificar",
+    "sigla_n2": "FEFF",
+    "name_n2": "FEFF",
+    "sigla_n3": "FEFF"
+  }
+}
