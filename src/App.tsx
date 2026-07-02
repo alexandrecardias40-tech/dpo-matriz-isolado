@@ -323,7 +323,7 @@ function EstruturaSearch({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 2, alignItems: "center" }}>
-      <span style={{ fontSize: 8.5, fontWeight: 700, color: "#475569" }}>Estrutura</span>
+      <span style={{ fontSize: 8.5, fontWeight: 700, color: "#475569" }}>Estrutura Organizacional</span>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <button style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "3px 6px", border: "1px solid #cbd5e1", borderRadius: 5, background: "white", fontSize: 9, cursor: "pointer", width: 130, gap: 4, textAlign: "center", boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}>
@@ -369,6 +369,7 @@ function EstruturaSearch({
                         background: isSelected ? "#eff6ff" : "transparent"
                       }}
                     >
+                      <Checkbox checked={isSelected} style={{ pointerEvents: "none", marginRight: 8 }} />
                       <span style={{
                         fontSize: 9.5,
                         color: isSelected ? "#2563eb" : "#0f172a",

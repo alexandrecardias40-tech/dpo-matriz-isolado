@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { Lightbulb } from "lucide-react";
 import ugrHierarchyRaw from "../ugr_hierarchy.json";
 
 export interface UgrHierarchyItem {
@@ -99,16 +100,53 @@ export default function UnitOrganogram({
 
   // Tip dinâmico para orientar o usuário
   const tipText = useMemo(() => {
+    const bulb = (
+      <Lightbulb 
+        size={13.5} 
+        className="pulsing-bulb" 
+        style={{ 
+          color: "#d97706", 
+          fill: "#fbbf24", 
+          marginRight: "5px", 
+          display: "inline-block", 
+          verticalAlign: "middle",
+          marginTop: "-2px"
+        }} 
+      />
+    );
+
     if (!selNivel1) {
-      return "💡 Selecione uma Área (Nível 1) nas caixas abaixo para iniciar a navegação na estrutura.";
+      return (
+        <>
+          {bulb} Selecione uma Área nas caixas abaixo para iniciar a navegação na estrutura.
+        </>
+      );
     }
     if (!selNivel2) {
-      return `💡 Clique em qualquer Unidade do Nível 1 (${selNivel1}) para detalhar suas subordinadas.`;
+      const name = selNivel1.toUpperCase();
+      let prep = "de";
+      if (name.includes("REITORIA")) prep = "da";
+      else if (name.includes("FACULDADES")) prep = "das";
+      else if (name.includes("INSTITUTOS") || name.includes("DECANATOS") || name.includes("ORGAOS") || name.includes("CENTROS")) prep = "dos";
+
+      return (
+        <>
+          {bulb} Clique em qualquer Unidade {prep} ({selNivel1}) para detalhar suas subordinadas.
+        </>
+      );
     }
     if (!selNivel3) {
-      return `💡 Clique em qualquer caixa (unidade principal ou subordinadas) para isolar seus dados no painel.`;
+      return (
+        <>
+          {bulb} Clique em qualquer caixa (unidade principal ou subordinadas) para isolar seus dados no painel.
+        </>
+      );
     }
-    return "Filtro ativo: Exibindo apenas a subordinada selecionada. Clique nela novamente para voltar.";
+    return (
+      <span style={{ display: "inline-flex", alignItems: "center" }}>
+        {bulb} Filtro ativo: Exibindo apenas a subordinada selecionada. Clique nela novamente para voltar.
+      </span>
+    );
   }, [selNivel1, selNivel2, selNivel3]);
 
   return (
@@ -123,6 +161,24 @@ export default function UnitOrganogram({
       gap: 8,
       width: "100%"
     }}>
+      <style>{`
+        @keyframes smooth-pulse {
+          0%, 100% { 
+            opacity: 0.65; 
+            transform: scale(0.95); 
+            filter: drop-shadow(0 0 1px rgba(245, 158, 11, 0.2));
+          }
+          50% { 
+            opacity: 1; 
+            transform: scale(1.18); 
+            filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.9));
+          }
+        }
+        .pulsing-bulb {
+          display: inline-block;
+          animation: smooth-pulse 2.2s infinite ease-in-out;
+        }
+      `}</style>
       {/* Cabeçalho centralizado */}
       <div style={{
         fontSize: 10.5,
