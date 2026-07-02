@@ -225,11 +225,30 @@ function UnidadeFilter({
   // Lista de todas as unidades Nível 2 com seus respectivos Nível 1
   const allNivel2Units = useMemo(() => {
     const unitsMap: Record<string, { sigla_n2: string; name_n2: string; nivel1: string }> = {};
+    const excluded = [
+      "a classificar",
+      "externo",
+      "cespe",
+      "ccom",
+      "cifmc",
+      "cirps/fub",
+      "cpab",
+      "feff",
+      "hub",
+      "ief",
+      "ifsul",
+      "sem ugr",
+      "ufpr"
+    ];
     Object.values(ugrHierarchy).forEach(h => {
+      const s2 = (h.sigla_n2 || "").toLowerCase();
+      const n1 = (h.nivel1 || "").toLowerCase();
+      const s3 = (h.sigla_n3 || "").toLowerCase();
       if (
         h.sigla_n2 &&
-        h.sigla_n2.toLowerCase() !== "a classificar" &&
-        h.nivel1.toLowerCase() !== "a classificar"
+        !excluded.includes(s2) &&
+        !excluded.includes(n1) &&
+        !excluded.includes(s3)
       ) {
         unitsMap[h.sigla_n2] = {
           sigla_n2: h.sigla_n2,
@@ -355,25 +374,44 @@ function EstruturaSearch({
     const activeN2 = new Map<string, { sigla: string; name: string; n1: string }>();
     const activeN3 = new Map<string, { ugr: string; sigla: string; name: string; n1: string; n2: string }>();
 
+    const excluded = [
+      "a classificar",
+      "externo",
+      "cespe",
+      "ccom",
+      "cifmc",
+      "cirps/fub",
+      "cpab",
+      "feff",
+      "hub",
+      "ief",
+      "ifsul",
+      "sem ugr",
+      "ufpr"
+    ];
     recordsForOrganogram.forEach((r: any) => {
       const ugrCode = String(r.ugr || "").trim();
       const h = ugrHierarchy[ugrCode];
-      if (
-        h &&
-        h.nivel1.toLowerCase() !== "a classificar" &&
-        h.sigla_n2.toLowerCase() !== "a classificar" &&
-        h.sigla_n3.toLowerCase() !== "a classificar"
-      ) {
-        activeN1.add(h.nivel1);
-        
-        const n2Key = `${h.nivel1}:${h.sigla_n2}`;
-        if (!activeN2.has(n2Key)) {
-          activeN2.set(n2Key, { sigla: h.sigla_n2, name: h.name_n2, n1: h.nivel1 });
-        }
+      if (h) {
+        const s2 = (h.sigla_n2 || "").toLowerCase();
+        const n1 = (h.nivel1 || "").toLowerCase();
+        const s3 = (h.sigla_n3 || "").toLowerCase();
+        if (
+          !excluded.includes(s2) &&
+          !excluded.includes(n1) &&
+          !excluded.includes(s3)
+        ) {
+          activeN1.add(h.nivel1);
+          
+          const n2Key = `${h.nivel1}:${h.sigla_n2}`;
+          if (!activeN2.has(n2Key)) {
+            activeN2.set(n2Key, { sigla: h.sigla_n2, name: h.name_n2, n1: h.nivel1 });
+          }
 
-        const n3Key = ugrCode;
-        if (!activeN3.has(n3Key)) {
-          activeN3.set(n3Key, { ugr: ugrCode, sigla: h.sigla_n3, name: h.name_n3, n1: h.nivel1, n2: h.sigla_n2 });
+          const n3Key = ugrCode;
+          if (!activeN3.has(n3Key)) {
+            activeN3.set(n3Key, { ugr: ugrCode, sigla: h.sigla_n3, name: h.name_n3, n1: h.nivel1, n2: h.sigla_n2 });
+          }
         }
       }
     });
