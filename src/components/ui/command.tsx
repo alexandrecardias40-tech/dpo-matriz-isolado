@@ -68,15 +68,15 @@ function CommandInput({
   return (
     <div
       data-slot="command-input-wrapper"
-      style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0" }}
-      className="flex h-9 items-center gap-2 px-3"
+      style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0", height: "28px", padding: "0 8px" }}
+      className="flex items-center gap-1.5"
     >
-      <SearchIcon className="size-4 shrink-0 opacity-50" />
+      <SearchIcon className="shrink-0 opacity-50" style={{ width: "12px", height: "12px" }} />
       <CommandPrimitive.Input
         data-slot="command-input"
-        style={{ background: "transparent", color: "#0f172a", outline: "none", width: "100%", fontSize: 13, border: "none" }}
+        style={{ background: "transparent", color: "#0f172a", outline: "none", width: "100%", fontSize: "10.5px", border: "none", height: "22px" }}
         className={cn(
-          "placeholder:text-muted-foreground flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50",
+          "placeholder:text-muted-foreground flex w-full rounded-md bg-transparent text-xs outline-hidden disabled:cursor-not-allowed disabled:opacity-50",
           className
         )}
         {...props}
