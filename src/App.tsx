@@ -336,7 +336,7 @@ function EstruturaSearch({
         <PopoverContent style={{ width: 210, padding: 0 }}>
           <Command>
             <CommandInput placeholder="Buscar por unidade, depto, UGR..." value={searchQuery} onValueChange={setSearchQuery} />
-            <CommandList style={{ maxHeight: 250, overflowY: "auto" }}>
+            <CommandList style={{ maxHeight: 250, overflowY: "auto", paddingTop: "6px" }}>
               <CommandEmpty>Nenhum resultado.</CommandEmpty>
               <CommandGroup>
                 {visibleOptions.map(o => {
