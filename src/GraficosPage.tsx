@@ -138,6 +138,36 @@ function DetailPanel({ cc, onBack, records }: { cc: any; onBack: ()=>void; recor
       ? `está ${diff.toFixed(1)} pontos percentuais ACIMA da média geral da Matriz (${globalRate.toFixed(1)}%)`
       : `está ${Math.abs(diff).toFixed(1)} pontos percentuais ABAIXO da média geral da Matriz (${globalRate.toFixed(1)}%)`;
 
+    // Percentagens da composição
+    const rateEmp = aprovado > 0 ? (empenhado / aprovado) * 100 : 0;
+    const rateDeb = aprovado > 0 ? (debitado / aprovado) * 100 : 0;
+    const rateDisp = aprovado > 0 ? (disponivel / aprovado) * 100 : 0;
+
+    // Agrupar naturezas de despesa (tg_breakdown) de todos os registros da unidade
+    const ndMap: Record<string, { code: string; name: string; empenhado: number; total: number }> = {};
+    filteredRegistros.forEach((r: any) => {
+      if (r.tg_breakdown && Array.isArray(r.tg_breakdown)) {
+        r.tg_breakdown.forEach((nd: any) => {
+          const code = String(nd.natureza_despesa || "").trim();
+          if (!code) return;
+          if (!ndMap[code]) {
+            ndMap[code] = {
+              code,
+              name: nd.natureza_despesa_nome || "Sem Nome",
+              empenhado: 0,
+              total: 0
+            };
+          }
+          ndMap[code].empenhado += Number(nd.despesas_empenhadas) || 0;
+          ndMap[code].total += Number(nd.total) || 0;
+        });
+      }
+    });
+    
+    const topNDs = Object.values(ndMap)
+      .sort((a: any, b: any) => b.total - a.total)
+      .slice(0, 5);
+
     let status = "";
     let color = "";
     let concerns: string[] = [];
@@ -192,9 +222,13 @@ function DetailPanel({ cc, onBack, records }: { cc: any; onBack: ()=>void; recor
       executadoText: fmt(executado),
       disponivelText: fmt(disponivel),
       empenhadoText: fmt(empenhado),
-      debitadoText: fmt(debitado)
+      debitadoText: fmt(debitado),
+      rateEmp,
+      rateDeb,
+      rateDisp,
+      topNDs
     };
-  }, [cc, stats, records]);
+  }, [cc, stats, records, filteredRegistros]);
 
   const Bar = ({ value, max, color }: { value:number; max:number; color:string }) => (
     <div style={{ height:6, background:"#f1f5f9", borderRadius:3, overflow:"hidden", marginTop:4 }}>
@@ -270,11 +304,62 @@ function DetailPanel({ cc, onBack, records }: { cc: any; onBack: ()=>void; recor
               <div style={{ marginTop: 10, padding: "10px 12px", background: "#f8fafc", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 11, color: "#334155" }}>
                 📊 A taxa de execução real de <strong>{diagnostic.rateText}%</strong> {diagnostic.compareText}.
               </div>
-            </div>
-            <div style={{ marginTop: 12, fontSize: 10.5, color: "#64748b", display: "flex", gap: 12, flexWrap: "wrap" }}>
-              <span>Empenhado: <strong style={{ color: "#475569" }}>{diagnostic.empenhadoText}</strong></span>
-              <span>Debitado: <strong style={{ color: "#475569" }}>{diagnostic.debitadoText}</strong></span>
-              <span>Disponível: <strong style={{ color: "#ef4444" }}>{diagnostic.disponivelText}</strong></span>
+              
+              {/* Barra Empilhada e Detalhes de Composição */}
+              <div style={{ marginTop: 14, borderTop: "1px solid #f1f5f9", paddingTop: 12 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10.5, color: "#475569", fontWeight: 700, marginBottom: 5 }}>
+                  <span>Composição do Orçamento Aprovado ({diagnostic.aprovadoText})</span>
+                </div>
+                <div style={{ display: "flex", height: 16, borderRadius: 8, overflow: "hidden", background: "#e2e8f0", boxShadow: "inset 0 1px 2px rgba(0,0,0,0.1)" }}>
+                  {diagnostic.rateDeb > 0 && (
+                    <div style={{ width: `${diagnostic.rateDeb}%`, background: "#4f46e5", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontSize: 8.5, fontWeight: 700 }} title={`Debitado: ${diagnostic.debitadoText} (${diagnostic.rateDeb.toFixed(1)}%)`}>
+                      {diagnostic.rateDeb >= 10 ? `${diagnostic.rateDeb.toFixed(0)}%` : ""}
+                    </div>
+                  )}
+                  {diagnostic.rateEmp > 0 && (
+                    <div style={{ width: `${diagnostic.rateEmp}%`, background: "#0ea5e9", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontSize: 8.5, fontWeight: 700 }} title={`Empenhado: ${diagnostic.empenhadoText} (${diagnostic.rateEmp.toFixed(1)}%)`}>
+                      {diagnostic.rateEmp >= 10 ? `${diagnostic.rateEmp.toFixed(0)}%` : ""}
+                    </div>
+                  )}
+                  {diagnostic.rateDisp > 0 && (
+                    <div style={{ width: `${diagnostic.rateDisp}%`, background: "#ef4444", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontSize: 8.5, fontWeight: 700 }} title={`Disponível: ${diagnostic.disponivelText} (${diagnostic.rateDisp.toFixed(1)}%)`}>
+                      {diagnostic.rateDisp >= 10 ? `${diagnostic.rateDisp.toFixed(0)}%` : ""}
+                    </div>
+                  )}
+                </div>
+                
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, marginTop: 6, fontWeight: 600, flexWrap: "wrap", gap: "8px 14px" }}>
+                  <span style={{ display: "flex", alignItems: "center", gap: 4 }}><span style={{ display: "inline-block", width: 6, height: 6, borderRadius: "50%", background: "#4f46e5" }} /> Debitado: <strong style={{ color: "#334155" }}>{diagnostic.debitadoText}</strong> ({diagnostic.rateDeb.toFixed(1)}%)</span>
+                  <span style={{ display: "flex", alignItems: "center", gap: 4 }}><span style={{ display: "inline-block", width: 6, height: 6, borderRadius: "50%", background: "#0ea5e9" }} /> Empenhado: <strong style={{ color: "#334155" }}>{diagnostic.empenhadoText}</strong> ({diagnostic.rateEmp.toFixed(1)}%)</span>
+                  <span style={{ display: "flex", alignItems: "center", gap: 4 }}><span style={{ display: "inline-block", width: 6, height: 6, borderRadius: "50%", background: "#ef4444" }} /> Disponível: <strong style={{ color: "#b91c1c" }}>{diagnostic.disponivelText}</strong> ({diagnostic.rateDisp.toFixed(1)}%)</span>
+                </div>
+              </div>
+
+              {/* Detalhamento por Natureza de Despesa */}
+              {diagnostic.topNDs && diagnostic.topNDs.length > 0 && (
+                <div style={{ marginTop: 16, borderTop: "1px solid #e2e8f0", paddingTop: 12 }}>
+                  <div style={{ fontSize: 10.5, fontWeight: 800, color: "#334155", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                    🧬 Despesas por Natureza de Despesa (TG)
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+                    {diagnostic.topNDs.map((nd: any) => (
+                      <div key={nd.code} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 10.5, padding: "5px 8px", background: "#f8fafc", borderRadius: 6, border: "1px solid #f1f5f9" }}>
+                        <span style={{ display: "flex", gap: 6, alignItems: "center", minWidth: 0 }}>
+                          <span style={{ fontWeight: 800, color: "#4f46e5", background: "#eeebff", padding: "1px 5px", borderRadius: 4, fontFamily: "monospace", fontSize: 9 }}>{nd.code}</span>
+                          <span style={{ color: "#475569", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={nd.name}>{nd.name}</span>
+                        </span>
+                        <span style={{ fontWeight: 700, color: "#0f172a", flexShrink: 0 }}>
+                          {fmt(nd.total)} {stats.executado_tg > 0 && (
+                            <span style={{ fontSize: 9, fontWeight: 500, color: "#64748b", marginLeft: 4 }}>
+                              ({((nd.total / stats.executado_tg) * 100).toFixed(1)}% do exec.)
+                            </span>
+                          )}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

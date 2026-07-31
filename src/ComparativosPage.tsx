@@ -176,8 +176,8 @@ function buildData(records: any[], labelMatriz: string = "Matriz Total") {
   const totDispMatriz= ccArr.reduce((s:number,r:any)=>s+r.disp_tg,0);
   const totExecMatriz= ccArr.reduce((s:number,r:any)=>s+r.exec_tg,0);
 
-  // Top 15 para gráficos e tabelas com siglas
-  const top15 = ccArr.slice(0,15).map((r:any)=>({
+  // Todas as unidades para gráficos e tabelas com siglas
+  const top15 = ccArr.map((r:any)=>({
     name: getUnitAbbreviation(r.cc),
     fullName: r.cc,
     [`Aprovado (${labelMatriz})`]: r.valor_aprovado,
@@ -311,7 +311,7 @@ export default function ComparativosPage() {
     if (selUnidade.length === 0) {
       return {
         title: "Análise Consolidada da Matriz",
-        text: `Atualmente, o painel exibe a visão global com todas as ${D.nCC} unidades organizacionais da Matriz. O orçamento total aprovado totaliza ${fmt(D.totAprovado)}, com uma execução acumulada de ${fmt(D.totExecMatriz)} (${pct(D.totExecMatriz, D.totAprovado)}). A unidade ${D.liderExec ? getUnitAbbreviation(D.liderExec.cc) : "N/A"} apresenta o maior volume de execução real (${fmt(D.liderExec?.exec_matriz)}), enquanto a unidade ${D.maiorSaldoLivre ? getUnitAbbreviation(D.maiorSaldoLivre.cc) : "N/A"} retém o maior saldo livre restante (${fmt(D.maiorSaldoLivre?.disp_matriz)}). O saldo livre total disponível em toda a Matriz é de ${fmt(D.totDispMatriz)}.`
+        text: `Atualmente, o painel exibe a visão global com todas as ${D.nCC} unidades organizacionais da Matriz. O orçamento total aprovado totaliza ${fmt(D.totAprovado)}, com uma execução acumulada de ${fmt(D.totExecMatriz)} (${pct(D.totExecMatriz, D.totAprovado)}). A unidade ${D.liderExec ? getUnitAbbreviation(D.liderExec.cc) : "N/A"} apresenta o maior volume de execução real (${fmt(D.liderExec?.exec_tg)}), enquanto a unidade ${D.maiorSaldoLivre ? getUnitAbbreviation(D.maiorSaldoLivre.cc) : "N/A"} retém o maior saldo livre restante (${fmt(D.maiorSaldoLivre?.disp_tg)}). O saldo livre total disponível em toda a Matriz é de ${fmt(D.totDispMatriz)}.`
       };
     } else if (selUnidade.length === 1) {
       const uName = selUnidade[0];
@@ -353,7 +353,7 @@ export default function ComparativosPage() {
 
       return {
         title: `Análise Comparativa do Grupo (${selUnidade.length} Unidades)`,
-        text: `As ${selUnidade.length} unidades selecionadas representam ${groupShare} do orçamento total aprovado da Matriz. Juntas, somam ${fmt(D.totAprovado)} em recursos aprovados e registram uma execução conjunta de ${fmt(D.totExecMatriz)} (${pct(D.totExecMatriz, D.totAprovado)}). Dentre as selecionadas, ${D.liderExec ? getUnitAbbreviation(D.liderExec.cc) : "N/A"} lidera a execução com ${fmt(D.liderExec?.exec_matriz)} executados, e ${D.maiorSaldoLivre ? getUnitAbbreviation(D.maiorSaldoLivre.cc) : "N/A"} possui o maior saldo disponível individual (${fmt(D.maiorSaldoLivre?.disp_matriz)}). O saldo acumulado disponível para o grupo é de ${fmt(D.totDispMatriz)}. ${performanceSub}`
+        text: `As ${selUnidade.length} unidades selecionadas representam ${groupShare} do orçamento total aprovado da Matriz. Juntas, somam ${fmt(D.totAprovado)} em recursos aprovados e registram uma execução conjunta de ${fmt(D.totExecMatriz)} (${pct(D.totExecMatriz, D.totAprovado)}). Dentre as selecionadas, ${D.liderExec ? getUnitAbbreviation(D.liderExec.cc) : "N/A"} lidera a execução com ${fmt(D.liderExec?.exec_tg)} executados, e ${D.maiorSaldoLivre ? getUnitAbbreviation(D.maiorSaldoLivre.cc) : "N/A"} possui o maior saldo disponível individual (${fmt(D.maiorSaldoLivre?.disp_tg)}). O saldo acumulado disponível para o grupo é de ${fmt(D.totDispMatriz)}. ${performanceSub}`
       };
     }
   }, [selUnidade, D, records]);
@@ -597,12 +597,12 @@ export default function ComparativosPage() {
             {/* Gráfico de Barras Principal */}
             <div style={{ ...s.card, padding:0, overflow:"hidden", display:"flex", flexDirection:"column" }}>
               <div style={{ padding:"14px 18px", borderBottom:"1px solid #e2e8f0" }}>
-                <div style={s.section}>Top 15 Unidades — Cenário Comparativo ({labelMatriz})</div>
+                <div style={s.section}>Cenário Comparativo por Unidade ({labelMatriz})</div>
                 <div style={{ fontSize:11, color:"#64748b" }}>Ordenado por volume total aprovado · Exibido por Sigla de Unidade</div>
               </div>
               
               <div style={{ padding:"18px 20px 10px", flex:1 }}>
-                <ResponsiveContainer width="100%" height={400}>
+                <ResponsiveContainer width="100%" height={Math.max(450, D.top15.length * 28)}>
                   <BarChart data={D.top15} layout="vertical" margin={{ left:5, right:20, top:0, bottom:0 }} barCategoryGap={6} barGap={2}>
                     <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
                     <XAxis type="number" tickFormatter={v=>fmtK(v)} tick={{ fontSize:10, fill:"#94a3b8" }} tickLine={false} axisLine={false} />

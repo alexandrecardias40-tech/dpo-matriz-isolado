@@ -1240,20 +1240,20 @@ export default function App() {
               if (isSimplifiedKpis) {
                 return (
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16, maxWidth: 450, margin: "0 auto", width: "100%" }}>
-                    <KpiCard title="Disponível"    value={fmt(T.credito_disponivel_tg)}   sub="Crédito disponível (TG)"    color="#6366f1" icon="📥" tooltip="Crédito disponível no Tesouro Gerencial." />
-                    <KpiCard title="Empenhado"     value={fmt(T.despesas_empenhadas_tg)}  sub="Reservado oficialmente"     color="#0ea5e9" icon="📋" tooltip="Despesas empenhadas no Tesouro Gerencial." />
+                    <KpiCard title="Disponível"    value={hasFilter ? fmt(T.credito_disponivel_tg) : "—"}   sub="Crédito disponível (TG)"    color="#6366f1" icon="📥" tooltip="Crédito disponível no Tesouro Gerencial." />
+                    <KpiCard title="Empenhado"     value={hasFilter ? fmt(T.despesas_empenhadas_tg) : "—"}  sub="Reservado oficialmente"     color="#0ea5e9" icon="📋" tooltip="Despesas empenhadas no Tesouro Gerencial." />
                   </div>
                 );
               }
 
               return (
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 8 }}>
-                  <KpiCard title="Dotação"       value={fmt(T.valor_aprovado)}          sub="Valor fixado aprovado"       color="#3b82f6" icon="💰" tooltip="Valor aprovado fixado no planejamento inicial." />
-                  <KpiCard title="Disponível"    value={fmt(T.credito_disponivel_tg)}   sub="Crédito disponível (TG)"    color="#6366f1" icon="📥" tooltip="Crédito disponível no Tesouro Gerencial." />
-                  <KpiCard title="Empenhado"     value={fmt(T.despesas_empenhadas_tg)}  sub="Reservado oficialmente"     color="#0ea5e9" icon="📋" tooltip="Despesas empenhadas no Tesouro Gerencial." />
-                  <KpiCard title="Debitado"      value={fmt(T.debitado_tg)} sub="Dotação - Disp. TG - Emp. TG (Matriz)" color="#f59e0b" icon="🧾" tooltip="Calculado por fórmula: Dotação − Crédito Disponível TG − Empenhado TG. Exclui Custos Indiretos." />
-                  <KpiCard title="Executado"     value={fmt(T.executado_tg)}            sub="Dotação − Disponível TG"    color="#10b981" icon="⚡" tooltip="Calculado por fórmula: Valor Aprovado − Crédito Disponível TG." />
-                  <KpiCard title="% Executado"   value={T.pct_exec.toFixed(2) + "%"}    sub="Em relação à dotação"       color="#8b5cf6" icon="📈" tooltip="Calculado por fórmula: Executado TG / Valor Aprovado." />
+                  <KpiCard title="Dotação"       value={hasFilter ? fmt(T.valor_aprovado) : "—"}          sub="Valor fixado aprovado"       color="#3b82f6" icon="💰" tooltip="Valor aprovado fixado no planejamento inicial." />
+                  <KpiCard title="Disponível"    value={hasFilter ? fmt(T.credito_disponivel_tg) : "—"}   sub="Crédito disponível (TG)"    color="#6366f1" icon="📥" tooltip="Crédito disponível no Tesouro Gerencial." />
+                  <KpiCard title="Empenhado"     value={hasFilter ? fmt(T.despesas_empenhadas_tg) : "—"}  sub="Reservado oficialmente"     color="#0ea5e9" icon="📋" tooltip="Despesas empenhadas no Tesouro Gerencial." />
+                  <KpiCard title="Debitado"      value={hasFilter ? fmt(T.debitado_tg) : "—"} sub="Dotação - Disp. TG - Emp. TG (Matriz)" color="#f59e0b" icon="🧾" tooltip="Calculado por fórmula: Dotação − Crédito Disponível TG − Empenhado TG. Exclui Custos Indiretos." />
+                  <KpiCard title="Executado"     value={hasFilter ? fmt(T.executado_tg) : "—"}            sub="Dotação − Disponível TG"    color="#10b981" icon="⚡" tooltip="Calculado por fórmula: Valor Aprovado − Crédito Disponível TG." />
+                  <KpiCard title="% Executado"   value={hasFilter ? T.pct_exec.toFixed(2) + "%" : "—"}    sub="Em relação à dotação"       color="#8b5cf6" icon="📈" tooltip="Calculado por fórmula: Executado TG / Valor Aprovado." />
                 </div>
               );
             })()}
@@ -1270,107 +1270,117 @@ export default function App() {
           />
 
           {/* Tabela Principal (Cruzamento) */}
-          <div style={s.panel}>
-            <div style={{ padding: "14px 18px", borderBottom: "1px solid #e2e8f0", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
-              <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 800, color: "#334155", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                <FileText size={15} style={{ color: "#6366f1" }} /> Detalhamento de Execução Orçamentária
-              </span>
-              <span style={{ fontSize: 11, color: "#64748b", fontWeight: 500 }}>
-                Exibindo <strong style={{ color: "#0f172a" }}>{filteredRecords.length}</strong> de <strong style={{ color: "#0f172a" }}>{records.length}</strong> chaves <code>(UGR, PI)</code>
-              </span>
+          {hasFilter ? (
+            <div style={s.panel}>
+              <div style={{ padding: "14px 18px", borderBottom: "1px solid #e2e8f0", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
+                <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 800, color: "#334155", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                  <FileText size={15} style={{ color: "#6366f1" }} /> Detalhamento de Execução Orçamentária
+                </span>
+                <span style={{ fontSize: 11, color: "#64748b", fontWeight: 500 }}>
+                  Exibindo <strong style={{ color: "#0f172a" }}>{filteredRecords.length}</strong> de <strong style={{ color: "#0f172a" }}>{records.length}</strong> chaves <code>(UGR, PI)</code>
+                </span>
+              </div>
+              <div style={{ width: "100%" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 10, tableLayout: "fixed", wordBreak: "break-word" }}>
+                  <thead>
+                    <tr style={{ background: "#f8fafc" }}>
+                      {[
+                        { name: "UGR", width: "5%" },
+                        { name: "UNIDADE", width: "13%" },
+                        { name: "DESCRIÇÃO", width: "18%" },
+                        { name: "DOTAÇÃO", width: "10%" },
+                        { name: "DISPONÍVEL", width: "10%" },
+                        { name: "EMPENHADO", width: "10%" },
+                        { name: "DEBITADO", width: "10%" },
+                        { name: "% EXECUTADO", width: "11%" },
+                        { name: "DETALHAMENTO", width: "10%" }
+                      ].map(h => (
+                        <th key={h.name} style={{ ...s.th, padding: "6px 2px", fontSize: "9px", width: h.width }}>{h.name}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[...filteredRecords].sort((a: any, b: any) => {
+                      const ugrA = String(a.ugr ?? "");
+                      const ugrB = String(b.ugr ?? "");
+                      const cmpUgr = ugrA.localeCompare(ugrB, "pt-BR", { numeric: true });
+                      if (cmpUgr !== 0) return cmpUgr;
+
+                      const labelA = piLabel(a.plano_interno) || "";
+                      const labelB = piLabel(b.plano_interno) || "";
+                      const hasMatrizA = labelA.toLowerCase().includes("matriz");
+                      const hasMatrizB = labelB.toLowerCase().includes("matriz");
+
+                      if (hasMatrizA && !hasMatrizB) return -1;
+                      if (!hasMatrizA && hasMatrizB) return 1;
+
+                      return labelA.localeCompare(labelB, "pt-BR");
+                    }).map((d: any, i: number) => {
+                      const diff = Math.abs(d.despesas_empenhadas_matriz - d.despesas_empenhadas_tg);
+                      
+                      return (
+                        <tr key={i} style={{ background: i % 2 === 0 ? "white" : "#fafbfc" }}>
+                          <td style={{ ...s.td, padding: "6px 2px", fontSize: "9.5px", fontWeight: 700 }}>{d.ugr}</td>
+                          <td style={{ ...s.td, padding: "6px 2px", fontSize: "9.5px", whiteSpace: "normal", wordBreak: "break-word", lineHeight: 1.2 }} title={ugrHierarchy[String(d.ugr || "").trim()]?.name_n3 || d.unidade}>
+                            <span style={{ fontWeight: 600, color: "#0f172a" }}>
+                              {ugrHierarchy[String(d.ugr || "").trim()]?.name_n3 || d.unidade || "—"}
+                            </span>
+                          </td>
+                          <td style={{ ...s.td, padding: "6px 2px", fontSize: "9.5px", whiteSpace: "normal", wordBreak: "break-word", lineHeight: 1.2, textAlign: "center" }} title={`${d.plano_interno} - ${piLabel(d.plano_interno)}`}>
+                            <span style={{ fontWeight: 600, color: "#4f46e5" }}>{piLabel(d.plano_interno)}</span>
+                            <div style={{ fontSize: "8px", color: "#64748b", marginTop: "2px", fontFamily: "monospace" }}>{d.plano_interno}</div>
+                          </td>
+
+                          <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", fontWeight: 600, color: "#0f172a" }}>{d.in_matrix ? fmt(d.valor_aprovado) : "—"}</td>
+                          <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", fontWeight: 700 }}>{d.in_tg ? fmt(d.credito_disponivel_tg) : "—"}</td>
+                          <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", fontWeight: 700 }}>{d.in_tg ? fmt(d.despesas_empenhadas_tg) : "—"}</td>
+                          <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", color: "#0f172a", fontWeight: 700 }}>
+                            {(() => {
+                              const pi = (d.plano_interno || "").trim();
+                              const isCiOrArr = (PI_GROUPS["Custos Indiretos"] || []).includes(pi) || (PI_GROUPS["Arrecadação"] || []).includes(pi);
+                              if (isCiOrArr) return "—";
+                              return (d.in_matrix || d.in_tg) ? fmt((Number(d.valor_aprovado)||0) - (Number(d.credito_disponivel_tg)||0) - (Number(d.despesas_empenhadas_tg)||0)) : "—";
+                            })()}
+                          </td>
+                          <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", fontWeight: 700, color: "#0f172a", textAlign: "center" }}>
+                            {d.in_matrix ? (() => {
+                              const aprovado = Number(d.valor_aprovado) || 0;
+                              const disponivel = Number(d.credito_disponivel_tg) || 0;
+                              const executado = aprovado - disponivel;
+                              const taxa = aprovado > 0 ? (executado / aprovado) * 100 : 0;
+                              return taxa.toFixed(1) + "%";
+                            })() : "—"}
+                          </td>
+                          <td style={{ ...s.td, padding: "6px 2px", fontSize: "9px" }}>
+                            {d.in_tg ? (
+                              <button
+                                onClick={() => setSelectedRecord(d)}
+                                style={{ background: "#4f46e5", color: "white", border: "none", borderRadius: 4, padding: "3px 5px", fontSize: "8.5px", fontWeight: 700, cursor: "pointer", transition: "background 0.2s", whiteSpace: "nowrap" }}
+                                onMouseEnter={(e) => e.currentTarget.style.background = "#4338ca"}
+                                onMouseLeave={(e) => e.currentTarget.style.background = "#4f46e5"}
+                              >
+                                Nat. Desp.
+                              </button>
+                            ) : (
+                              <span style={{ color: "#94a3b8", fontSize: "9px" }}>—</span>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
-            <div style={{ width: "100%" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 10, tableLayout: "fixed", wordBreak: "break-word" }}>
-                <thead>
-                  <tr style={{ background: "#f8fafc" }}>
-                    {[
-                      { name: "UGR", width: "5%" },
-                      { name: "UNIDADE", width: "13%" },
-                      { name: "DESCRIÇÃO", width: "18%" },
-                      { name: "DOTAÇÃO", width: "10%" },
-                      { name: "DISPONÍVEL", width: "10%" },
-                      { name: "EMPENHADO", width: "10%" },
-                      { name: "DEBITADO", width: "10%" },
-                      { name: "% EXECUTADO", width: "11%" },
-                      { name: "DETALHAMENTO", width: "10%" }
-                    ].map(h => (
-                      <th key={h.name} style={{ ...s.th, padding: "6px 2px", fontSize: "9px", width: h.width }}>{h.name}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {[...filteredRecords].sort((a: any, b: any) => {
-                    const ugrA = String(a.ugr ?? "");
-                    const ugrB = String(b.ugr ?? "");
-                    const cmpUgr = ugrA.localeCompare(ugrB, "pt-BR", { numeric: true });
-                    if (cmpUgr !== 0) return cmpUgr;
-
-                    const labelA = piLabel(a.plano_interno) || "";
-                    const labelB = piLabel(b.plano_interno) || "";
-                    const hasMatrizA = labelA.toLowerCase().includes("matriz");
-                    const hasMatrizB = labelB.toLowerCase().includes("matriz");
-
-                    if (hasMatrizA && !hasMatrizB) return -1;
-                    if (!hasMatrizA && hasMatrizB) return 1;
-
-                    return labelA.localeCompare(labelB, "pt-BR");
-                  }).map((d: any, i: number) => {
-                    const diff = Math.abs(d.despesas_empenhadas_matriz - d.despesas_empenhadas_tg);
-                    
-                    return (
-                      <tr key={i} style={{ background: i % 2 === 0 ? "white" : "#fafbfc" }}>
-                        <td style={{ ...s.td, padding: "6px 2px", fontSize: "9.5px", fontWeight: 700 }}>{d.ugr}</td>
-                        <td style={{ ...s.td, padding: "6px 2px", fontSize: "9.5px", whiteSpace: "normal", wordBreak: "break-word", lineHeight: 1.2 }} title={ugrHierarchy[String(d.ugr || "").trim()]?.name_n3 || d.unidade}>
-                          <span style={{ fontWeight: 600, color: "#0f172a" }}>
-                            {ugrHierarchy[String(d.ugr || "").trim()]?.name_n3 || d.unidade || "—"}
-                          </span>
-                        </td>
-                        <td style={{ ...s.td, padding: "6px 2px", fontSize: "9.5px", whiteSpace: "normal", wordBreak: "break-word", lineHeight: 1.2, textAlign: "center" }} title={`${d.plano_interno} - ${piLabel(d.plano_interno)}`}>
-                          <span style={{ fontWeight: 600, color: "#4f46e5" }}>{piLabel(d.plano_interno)}</span>
-                          <div style={{ fontSize: "8px", color: "#64748b", marginTop: "2px", fontFamily: "monospace" }}>{d.plano_interno}</div>
-                        </td>
-
-                        <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", fontWeight: 600, color: "#0f172a" }}>{d.in_matrix ? fmt(d.valor_aprovado) : "—"}</td>
-                        <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", fontWeight: 700 }}>{d.in_tg ? fmt(d.credito_disponivel_tg) : "—"}</td>
-                        <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", fontWeight: 700 }}>{d.in_tg ? fmt(d.despesas_empenhadas_tg) : "—"}</td>
-                        <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", color: "#0f172a", fontWeight: 700 }}>
-                          {(() => {
-                            const pi = (d.plano_interno || "").trim();
-                            const isCiOrArr = (PI_GROUPS["Custos Indiretos"] || []).includes(pi) || (PI_GROUPS["Arrecadação"] || []).includes(pi);
-                            if (isCiOrArr) return "—";
-                            return (d.in_matrix || d.in_tg) ? fmt((Number(d.valor_aprovado)||0) - (Number(d.credito_disponivel_tg)||0) - (Number(d.despesas_empenhadas_tg)||0)) : "—";
-                          })()}
-                        </td>
-                        <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", fontWeight: 700, color: "#0f172a", textAlign: "center" }}>
-                          {d.in_matrix ? (() => {
-                            const aprovado = Number(d.valor_aprovado) || 0;
-                            const disponivel = Number(d.credito_disponivel_tg) || 0;
-                            const executado = aprovado - disponivel;
-                            const taxa = aprovado > 0 ? (executado / aprovado) * 100 : 0;
-                            return taxa.toFixed(1) + "%";
-                          })() : "—"}
-                        </td>
-                        <td style={{ ...s.td, padding: "6px 2px", fontSize: "9px" }}>
-                          {d.in_tg ? (
-                            <button
-                              onClick={() => setSelectedRecord(d)}
-                              style={{ background: "#4f46e5", color: "white", border: "none", borderRadius: 4, padding: "3px 5px", fontSize: "8.5px", fontWeight: 700, cursor: "pointer", transition: "background 0.2s", whiteSpace: "nowrap" }}
-                              onMouseEnter={(e) => e.currentTarget.style.background = "#4338ca"}
-                              onMouseLeave={(e) => e.currentTarget.style.background = "#4f46e5"}
-                            >
-                              Nat. Desp.
-                            </button>
-                          ) : (
-                            <span style={{ color: "#94a3b8", fontSize: "9px" }}>—</span>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+          ) : (
+            <div style={{ ...s.panel, padding: "48px 24px", textAlign: "center", color: "#64748b", background: "white" }}>
+              <FileText size={32} style={{ color: "#a5b4fc", marginBottom: 14, display: "block", margin: "0 auto 12px" }} />
+              <h3 style={{ fontSize: 14, fontWeight: 800, color: "#1e293b", margin: 0 }}>Nenhum Filtro Selecionado</h3>
+              <p style={{ fontSize: 11.5, color: "#64748b", margin: "6px 0 0", lineHeight: 1.4 }}>
+                Selecione uma área, unidade, plano interno ou outro filtro acima para carregar o detalhamento orçamentário.
+              </p>
             </div>
-          </div>
+          )}
 
 
 
