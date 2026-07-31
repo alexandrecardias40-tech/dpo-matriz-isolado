@@ -305,35 +305,7 @@ function DetailPanel({ cc, onBack, records }: { cc: any; onBack: ()=>void; recor
                 📊 A taxa de execução real de <strong>{diagnostic.rateText}%</strong> {diagnostic.compareText}.
               </div>
               
-              {/* Barra Empilhada e Detalhes de Composição */}
-              <div style={{ marginTop: 14, borderTop: "1px solid #f1f5f9", paddingTop: 12 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10.5, color: "#475569", fontWeight: 700, marginBottom: 5 }}>
-                  <span>Composição do Orçamento Aprovado ({diagnostic.aprovadoText})</span>
-                </div>
-                <div style={{ display: "flex", height: 16, borderRadius: 8, overflow: "hidden", background: "#e2e8f0", boxShadow: "inset 0 1px 2px rgba(0,0,0,0.1)" }}>
-                  {diagnostic.rateEmp > 0 && (
-                    <div style={{ width: `${diagnostic.rateEmp}%`, background: "#0ea5e9", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontSize: 8.5, fontWeight: 700 }} title={`Empenhado: ${diagnostic.empenhadoText} (${diagnostic.rateEmp.toFixed(1)}%)`}>
-                      {diagnostic.rateEmp >= 10 ? `${diagnostic.rateEmp.toFixed(0)}%` : ""}
-                    </div>
-                  )}
-                  {diagnostic.rateDeb > 0 && (
-                    <div style={{ width: `${diagnostic.rateDeb}%`, background: "#4f46e5", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontSize: 8.5, fontWeight: 700 }} title={`Debitado: ${diagnostic.debitadoText} (${diagnostic.rateDeb.toFixed(1)}%)`}>
-                      {diagnostic.rateDeb >= 10 ? `${diagnostic.rateDeb.toFixed(0)}%` : ""}
-                    </div>
-                  )}
-                  {diagnostic.rateDisp > 0 && (
-                    <div style={{ width: `${diagnostic.rateDisp}%`, background: "#ef4444", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontSize: 8.5, fontWeight: 700 }} title={`Disponível: ${diagnostic.disponivelText} (${diagnostic.rateDisp.toFixed(1)}%)`}>
-                      {diagnostic.rateDisp >= 10 ? `${diagnostic.rateDisp.toFixed(0)}%` : ""}
-                    </div>
-                  )}
-                </div>
-                
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, marginTop: 6, fontWeight: 600, flexWrap: "wrap", gap: "8px 14px" }}>
-                  <span style={{ display: "flex", alignItems: "center", gap: 4 }}><span style={{ display: "inline-block", width: 6, height: 6, borderRadius: "50%", background: "#0ea5e9" }} /> Empenhado: <strong style={{ color: "#334155" }}>{diagnostic.empenhadoText}</strong> ({diagnostic.rateEmp.toFixed(1)}%)</span>
-                  <span style={{ display: "flex", alignItems: "center", gap: 4 }}><span style={{ display: "inline-block", width: 6, height: 6, borderRadius: "50%", background: "#4f46e5" }} /> Debitado: <strong style={{ color: "#334155" }}>{diagnostic.debitadoText}</strong> ({diagnostic.rateDeb.toFixed(1)}%)</span>
-                  <span style={{ display: "flex", alignItems: "center", gap: 4 }}><span style={{ display: "inline-block", width: 6, height: 6, borderRadius: "50%", background: "#ef4444" }} /> Disponível: <strong style={{ color: "#b91c1c" }}>{diagnostic.disponivelText}</strong> ({diagnostic.rateDisp.toFixed(1)}%)</span>
-                </div>
-              </div>
+
 
               {/* Detalhamento por Natureza de Despesa */}
               {diagnostic.topNDs && diagnostic.topNDs.length > 0 && (

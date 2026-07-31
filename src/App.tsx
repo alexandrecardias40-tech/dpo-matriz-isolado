@@ -951,6 +951,40 @@ export default function App() {
     };
   }, [filteredRecords]);
 
+  // Totais padrão iniciais (Matriz Acadêmica + Matriz Administrativa) quando não há filtros aplicados
+  const T_default = useMemo(() => {
+    let valor_aprovado = 0;
+    let credito_disponivel_tg = 0;
+    let despesas_empenhadas_tg = 0;
+    
+    const MATRIZ_CODES = new Set([
+      ...(PI_GROUPS["Matriz Acadêmica"] || []),
+      ...(PI_GROUPS["Matriz Administrativa"] || [])
+    ]);
+
+    records.forEach((d: any) => {
+      const pi = (d.plano_interno || "").trim();
+      if (MATRIZ_CODES.has(pi)) {
+        valor_aprovado += Number(d.valor_aprovado) || 0;
+        credito_disponivel_tg += Number(d.credito_disponivel_tg) || 0;
+        despesas_empenhadas_tg += Number(d.despesas_empenhadas_tg) || 0;
+      }
+    });
+
+    const debitado_tg = valor_aprovado - credito_disponivel_tg - despesas_empenhadas_tg;
+    const executado_tg = valor_aprovado - credito_disponivel_tg;
+    const pct_exec = valor_aprovado > 0 ? (executado_tg / valor_aprovado) * 100 : 0;
+
+    return {
+      valor_aprovado,
+      credito_disponivel_tg,
+      despesas_empenhadas_tg,
+      debitado_tg,
+      executado_tg,
+      pct_exec
+    };
+  }, [records]);
+
 
   // Totais de Adiantamentos
   const TAdiantamentos = useMemo(() => {
@@ -1151,7 +1185,7 @@ export default function App() {
     if (selPI.length > 0) {
       parts.push(selPI.join(", "));
     }
-    return parts.length > 0 ? parts.join(" | ") : "Matriz + Custos Indiretos + Arrecadação";
+    return parts.length > 0 ? parts.join(" | ") : "Matriz";
   }, [selNivel1, selNivel2, selNivel3, selPI]);
 
   const s: Record<string, React.CSSProperties> = {
@@ -1240,20 +1274,20 @@ export default function App() {
               if (isSimplifiedKpis) {
                 return (
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16, maxWidth: 450, margin: "0 auto", width: "100%" }}>
-                    <KpiCard title="Disponível"    value={hasFilter ? fmt(T.credito_disponivel_tg) : "—"}   sub="Crédito disponível (TG)"    color="#6366f1" icon="📥" tooltip="Crédito disponível no Tesouro Gerencial." />
-                    <KpiCard title="Empenhado"     value={hasFilter ? fmt(T.despesas_empenhadas_tg) : "—"}  sub="Reservado oficialmente"     color="#0ea5e9" icon="📋" tooltip="Despesas empenhadas no Tesouro Gerencial." />
+                    <KpiCard title="Disponível"    value={hasFilter ? fmt(T.credito_disponivel_tg) : fmt(T_default.credito_disponivel_tg)}   sub="Crédito disponível (TG)"    color="#6366f1" icon="📥" tooltip="Crédito disponível no Tesouro Gerencial." />
+                    <KpiCard title="Empenhado"     value={hasFilter ? fmt(T.despesas_empenhadas_tg) : fmt(T_default.despesas_empenhadas_tg)}  sub="Reservado oficialmente"     color="#0ea5e9" icon="📋" tooltip="Despesas empenhadas no Tesouro Gerencial." />
                   </div>
                 );
               }
 
               return (
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 8 }}>
-                  <KpiCard title="Dotação"       value={hasFilter ? fmt(T.valor_aprovado) : "—"}          sub="Valor fixado aprovado"       color="#3b82f6" icon="💰" tooltip="Valor aprovado fixado no planejamento inicial." />
-                  <KpiCard title="Disponível"    value={hasFilter ? fmt(T.credito_disponivel_tg) : "—"}   sub="Crédito disponível (TG)"    color="#6366f1" icon="📥" tooltip="Crédito disponível no Tesouro Gerencial." />
-                  <KpiCard title="Empenhado"     value={hasFilter ? fmt(T.despesas_empenhadas_tg) : "—"}  sub="Reservado oficialmente"     color="#0ea5e9" icon="📋" tooltip="Despesas empenhadas no Tesouro Gerencial." />
-                  <KpiCard title="Debitado"      value={hasFilter ? fmt(T.debitado_tg) : "—"} sub="Dotação - Disp. TG - Emp. TG (Matriz)" color="#f59e0b" icon="🧾" tooltip="Calculado por fórmula: Dotação − Crédito Disponível TG − Empenhado TG. Exclui Custos Indiretos." />
-                  <KpiCard title="Executado"     value={hasFilter ? fmt(T.executado_tg) : "—"}            sub="Dotação − Disponível TG"    color="#10b981" icon="⚡" tooltip="Calculado por fórmula: Valor Aprovado − Crédito Disponível TG." />
-                  <KpiCard title="% Executado"   value={hasFilter ? T.pct_exec.toFixed(2) + "%" : "—"}    sub="Em relação à dotação"       color="#8b5cf6" icon="📈" tooltip="Calculado por fórmula: Executado TG / Valor Aprovado." />
+                  <KpiCard title="Dotação"       value={hasFilter ? fmt(T.valor_aprovado) : fmt(T_default.valor_aprovado)}          sub="Valor fixado aprovado"       color="#3b82f6" icon="💰" tooltip="Valor aprovado fixado no planejamento inicial." />
+                  <KpiCard title="Disponível"    value={hasFilter ? fmt(T.credito_disponivel_tg) : fmt(T_default.credito_disponivel_tg)}   sub="Crédito disponível (TG)"    color="#6366f1" icon="📥" tooltip="Crédito disponível no Tesouro Gerencial." />
+                  <KpiCard title="Empenhado"     value={hasFilter ? fmt(T.despesas_empenhadas_tg) : fmt(T_default.despesas_empenhadas_tg)}  sub="Reservado oficialmente"     color="#0ea5e9" icon="📋" tooltip="Despesas empenhadas no Tesouro Gerencial." />
+                  <KpiCard title="Debitado"      value={hasFilter ? fmt(T.debitado_tg) : fmt(T_default.debitado_tg)} sub="Dotação - Disp. TG - Emp. TG (Matriz)" color="#f59e0b" icon="🧾" tooltip="Calculado por fórmula: Dotação − Crédito Disponível TG − Empenhado TG. Exclui Custos Indiretos." />
+                  <KpiCard title="Executado"     value={hasFilter ? fmt(T.executado_tg) : fmt(T_default.executado_tg)}            sub="Dotação − Disponível TG"    color="#10b981" icon="⚡" tooltip="Calculado por fórmula: Valor Aprovado − Crédito Disponível TG." />
+                  <KpiCard title="% Executado"   value={(hasFilter ? T.pct_exec : T_default.pct_exec).toFixed(2) + "%"}    sub="Em relação à dotação"       color="#8b5cf6" icon="📈" tooltip="Calculado por fórmula: Executado TG / Valor Aprovado." />
                 </div>
               );
             })()}
