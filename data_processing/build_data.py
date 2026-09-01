@@ -320,8 +320,12 @@ print(f"Salvo data.json com {len(records_clean)} registros de Matriz e {len(adia
 # ═══════════════════════════════════════════════════════════════
 # 5. Salvar metadados de atualização
 # ═══════════════════════════════════════════════════════════════
+import datetime
 latest_time = max(os.path.getmtime(f_matriz), os.path.getmtime(f_tg))
-dt = datetime.datetime.fromtimestamp(latest_time).strftime('%d/%m/%Y às %H:%M')
+# Ajuste de fuso horário para o Brasil (UTC-3) pois o GitHub Actions roda em UTC (GMT+0)
+dt_utc = datetime.datetime.fromtimestamp(latest_time, tz=datetime.timezone.utc)
+dt_br = dt_utc - datetime.timedelta(hours=3)
+dt = dt_br.strftime('%d/%m/%Y às %H:%M')
 
 meta = {
     "lastUpdated": dt,
