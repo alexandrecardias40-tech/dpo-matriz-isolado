@@ -127,6 +127,9 @@ col_map = {
 }
 # Aplicar limpeza de nomes de colunas
 df_tg.columns = [c.strip() if isinstance(c, str) else f'col_{i}' for i, c in enumerate(df_tg.columns)]
+# Preencher células mescladas do Tesouro Gerencial (ffill)
+df_tg['UG Responsável'] = df_tg['UG Responsável'].ffill()
+df_tg['PI'] = df_tg['PI'].ffill()
 df_tg = df_tg.dropna(subset=['UG Responsável', 'PI'])
 # Filtrar linhas de Total do Tesouro Gerencial
 df_tg = df_tg[df_tg['UG Responsável'].astype(str).str.strip().str.upper() != 'TOTAL']
