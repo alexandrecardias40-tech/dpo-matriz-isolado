@@ -1,6 +1,8 @@
 name: Check Email and Update Matriz Data
 
 on:
+  repository_dispatch:
+    types: [webhook_update]
   schedule:
     # Run every 6 hours (at minute 0)
     - cron: '0 */6 * * *'
