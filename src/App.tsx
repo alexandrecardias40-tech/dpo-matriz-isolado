@@ -851,7 +851,7 @@ export default function App() {
     if (!adiantamentos || adiantamentos.length === 0) return [];
     return adiantamentos.filter((d: any) => {
       const u = (d.unidade || "").trim().toUpperCase();
-      const uClean = u === "FCTE" ? "FCE" : u;
+      const uClean = u === "FGA" ? "FCTE" : u === "FCE" ? "FCTS" : u;
 
       if (selNivel3) {
         const h3 = ugrHierarchy[selNivel3];
@@ -1360,9 +1360,9 @@ export default function App() {
                               {ugrHierarchy[String(d.ugr || "").trim()]?.name_n3 || d.unidade || "—"}
                             </span>
                           </td>
-                          <td style={{ ...s.td, padding: "6px 2px", fontSize: "9.5px", whiteSpace: "normal", wordBreak: "break-word", lineHeight: 1.2, textAlign: "center" }} title={`${d.plano_interno} - ${piLabel(d.plano_interno)}`}>
-                            <span style={{ fontWeight: 600, color: "#4f46e5" }}>{piLabel(d.plano_interno)}</span>
-                            <div style={{ fontSize: "8px", color: "#64748b", marginTop: "2px", fontFamily: "monospace" }}>{d.plano_interno}</div>
+                          <td style={{ ...s.td, padding: "6px 2px", fontSize: "9.5px", whiteSpace: "normal", wordBreak: "break-word", lineHeight: 1.2, textAlign: "center" }} title={d.plano_interno_nome ? `PI: ${d.plano_interno} — ${d.plano_interno_nome}` : `${d.plano_interno} — ${piLabel(d.plano_interno)}`}>
+                            <span style={{ fontWeight: 600, color: "#4f46e5" }} title={d.plano_interno_nome ? `Nome do PI: ${d.plano_interno_nome}` : piLabel(d.plano_interno)}>{piLabel(d.plano_interno)}</span>
+                            <div style={{ fontSize: "8px", color: "#64748b", marginTop: "2px", fontFamily: "monospace" }} title={d.plano_interno_nome ? `Nome do PI: ${d.plano_interno_nome}` : d.plano_interno}>{d.plano_interno}</div>
                           </td>
 
                           <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", fontWeight: 600, color: "#0f172a" }}>{d.in_matrix ? fmt(d.valor_aprovado) : "—"}</td>

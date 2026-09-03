@@ -64,21 +64,21 @@
   },
   "150242": {
     "ugr": "150242",
-    "key": "FGA",
-    "name_n3": "Faculdade do Gama",
+    "key": "FCTE",
+    "name_n3": "Faculdade de Ciências e Tecnologias da Engenharia",
     "nivel1": "UA - FACULDADES",
-    "sigla_n2": "FGA",
-    "name_n2": "Faculdade do Gama",
-    "sigla_n3": "FGA"
+    "sigla_n2": "FCTE",
+    "name_n2": "Faculdade de Ciências e Tecnologias da Engenharia",
+    "sigla_n3": "FCTE"
   },
   "150243": {
     "ugr": "150243",
-    "key": "FCE",
-    "name_n3": "Faculdade de Ceilândia",
+    "key": "FCTS",
+    "name_n3": "Faculdade de Ciências e Tecnologias da Saúde",
     "nivel1": "UA - FACULDADES",
-    "sigla_n2": "FCE",
-    "name_n2": "Faculdade de Ceilândia",
-    "sigla_n3": "FCE"
+    "sigla_n2": "FCTS",
+    "name_n2": "Faculdade de Ciências e Tecnologias da Saúde",
+    "sigla_n3": "FCTS"
   },
   "150245": {
     "ugr": "150245",
@@ -174,7 +174,7 @@
     "ugr": "152371",
     "key": "DOR",
     "name_n3": "Diretoria de Orçamento",
-    "nivel1": "DECANATOS",
+    "nivel1": "Outros",
     "sigla_n2": "DPO",
     "name_n2": "Decanato de Planejamento, Orçamento e Avaliação Institucional",
     "sigla_n3": "DOR"
@@ -201,7 +201,7 @@
     "ugr": "152387",
     "key": "DPO",
     "name_n3": "Decanato de Planejamento, Orçamento e Avaliação Institucional",
-    "nivel1": "DECANATOS",
+    "nivel1": "Outros",
     "sigla_n2": "DPO",
     "name_n2": "Decanato de Planejamento, Orçamento e Avaliação Institucional",
     "sigla_n3": "DPO"
@@ -217,12 +217,12 @@
   },
   "152401": {
     "ugr": "152401",
-    "key": "FGA",
-    "name_n3": "Faculdade do Gama",
+    "key": "FCTE",
+    "name_n3": "Faculdade de Ciências e Tecnologias da Engenharia",
     "nivel1": "UA - FACULDADES",
-    "sigla_n2": "FGA",
-    "name_n2": "Faculdade do Gama",
-    "sigla_n3": "FGA"
+    "sigla_n2": "FCTE",
+    "name_n2": "Faculdade de Ciências e Tecnologias da Engenharia",
+    "sigla_n3": "FCTE"
   },
   "152405": {
     "ugr": "152405",
@@ -372,7 +372,7 @@
     "ugr": "154156",
     "key": "GRE",
     "name_n3": "Gabinete da Reitoria",
-    "nivel1": "ÓRGÃOS AUXILIARES",
+    "nivel1": "REITORIA",
     "sigla_n2": "GRE",
     "name_n2": "Gabinete da Reitoria",
     "sigla_n3": "GRE"
@@ -1452,7 +1452,7 @@
     "ugr": "154323",
     "key": "DPL",
     "name_n3": "Diretoria de Planejamento",
-    "nivel1": "DECANATOS",
+    "nivel1": "Outros",
     "sigla_n2": "DPO",
     "name_n2": "Decanato de Planejamento, Orçamento e Avaliação Institucional",
     "sigla_n3": "DPL"
@@ -1596,7 +1596,7 @@
     "ugr": "154370",
     "key": "DOR",
     "name_n3": "Diretoria de Orçamento",
-    "nivel1": "DECANATOS",
+    "nivel1": "Outros",
     "sigla_n2": "DPO",
     "name_n2": "Decanato de Planejamento, Orçamento e Avaliação Institucional",
     "sigla_n3": "DOR"
@@ -1630,21 +1630,21 @@
   },
   "154506": {
     "ugr": "154506",
-    "key": "FGA",
-    "name_n3": "Faculdade do Gama",
+    "key": "FCTE",
+    "name_n3": "Faculdade de Ciências e Tecnologias da Engenharia",
     "nivel1": "UA - FACULDADES",
-    "sigla_n2": "FGA",
-    "name_n2": "Faculdade do Gama",
-    "sigla_n3": "FGA"
+    "sigla_n2": "FCTE",
+    "name_n2": "Faculdade de Ciências e Tecnologias da Engenharia",
+    "sigla_n3": "FCTE"
   },
   "154507": {
     "ugr": "154507",
-    "key": "FCE",
-    "name_n3": "Faculdade de Ceilândia",
+    "key": "FCTS",
+    "name_n3": "Faculdade de Ciências e Tecnologias da Saúde",
     "nivel1": "UA - FACULDADES",
-    "sigla_n2": "FCE",
-    "name_n2": "Faculdade de Ceilândia",
-    "sigla_n3": "FCE"
+    "sigla_n2": "FCTS",
+    "name_n2": "Faculdade de Ciências e Tecnologias da Saúde",
+    "sigla_n3": "FCTS"
   },
   "154509": {
     "ugr": "154509",

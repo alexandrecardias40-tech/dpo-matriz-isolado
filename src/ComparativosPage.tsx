@@ -311,7 +311,7 @@ export default function ComparativosPage() {
     if (selUnidade.length === 0) {
       return {
         title: "Análise Consolidada da Matriz",
-        text: `Atualmente, o painel exibe a visão global com todas as ${D.nCC} unidades organizacionais da Matriz. O orçamento total aprovado totaliza ${fmt(D.totAprovado)}, com uma execução acumulada de ${fmt(D.totExecMatriz)} (${pct(D.totExecMatriz, D.totAprovado)}). A unidade ${D.liderExec ? getUnitAbbreviation(D.liderExec.cc) : "N/A"} apresenta o maior volume de execução real (${fmt(D.liderExec?.exec_tg)}), enquanto a unidade ${D.maiorSaldoLivre ? getUnitAbbreviation(D.maiorSaldoLivre.cc) : "N/A"} retém o maior saldo livre restante (${fmt(D.maiorSaldoLivre?.disp_tg)}). O saldo livre total disponível em toda a Matriz é de ${fmt(D.totDispMatriz)}.`
+        text: `Atualmente, o painel exibe a visão global com todas as ${D.nCC} unidades organizacionais da Matriz. O orçamento total aprovado totaliza ${fmt(D.totAprovado)}, com uma execução acumulada de ${fmt(D.totExecMatriz)} (${pct(D.totExecMatriz, D.totAprovado)}).`
       };
     } else if (selUnidade.length === 1) {
       const uName = selUnidade[0];
@@ -400,12 +400,8 @@ export default function ComparativosPage() {
     if (selUnidade.length === 0) {
       return {
         title: `Diagnóstico de Eficiência — ${labelMatriz} (Geral)`,
-        text: `O gráfico de dispersão exibe a eficiência de alocação das ${totalUnits} unidades. Observa-se que as 3 maiores unidades concentram ${paretoPct.toFixed(1)}% de todo o orçamento aprovado da ${labelMatriz}, indicando alta concentração orçamentária. Com relação ao aproveitamento: ${lowExec} unidades (${pctLow.toFixed(1)}%) estão com desempenho baixo (vermelho), ${midExec} intermediário (amarelo) e ${highExec} (${pctHigh.toFixed(1)}%) alto (verde). Este cenário indica uma ${dispersionDesc}`,
-        recommendations: [
-          `Promover remanejamentos preventivos de saldos ociosos (unidades com baixa taxa) para aquelas com alta taxa de execução dentro da ${labelMatriz}.`,
-          "Padronizar os fluxos de contratação e capacitar gestores das unidades com execução crítica.",
-          "Realizar monitoramento quinzenal com as 3 maiores unidades detentoras de recursos para garantir a execução das grandes metas."
-        ]
+        text: `O gráfico de dispersão cruza o montante do Orçamento Aprovado (eixo horizontal X) com a Taxa de Execução (eixo vertical Y) de cada unidade. O posicionamento à direita indica maior volume de recursos sob responsabilidade da unidade, enquanto a altura no gráfico indica o percentual de execução alcançado. O tamanho de cada círculo é proporcional ao Saldo Disponível restante.`,
+        recommendations: []
       };
     } else if (selUnidade.length === 1) {
       const uName = selUnidade[0];
