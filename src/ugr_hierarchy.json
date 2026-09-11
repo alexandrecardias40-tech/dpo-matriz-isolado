@@ -174,7 +174,7 @@
     "ugr": "152371",
     "key": "DOR",
     "name_n3": "Diretoria de Orçamento",
-    "nivel1": "Outros",
+    "nivel1": "DECANATOS",
     "sigla_n2": "DPO",
     "name_n2": "Decanato de Planejamento, Orçamento e Avaliação Institucional",
     "sigla_n3": "DOR"
@@ -201,7 +201,7 @@
     "ugr": "152387",
     "key": "DPO",
     "name_n3": "Decanato de Planejamento, Orçamento e Avaliação Institucional",
-    "nivel1": "Outros",
+    "nivel1": "DECANATOS",
     "sigla_n2": "DPO",
     "name_n2": "Decanato de Planejamento, Orçamento e Avaliação Institucional",
     "sigla_n3": "DPO"
@@ -1452,7 +1452,7 @@
     "ugr": "154323",
     "key": "DPL",
     "name_n3": "Diretoria de Planejamento",
-    "nivel1": "Outros",
+    "nivel1": "DECANATOS",
     "sigla_n2": "DPO",
     "name_n2": "Decanato de Planejamento, Orçamento e Avaliação Institucional",
     "sigla_n3": "DPL"
@@ -1596,7 +1596,7 @@
     "ugr": "154370",
     "key": "DOR",
     "name_n3": "Diretoria de Orçamento",
-    "nivel1": "Outros",
+    "nivel1": "DECANATOS",
     "sigla_n2": "DPO",
     "name_n2": "Decanato de Planejamento, Orçamento e Avaliação Institucional",
     "sigla_n3": "DOR"
