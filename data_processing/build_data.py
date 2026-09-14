@@ -275,6 +275,32 @@ for ugr, pi in all_keys:
         # Só no TG
         semaforo = 'tg_only'
 
+    # Lista de combinações (UGR, PI) permanentemente excluídas a pedido do usuário
+    EXCLUDED_UGR_PI = {
+        ('154323', 'VGY01N0101N'),  # DPL - Custos Indiretos
+        ('152371', 'VGY01N0105N'),  # DOR - Matriz Administrativa
+        ('152371', 'MGY01N0104N'),  # DOR - Matriz Acadêmica
+    }
+    if (str(ugr).strip(), str(pi).strip()) in EXCLUDED_UGR_PI:
+        continue
+
+    # Ignorar registros totalmente zerados (sem nenhum valor financeiro em Matriz ou TG)
+    is_all_zero = (
+        valor_aprovado == 0 and
+        credito_disponivel_matriz == 0 and
+        despesas_empenhadas_matriz == 0 and
+        despesas_debitadas_matriz == 0 and
+        total_executado_matriz == 0 and
+        debitar_matriz == 0 and
+        round(credito_disponivel_tg, 2) == 0 and
+        round(despesas_empenhadas_tg, 2) == 0 and
+        round(despesas_empenhadas_a_liquidar_tg, 2) == 0 and
+        round(despesas_liquidadas_tg, 2) == 0 and
+        round(total_tg, 2) == 0
+    )
+    if is_all_zero:
+        continue
+
     records.append({
         'ugr': ugr,
         'unidade': unidade,
