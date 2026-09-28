@@ -282,6 +282,7 @@ for ugr, pi in all_keys:
         ('152371', 'MGY01N0104N'),  # DOR - Matriz Acadêmica
         ('152386', 'MGY01N0104N'),  # DGP - Matriz Acadêmica (zerado/inválido a pedido do usuário)
         ('154168', 'MGY01N0104N'),  # DEG - Matriz Acadêmica (zerado/inválido a pedido do usuário)
+        ('156047', 'MGY01N0104N'),  # DPI - Matriz Acadêmica (zerado/inválido a pedido do usuário)
     }
     if (str(ugr).strip(), str(pi).strip()) in EXCLUDED_UGR_PI:
         continue
@@ -291,12 +292,7 @@ for ugr, pi in all_keys:
         continue
 
     # Regras de Ajustes de Empenho (Abatimentos manuais a pedido)
-
-    # 156047 (DPI)
-    if str(ugr).strip() == '156047':
-        # O pedido não especifica o PI, então abato na UGR como um todo se o valor empenhado for grande
-        despesas_empenhadas_tg -= 150000.00
-        total_tg -= 150000.00
+    # (Nenhum abatimento restante, tudo foi movido para exclusão direta)
 
     # Atualiza diff após abatimento para recalcular o semáforo se for o caso
     diff_emp = abs(despesas_empenhadas_matriz - despesas_empenhadas_tg)
