@@ -2578,7 +2578,7 @@
       "ugr": "154151",
       "unidade": "DECANATO DE ADMINISTRACAO (DAF)",
       "plano_interno": "VGH01N0112N",
-      "plano_interno_nome": "RECONHECIMENTO DIVIDA C/BENEFICIOS PGFN 1¤ATI",
+      "plano_interno_nome": "RECONHECIMENTO DIVIDA C/BENEFICIOS PGFN 1\u00a4ATI",
       "sei": "",
       "nome_responsavel": "",
       "nc_alocacao": "",
@@ -9913,7 +9913,7 @@
       "ugr": "154151",
       "unidade": "nan",
       "plano_interno": "VGH01N0114N",
-      "plano_interno_nome": "RECONHEC DE DIVIDA C/BENEFICIOS-PGFN: 2¤ ATI",
+      "plano_interno_nome": "RECONHEC DE DIVIDA C/BENEFICIOS-PGFN: 2\u00a4 ATI",
       "sei": "",
       "nome_responsavel": "",
       "nc_alocacao": "",
@@ -15058,42 +15058,6 @@
       ]
     },
     {
-      "ugr": "153646",
-      "unidade": "DEPARTAMENTO DE ADMINISTRACAO DE PESSOAL/UFPR",
-      "plano_interno": "MGY01N0104N",
-      "plano_interno_nome": "CREDITOS DISTRIBUIDOS P/UNID.ACAD.- MATRIZ",
-      "sei": "",
-      "nome_responsavel": "",
-      "nc_alocacao": "",
-      "nc_desconto": "",
-      "valor_aprovado": 0.0,
-      "credito_disponivel_matriz": 0.0,
-      "despesas_empenhadas_matriz": 0.0,
-      "despesas_debitadas_matriz": 0.0,
-      "total_executado_matriz": 0.0,
-      "percentual_executado_matriz": 0.0,
-      "debitar_matriz": 0.0,
-      "credito_disponivel_tg": 0.0,
-      "despesas_empenhadas_tg": 3500.0,
-      "despesas_empenhadas_a_liquidar_tg": 0.0,
-      "despesas_liquidadas_tg": 3500.0,
-      "total_tg": 7000.0,
-      "in_matrix": false,
-      "in_tg": true,
-      "semaforo": "tg_only",
-      "tg_breakdown": [
-        {
-          "natureza_despesa": "339036",
-          "natureza_despesa_nome": "OUTROS SERVICOS DE TERCEIROS - PESSOA FISICA",
-          "credito_disponivel": 0.0,
-          "despesas_empenhadas": 3500.0,
-          "despesas_empenhadas_a_liquidar": 0.0,
-          "despesas_liquidadas": 3500.0,
-          "total": 7000.0
-        }
-      ]
-    },
-    {
       "ugr": "154251",
       "unidade": "nan",
       "plano_interno": "OGP01O19H4N",
@@ -15936,42 +15900,6 @@
           "despesas_empenhadas_a_liquidar": 4951.78,
           "despesas_liquidadas": 9048.22,
           "total": 28000.0
-        }
-      ]
-    },
-    {
-      "ugr": "152386",
-      "unidade": "DECANATO DE GESTAO DE PESSOAS_(DGP)",
-      "plano_interno": "MGY01N0104N",
-      "plano_interno_nome": "CREDITOS DISTRIBUIDOS P/UNID.ACAD.- MATRIZ",
-      "sei": "",
-      "nome_responsavel": "",
-      "nc_alocacao": "",
-      "nc_desconto": "",
-      "valor_aprovado": 0.0,
-      "credito_disponivel_matriz": 0.0,
-      "despesas_empenhadas_matriz": 0.0,
-      "despesas_debitadas_matriz": 0.0,
-      "total_executado_matriz": 0.0,
-      "percentual_executado_matriz": 0.0,
-      "debitar_matriz": 0.0,
-      "credito_disponivel_tg": 0.0,
-      "despesas_empenhadas_tg": 149.9,
-      "despesas_empenhadas_a_liquidar_tg": 0.0,
-      "despesas_liquidadas_tg": 149.9,
-      "total_tg": 299.8,
-      "in_matrix": false,
-      "in_tg": true,
-      "semaforo": "tg_only",
-      "tg_breakdown": [
-        {
-          "natureza_despesa": "339093",
-          "natureza_despesa_nome": "INDENIZACOES E RESTITUICOES",
-          "credito_disponivel": 0.0,
-          "despesas_empenhadas": 149.9,
-          "despesas_empenhadas_a_liquidar": 0.0,
-          "despesas_liquidadas": 149.9,
-          "total": 299.8
         }
       ]
     },
@@ -17664,42 +17592,6 @@
           "despesas_empenhadas_a_liquidar": 1000.0,
           "despesas_liquidadas": 0.0,
           "total": 2000.0
-        }
-      ]
-    },
-    {
-      "ugr": "154168",
-      "unidade": "nan",
-      "plano_interno": "MGY01N0104N",
-      "plano_interno_nome": "CREDITOS DISTRIBUIDOS P/UNID.ACAD.- MATRIZ",
-      "sei": "",
-      "nome_responsavel": "",
-      "nc_alocacao": "",
-      "nc_desconto": "",
-      "valor_aprovado": 0.0,
-      "credito_disponivel_matriz": 0.0,
-      "despesas_empenhadas_matriz": 0.0,
-      "despesas_debitadas_matriz": 0.0,
-      "total_executado_matriz": 0.0,
-      "percentual_executado_matriz": 0.0,
-      "debitar_matriz": 0.0,
-      "credito_disponivel_tg": 0.0,
-      "despesas_empenhadas_tg": 5499.0,
-      "despesas_empenhadas_a_liquidar_tg": 0.0,
-      "despesas_liquidadas_tg": 5499.0,
-      "total_tg": 10998.0,
-      "in_matrix": false,
-      "in_tg": true,
-      "semaforo": "tg_only",
-      "tg_breakdown": [
-        {
-          "natureza_despesa": "339039",
-          "natureza_despesa_nome": "OUTROS SERVICOS DE TERCEIROS - PESSOA JURIDICA",
-          "credito_disponivel": 0.0,
-          "despesas_empenhadas": 5499.0,
-          "despesas_empenhadas_a_liquidar": 0.0,
-          "despesas_liquidadas": 5499.0,
-          "total": 10998.0
         }
       ]
     },
