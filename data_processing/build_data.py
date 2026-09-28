@@ -280,9 +280,31 @@ for ugr, pi in all_keys:
         ('154323', 'VGY01N0101N'),  # DPL - Custos Indiretos
         ('152371', 'VGY01N0105N'),  # DOR - Matriz Administrativa
         ('152371', 'MGY01N0104N'),  # DOR - Matriz Acadêmica
+        ('152386', 'MGY01N0104N'),  # DGP - Matriz Acadêmica (zerado/inválido a pedido do usuário)
+        ('154168', 'MGY01N0104N'),  # DEG - Matriz Acadêmica (zerado/inválido a pedido do usuário)
     }
     if (str(ugr).strip(), str(pi).strip()) in EXCLUDED_UGR_PI:
         continue
+
+    # Excluir UGRs específicas
+    if str(ugr).strip() == '153646':
+        continue
+
+    # Regras de Ajustes de Empenho (Abatimentos manuais a pedido)
+
+    # 156047 (DPI)
+    if str(ugr).strip() == '156047':
+        # O pedido não especifica o PI, então abato na UGR como um todo se o valor empenhado for grande
+        despesas_empenhadas_tg -= 150000.00
+        total_tg -= 150000.00
+
+    # Atualiza diff após abatimento para recalcular o semáforo se for o caso
+    diff_emp = abs(despesas_empenhadas_matriz - despesas_empenhadas_tg)
+    if in_matrix and in_tg:
+        if diff_emp < 1.0: semaforo = 'verde'
+        elif diff_emp < 1000.0: semaforo = 'amarelo'
+        else: semaforo = 'vermelho'
+
 
     # Ignorar registros totalmente zerados (sem nenhum valor financeiro em Matriz ou TG)
     is_all_zero = (

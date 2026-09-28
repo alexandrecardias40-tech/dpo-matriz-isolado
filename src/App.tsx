@@ -12,44 +12,43 @@ const fmt = (v: number) => isNaN(v) ? "R$ 0" : new Intl.NumberFormat("pt-BR", { 
 const fmtK = (v: number) => !v || isNaN(v) ? "—" : new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", notation: "compact", maximumFractionDigits: 1 }).format(v);
 const pct = (a: number, b: number) => b > 0 ? ((a / b) * 100).toFixed(1) + "%" : "0%";
 
-export const OGP_CODES = [
-  "OGP01O1904N", "OGP01O19A1N", "OGP01O19A8N", "OGP01O19B1N", "OGP01O19B2N",
-  "OGP01O19B5N", "OGP01O19B7N", "OGP01O19B8N", "OGP01O19B9N", "OGP01O19C1N",
-  "OGP01O19C2N", "OGP01O19C4N", "OGP01O19C5N", "OGP01O19C7N", "OGP01O19C8N",
-  "OGP01O19D1N", "OGP01O19D8N", "OGP01O19D9N", "OGP01O19E2N", "OGP01O19E4N",
-  "OGP01O19E5N", "OGP01O19E6N", "OGP01O19E7N", "OGP01O19E8N", "OGP01O19F2N",
-  "OGP01O19F4N", "OGP01O19G1N", "OGP01O19G2N", "OGP01O19G3N", "OGP01O19H4N",
-  "OGP01O19H5N", "OGP01O19H9N", "OGP01O19I6N", "OGP01O19K6N", "OGP01O19K9N",
-  "OGP01T19B6N", "OGP01T19J9N", "OGP01T19K2N", "OGP01T19K8N"
+// ── PIs permitidos e seus nomes amigáveis ────────────────────────────────
+export const PI_ALLOWED_FIXED = [
+  "VGY01N0103N", "VGY01N0107N", "VGY01N0101N", 
+  "MGY01N0104N", "VGY01N0105N"
 ];
 
-// ── PIs permitidos e seus nomes amigáveis ────────────────────────────────
-export const PI_ALLOWED = [
-  "VGY01N0103N", "VGY01N0107N", "VGY01N0101N", 
-  "MGY01N0104N", "VGY01N0105N",
-  ...OGP_CODES
-];
+export const isAllowedPI = (pi: string) => {
+  const p = pi?.trim() || "";
+  return PI_ALLOWED_FIXED.includes(p) || p.startsWith("OGP");
+};
 
 export const PI_NAMES: Record<string, string> = {
   VGY01N0103N: "Custos Indiretos",
   VGY01N0107N: "Custos Indiretos",
   VGY01N0101N: "Custos Indiretos",
   MGY01N0104N: "Matriz Acadêmica",
-  VGY01N0105N: "Matriz Administrativa",
-  ...OGP_CODES.reduce((acc, code) => ({ ...acc, [code]: "Arrecadação" }), {})
+  VGY01N0105N: "Matriz Administrativa"
 };
 
 // Agrupamento inverso: nome → lista de códigos
 export const PI_GROUPS: Record<string, string[]> = {
   "Custos Indiretos":     ["VGY01N0103N", "VGY01N0107N", "VGY01N0101N"],
   "Matriz Acadêmica":    ["MGY01N0104N"],
-  "Matriz Administrativa": ["VGY01N0105N"],
-  "Arrecadação":          OGP_CODES
+  "Matriz Administrativa": ["VGY01N0105N"]
 };
+
+export const isArrecadacao = (pi: string) => pi?.trim().startsWith("OGP");
+export const isCustosIndiretos = (pi: string) => PI_GROUPS["Custos Indiretos"].includes(pi?.trim() || "");
+export const isCIorArr = (pi: string) => isCustosIndiretos(pi) || isArrecadacao(pi);
 
 export const PI_GROUP_NAMES = ["Arrecadação", "Custos Indiretos", "Matriz Acadêmica", "Matriz Administrativa"];
 
-const piLabel = (code: string) => PI_NAMES[code?.trim()] ?? code;
+export const piLabel = (code: string) => {
+  const c = code?.trim() || "";
+  if (c.startsWith("OGP")) return "Arrecadação";
+  return PI_NAMES[c] ?? c;
+};
 
 const STATUS_MAP: Record<string, { bg: string; border: string; color: string; label: string; icon: string }> = {
   verde: { bg: "#ecfdf5", border: "#a7f3d0", color: "#065f46", label: "Empenhos Batem", icon: "●" },
@@ -630,7 +629,7 @@ export default function App() {
   const { records: rawRecords, adiantamentos, loading } = useData();
   // Filtra apenas os PIs permitidos
   const records = useMemo(
-    () => rawRecords.filter((d: any) => PI_ALLOWED.includes((d.plano_interno || "").trim())),
+    () => rawRecords.filter((d: any) => isAllowedPI(d.plano_interno)),
     [rawRecords]
   );
 
@@ -689,9 +688,10 @@ export default function App() {
     }
 
     const codesPresent = new Set(filtered.map((d: any) => (d.plano_interno || "").trim()));
-    return PI_GROUP_NAMES.filter(name =>
-      (PI_GROUPS[name] ?? []).some(code => codesPresent.has(code))
-    );
+    return PI_GROUP_NAMES.filter(name => {
+      if (name === "Arrecadação") return Array.from(codesPresent).some(c => isArrecadacao(c));
+      return (PI_GROUPS[name] ?? []).some(code => codesPresent.has(code));
+    });
   }, [records, selNivel1, selNivel2, selNivel3, selTaxaExec]);
 
   const taxasDeExecucaoDisponiveis = useMemo(() => {
@@ -710,8 +710,10 @@ export default function App() {
     
     // Apply PI filter
     if (selPI.length > 0) {
-      const codesFromNames = selPI.flatMap(name => PI_GROUPS[name] ?? []);
-      filtered = filtered.filter((d: any) => codesFromNames.includes((d.plano_interno || "").trim()));
+      filtered = filtered.filter((d: any) => {
+        const pi = (d.plano_interno || "").trim();
+        return selPI.some(name => name === "Arrecadação" ? isArrecadacao(pi) : (PI_GROUPS[name] || []).includes(pi));
+      });
     }
     
     const cats = new Set<string>();
@@ -737,8 +739,7 @@ export default function App() {
       
       // Filtro de PI
       if (selPI.length > 0) {
-        const codesFromNames = selPI.flatMap(name => PI_GROUPS[name] ?? []);
-        if (!codesFromNames.includes(pi)) return false;
+        if (!selPI.some(name => name === "Arrecadação" ? isArrecadacao(pi) : (PI_GROUPS[name] || []).includes(pi))) return false;
       }
       
       // Filtro de origem
@@ -817,8 +818,7 @@ export default function App() {
 
       // Filtro de PI
       if (selPI.length > 0) {
-        const codesFromNames = selPI.flatMap(name => PI_GROUPS[name] ?? []);
-        if (!codesFromNames.includes(pi)) return false;
+        if (!selPI.some(name => name === "Arrecadação" ? isArrecadacao(pi) : (PI_GROUPS[name] || []).includes(pi))) return false;
       }
       
       // Filtro de origem
@@ -900,10 +900,6 @@ export default function App() {
     let total_tg = 0;
 
     // Somas apenas para Matriz (exclui Custos Indiretos e Arrecadação) — usadas em Debitado e Executado
-    const EXCLUDED_CODES = new Set([
-      ...(PI_GROUPS["Custos Indiretos"] || []),
-      ...(PI_GROUPS["Arrecadação"] || [])
-    ]);
     let mtz_aprovado = 0;
     let mtz_disp_tg  = 0;
     let mtz_emp_tg   = 0;
@@ -927,7 +923,7 @@ export default function App() {
 
       // Acumula apenas registros que NÃO são Custos Indiretos nem Arrecadação
       const pi = (d.plano_interno || "").trim();
-      if (!EXCLUDED_CODES.has(pi)) {
+      if (!isCIorArr(pi)) {
         mtz_aprovado += Number(d.valor_aprovado) || 0;
         mtz_disp_tg  += Number(d.credito_disponivel_tg) || 0;
         mtz_emp_tg   += Number(d.despesas_empenhadas_tg) || 0;
@@ -1267,7 +1263,7 @@ export default function App() {
               const isSimplifiedKpis = (selPI.length === 1 && (selPI[0] === "Custos Indiretos" || selPI[0] === "Arrecadação")) || 
                 (filteredRecords.length > 0 && filteredRecords.every((d: any) => {
                   const pi = (d.plano_interno || "").trim();
-                  const isCiOrArr = (PI_GROUPS["Custos Indiretos"] || []).includes(pi) || (PI_GROUPS["Arrecadação"] || []).includes(pi);
+                  const isCiOrArr = isCIorArr(pi);
                   return isCiOrArr || !d.in_matrix;
                 }));
               
@@ -1371,7 +1367,7 @@ export default function App() {
                           <td style={{ ...s.td, padding: "6px 4px", fontSize: "10px", color: "#0f172a", fontWeight: 700 }}>
                             {(() => {
                               const pi = (d.plano_interno || "").trim();
-                              const isCiOrArr = (PI_GROUPS["Custos Indiretos"] || []).includes(pi) || (PI_GROUPS["Arrecadação"] || []).includes(pi);
+                            const isCiOrArr = isCIorArr(pi);
                               if (isCiOrArr) return "—";
                               return (d.in_matrix || d.in_tg) ? fmt((Number(d.valor_aprovado)||0) - (Number(d.credito_disponivel_tg)||0) - (Number(d.despesas_empenhadas_tg)||0)) : "—";
                             })()}

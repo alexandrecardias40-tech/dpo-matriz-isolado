@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useData } from "./DataProvider";
-import { PI_GROUPS, PI_GROUP_NAMES, PI_ALLOWED } from "./App";
+import { PI_GROUPS, PI_GROUP_NAMES, isAllowedPI, isCIorArr, isArrecadacao } from "./App";
 import DashboardLayout from "./components/DashboardLayout";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -141,10 +141,6 @@ const ScatterTooltip = ({ active, payload }: any) => {
 /* ── aggregation ── */
 function buildData(records: any[], labelMatriz: string = "Matriz Total") {
   // Códigos de Custos Indiretos e Arrecadação — excluídos do Debitado e Executado
-  const EXCLUDED_CODES = new Set([
-    ...(PI_GROUPS["Custos Indiretos"] || []),
-    ...(PI_GROUPS["Arrecadação"] || [])
-  ]);
 
   const byCC: Record<string,any> = {};
   records.forEach(d => {
@@ -156,7 +152,7 @@ function buildData(records: any[], labelMatriz: string = "Matriz Total") {
     byCC[cc].n++;
 
     // Emp e Disp TG apenas para Matriz (exclui CI e Arrecadação)
-    if (!EXCLUDED_CODES.has(pi)) {
+    if (!isCIorArr(pi)) {
       byCC[cc].emp_tg  += Number(d.despesas_empenhadas_tg)||0;
       byCC[cc].disp_tg += Number(d.credito_disponivel_tg)||0;
     }
@@ -250,15 +246,15 @@ export default function ComparativosPage() {
 
   // Filtro cascata: PIs permitidos presentes na Matriz
   const baseMatrixRecords = useMemo(() => {
-    return records.filter((d: any) => d.in_matrix && PI_ALLOWED.includes((d.plano_interno || "").trim()));
+    return records.filter((d: any) => d.in_matrix && isAllowedPI(d.plano_interno));
   }, [records]);
 
   const unidades = useMemo(() => {
-    const codesFromNames = selPI.length > 0
-      ? selPI.flatMap(name => PI_GROUPS[name] ?? [])
-      : [];
-    const filteredForUnidades = codesFromNames.length > 0
-      ? baseMatrixRecords.filter((d: any) => codesFromNames.includes((d.plano_interno || "").trim()))
+    const filteredForUnidades = selPI.length > 0
+      ? baseMatrixRecords.filter((d: any) => {
+          const pi = (d.plano_interno || "").trim();
+          return selPI.some(name => name === "Arrecadação" ? isArrecadacao(pi) : (PI_GROUPS[name] || []).includes(pi));
+        })
       : baseMatrixRecords;
     const raw = Array.from(new Set(filteredForUnidades.map((d: any) => (d.unidade || "").trim()).filter(Boolean))) as string[];
     return raw.sort((a, b) => getUnitAbbreviation(a).localeCompare(getUnitAbbreviation(b)));
@@ -269,9 +265,10 @@ export default function ComparativosPage() {
       ? baseMatrixRecords.filter((d: any) => selUnidade.includes((d.unidade || "").trim()))
       : baseMatrixRecords;
     const codesPresent = new Set(filteredForPIs.map((d: any) => (d.plano_interno || "").trim()));
-    return PI_GROUP_NAMES.filter(name =>
-      (PI_GROUPS[name] ?? []).some(code => codesPresent.has(code))
-    );
+    return PI_GROUP_NAMES.filter(name => {
+      if (name === "Arrecadação") return Array.from(codesPresent).some(c => isArrecadacao(c as string));
+      return (PI_GROUPS[name] ?? []).some(code => codesPresent.has(code));
+    });
   }, [baseMatrixRecords, selUnidade]);
 
   // Limpa seleções inválidas quando as opções do filtro cascata mudam
@@ -296,8 +293,7 @@ export default function ComparativosPage() {
       if (selUnidade.length > 0 && !selUnidade.includes(u)) return false;
       
       if (selPI.length > 0) {
-        const codesFromNames = selPI.flatMap(name => PI_GROUPS[name] ?? []);
-        if (!codesFromNames.includes(pi)) return false;
+        if (!selPI.some(name => name === "Arrecadação" ? isArrecadacao(pi) : (PI_GROUPS[name] || []).includes(pi))) return false;
       }
       return true;
     });
@@ -363,8 +359,7 @@ export default function ComparativosPage() {
     return baseMatrixRecords.filter((d: any) => {
       const pi = (d.plano_interno || "").trim();
       if (selPI.length > 0) {
-        const codesFromNames = selPI.flatMap(name => PI_GROUPS[name] ?? []);
-        if (!codesFromNames.includes(pi)) return false;
+        if (!selPI.some(name => name === "Arrecadação" ? isArrecadacao(pi) : (PI_GROUPS[name] || []).includes(pi))) return false;
       }
       return true;
     });
