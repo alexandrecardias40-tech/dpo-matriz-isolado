@@ -319,6 +319,10 @@ for ugr, pi in all_keys:
     if is_all_zero:
         continue
 
+    # Override de nomes de unidade a pedido do usuário
+    if str(ugr).strip() == '155099':
+        unidade = "Secretaria de Direitos Humanos - SDH"
+
     records.append({
         'ugr': ugr,
         'unidade': unidade,
