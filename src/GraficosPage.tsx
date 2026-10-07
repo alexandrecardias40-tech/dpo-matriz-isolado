@@ -2,7 +2,7 @@ import { useMemo, useState, useEffect } from "react";
 import { useData } from "./DataProvider";
 import DashboardLayout from "./components/DashboardLayout";
 import CINetworkChart from "./components/CINetworkChart";
-import { ArrowLeft, TrendingUp, AlertTriangle } from "lucide-react";
+import { ArrowLeft, AlertTriangle } from "lucide-react";
 import { PI_NAMES, PI_GROUPS } from "./App";
 
 const piLabel = (code: string) => PI_NAMES[code?.trim()] ?? code;
@@ -165,7 +165,8 @@ function DetailPanel({ cc, onBack, records }: { cc: any; onBack: ()=>void; recor
     });
     
     const topNDs = Object.values(ndMap)
-      .sort((a: any, b: any) => b.total - a.total)
+      .filter((a: any) => a.empenhado > 0)
+      .sort((a: any, b: any) => b.empenhado - a.empenhado)
       .slice(0, 5);
 
     let status = "";
@@ -290,28 +291,11 @@ function DetailPanel({ cc, onBack, records }: { cc: any; onBack: ()=>void; recor
           {/* Diagnóstico Geral */}
           <div style={{ ...s.card, padding: "16px 18px", borderLeft: `4px solid ${diagnostic.color}`, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
             <div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                <span style={{ fontWeight: 800, fontSize: 13, color: "#0f172a", display: "flex", alignItems: "center", gap: 6 }}>
-                  <TrendingUp size={15} style={{ color: diagnostic.color }} /> Diagnóstico Situacional
-                </span>
-                <span style={{ fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 12, background: `${diagnostic.color}15`, color: diagnostic.color, border: `1px solid ${diagnostic.color}30` }}>
-                  {diagnostic.status}
-                </span>
-              </div>
-              <p style={{ fontSize: 11.5, color: "#475569", lineHeight: 1.5, margin: 0 }}>
-                A unidade <strong>{cc.centro_custo}</strong> possui um orçamento total aprovado de <strong>{diagnostic.aprovadoText}</strong> e executou <strong>{diagnostic.executadoText}</strong> até o momento.
-              </p>
-              <div style={{ marginTop: 10, padding: "10px 12px", background: "#f8fafc", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 11, color: "#334155" }}>
-                📊 A taxa de execução real de <strong>{diagnostic.rateText}%</strong> {diagnostic.compareText}.
-              </div>
-              
-
-
               {/* Detalhamento por Natureza de Despesa */}
               {diagnostic.topNDs && diagnostic.topNDs.length > 0 && (
-                <div style={{ marginTop: 16, borderTop: "1px solid #e2e8f0", paddingTop: 12 }}>
+                <div>
                   <div style={{ fontSize: 10.5, fontWeight: 800, color: "#334155", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.04em" }}>
-                    🧬 Despesas por Natureza de Despesa (TG)
+                    Despesas Empenhadas por Natureza de Despesa (TG)
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
                     {diagnostic.topNDs.map((nd: any) => (
@@ -321,11 +305,7 @@ function DetailPanel({ cc, onBack, records }: { cc: any; onBack: ()=>void; recor
                           <span style={{ color: "#475569", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={nd.name}>{nd.name}</span>
                         </span>
                         <span style={{ fontWeight: 700, color: "#0f172a", flexShrink: 0 }}>
-                          {fmt(nd.total)} {stats.executado_tg > 0 && (
-                            <span style={{ fontSize: 9, fontWeight: 500, color: "#64748b", marginLeft: 4 }}>
-                              ({((nd.total / stats.executado_tg) * 100).toFixed(1)}% do exec.)
-                            </span>
-                          )}
+                          {fmt(nd.empenhado)}
                         </span>
                       </div>
                     ))}

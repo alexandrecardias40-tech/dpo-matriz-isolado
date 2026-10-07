@@ -607,15 +607,6 @@ export default function ComparativosPage() {
               </div>
             </div>
 
-            {/* Bloco de Análise Dinâmica para Desempenho */}
-            <div style={{ ...s.card, padding: "16px 18px", background: "#f8fafc", borderLeft: "4px solid #3b82f6", marginTop: 14 }}>
-              <div style={{ fontWeight: 700, fontSize: 13, color: "#0f172a", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
-                <Target size={14} style={{ color: "#3b82f6" }} /> {dynamicAnalysis.title}
-              </div>
-              <p style={{ fontSize: 11.5, color: "#475569", lineHeight: 1.5, margin: 0 }}>
-                {dynamicAnalysis.text}
-              </p>
-            </div>
 
           </div>
         ) : (
@@ -650,15 +641,6 @@ export default function ComparativosPage() {
               </div>
             </div>
 
-            {/* Bloco de Análise Dinâmica para Eficiência */}
-            <div style={{ ...s.card, padding: "16px 18px", background: "#f8fafc", borderLeft: "4px solid #8b5cf6" }}>
-              <div style={{ fontWeight: 700, fontSize: 13, color: "#0f172a", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
-                <TrendingUp size={14} style={{ color: "#8b5cf6" }} /> {efficiencyAnalysis.title}
-              </div>
-              <p style={{ fontSize: 11.5, color: "#475569", lineHeight: 1.5, margin: 0 }}>
-                {efficiencyAnalysis.text}
-              </p>
-            </div>
           </div>
         )}
 

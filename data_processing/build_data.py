@@ -292,7 +292,19 @@ for ugr, pi in all_keys:
         continue
 
     # Regras de Ajustes de Empenho (Abatimentos manuais a pedido)
-    # (Nenhum abatimento restante, tudo foi movido para exclusão direta)
+
+    # 156047 (DPI) - PI VGY01N0105N: retirar R$ 150.000 empenhados indevidamente na ND 339039
+    if str(ugr).strip() == '156047' and str(pi).strip() == 'VGY01N0105N':
+        despesas_empenhadas_tg = max(0, despesas_empenhadas_tg - 150000.0)
+        despesas_empenhadas_a_liquidar_tg = max(0, despesas_empenhadas_a_liquidar_tg - 150000.0)
+        total_tg = max(0, total_tg - 300000.0)
+        # Atualiza o breakdown da ND 339039
+        for item in tg_breakdown:
+            if item.get('natureza_despesa') == '339039':
+                item['despesas_empenhadas'] = max(0, item['despesas_empenhadas'] - 150000.0)
+                item['despesas_empenhadas_a_liquidar'] = max(0, item['despesas_empenhadas_a_liquidar'] - 150000.0)
+                item['total'] = max(0, item['total'] - 300000.0)
+                break
 
     # Atualiza diff após abatimento para recalcular o semáforo se for o caso
     diff_emp = abs(despesas_empenhadas_matriz - despesas_empenhadas_tg)

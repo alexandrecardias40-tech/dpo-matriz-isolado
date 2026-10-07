@@ -1505,37 +1505,19 @@
           "natureza_despesa": "339030",
           "natureza_despesa_nome": "MATERIAL DE CONSUMO",
           "credito_disponivel": 0.0,
-          "despesas_empenhadas": 0.0,
-          "despesas_empenhadas_a_liquidar": 0.0,
-          "despesas_liquidadas": 0.0,
-          "total": 0.0
-        },
-        {
-          "natureza_despesa": "339033",
-          "natureza_despesa_nome": "PASSAGENS E DESPESAS COM LOCOMOCAO",
-          "credito_disponivel": 0.0,
-          "despesas_empenhadas": 25000.0,
-          "despesas_empenhadas_a_liquidar": 12930.91,
-          "despesas_liquidadas": 12069.09,
-          "total": 50000.0
-        },
-        {
-          "natureza_despesa": "339036",
-          "natureza_despesa_nome": "OUTROS SERVICOS DE TERCEIROS - PESSOA FISICA",
-          "credito_disponivel": 0.0,
-          "despesas_empenhadas": 57000.0,
-          "despesas_empenhadas_a_liquidar": 16073.09,
-          "despesas_liquidadas": 40926.91,
-          "total": 114000.0
+          "despesas_empenhadas": 35343.2,
+          "despesas_empenhadas_a_liquidar": 378.72,
+          "despesas_liquidadas": 34964.48,
+          "total": 70686.4
         },
         {
           "natureza_despesa": "339039",
           "natureza_despesa_nome": "OUTROS SERVICOS DE TERCEIROS - PESSOA JURIDICA",
-          "credito_disponivel": 1.44,
-          "despesas_empenhadas": 15879.36,
-          "despesas_empenhadas_a_liquidar": 12567.0,
-          "despesas_liquidadas": 3312.36,
-          "total": 31760.16
+          "credito_disponivel": 1065926.79,
+          "despesas_empenhadas": 339906.73,
+          "despesas_empenhadas_a_liquidar": 183297.13,
+          "despesas_liquidadas": 156609.6,
+          "total": 1745740.25
         }
       ]
     },
@@ -9730,10 +9712,10 @@
       ]
     },
     {
-      "ugr": "154309",
-      "unidade": "DPTO.DE PSICOLOGIA SOCIAL E DO TRABALHO (PST)",
-      "plano_interno": "OGP01O19B5N",
-      "plano_interno_nome": "PROGRAMA POS-GRADUACAO EM PSICOLOGIA SOCIAL",
+      "ugr": "154191",
+      "unidade": "PREFEITURA DA UNB (PRC)",
+      "plano_interno": "VGM01N01A4N",
+      "plano_interno_nome": "TAXIGOV/MOBGOV (MOTORISTA)",
       "sei": "",
       "nome_responsavel": "",
       "nc_alocacao": "",
@@ -9745,11 +9727,11 @@
       "total_executado_matriz": 0.0,
       "percentual_executado_matriz": 0.0,
       "debitar_matriz": 0.0,
-      "credito_disponivel_tg": 3369.32,
-      "despesas_empenhadas_tg": 13325.0,
-      "despesas_empenhadas_a_liquidar_tg": 11325.0,
-      "despesas_liquidadas_tg": 2000.0,
-      "total_tg": 30019.32,
+      "credito_disponivel_tg": 0.0,
+      "despesas_empenhadas_tg": 160000.0,
+      "despesas_empenhadas_a_liquidar_tg": 150006.41,
+      "despesas_liquidadas_tg": 9993.59,
+      "total_tg": 320000.0,
       "in_matrix": false,
       "in_tg": true,
       "semaforo": "tg_only",
@@ -9919,10 +9901,10 @@
       ]
     },
     {
-      "ugr": "154163",
-      "unidade": "nan",
-      "plano_interno": "VGM01N01I1N",
-      "plano_interno_nome": "FUNCIONAMENTO GERAL",
+      "ugr": "154076",
+      "unidade": "SECRETARIA DE TECNOLOGIA DA INFORMACAO-STI",
+      "plano_interno": "VGM01N01K8N",
+      "plano_interno_nome": "ACORDO COOPERACAO TECN REDE RNP GIGACANDANGA",
       "sei": "",
       "nome_responsavel": "",
       "nc_alocacao": "",
@@ -9946,20 +9928,299 @@
         {
           "natureza_despesa": "339000",
           "natureza_despesa_nome": "APLICACOES DIRETAS",
-          "credito_disponivel": 122.55,
+          "credito_disponivel": 23543.56,
           "despesas_empenhadas": 0.0,
           "despesas_empenhadas_a_liquidar": 0.0,
           "despesas_liquidadas": 0.0,
-          "total": 122.55
+          "total": 23543.56
+        }
+      ]
+    },
+    {
+      "ugr": "154159",
+      "unidade": "INSTITUTO DE CIENCIAS HUMANAS (ICH)",
+      "plano_interno": "VGY01N0107N",
+      "plano_interno_nome": "CUSTOS INDIRETOS - EMENDAS PARLAMENTARES",
+      "sei": "",
+      "nome_responsavel": "",
+      "nc_alocacao": "",
+      "nc_desconto": "",
+      "valor_aprovado": 0.0,
+      "credito_disponivel_matriz": 0.0,
+      "despesas_empenhadas_matriz": 0.0,
+      "despesas_debitadas_matriz": 0.0,
+      "total_executado_matriz": 0.0,
+      "percentual_executado_matriz": 0.0,
+      "debitar_matriz": 0.0,
+      "credito_disponivel_tg": 9397.03,
+      "despesas_empenhadas_tg": 0.0,
+      "despesas_empenhadas_a_liquidar_tg": 0.0,
+      "despesas_liquidadas_tg": 0.0,
+      "total_tg": 9397.03,
+      "in_matrix": false,
+      "in_tg": true,
+      "semaforo": "tg_only",
+      "tg_breakdown": [
+        {
+          "natureza_despesa": "339000",
+          "natureza_despesa_nome": "APLICACOES DIRETAS",
+          "credito_disponivel": 9397.03,
+          "despesas_empenhadas": 0.0,
+          "despesas_empenhadas_a_liquidar": 0.0,
+          "despesas_liquidadas": 0.0,
+          "total": 9397.03
+        }
+      ]
+    },
+    {
+      "ugr": "155027",
+      "unidade": "ARQUIVO CENTRAL (ACE)",
+      "plano_interno": "VGY01N0105N",
+      "plano_interno_nome": "CREDITOS DISTRIBUIDOS P/ UNIDADES ADMINISTRAT",
+      "sei": "23106.002562/2026-52",
+      "nome_responsavel": "Renato",
+      "nc_alocacao": "1599",
+      "nc_desconto": "1600",
+      "valor_aprovado": 142269.37,
+      "credito_disponivel_matriz": 117528.76,
+      "despesas_empenhadas_matriz": 165.96,
+      "despesas_debitadas_matriz": 24574.65,
+      "total_executado_matriz": 24740.61,
+      "percentual_executado_matriz": 0.1739,
+      "debitar_matriz": 27959.0,
+      "credito_disponivel_tg": 117528.76,
+      "despesas_empenhadas_tg": 165.96,
+      "despesas_empenhadas_a_liquidar_tg": 6.66,
+      "despesas_liquidadas_tg": 159.3,
+      "total_tg": 117860.68,
+      "in_matrix": true,
+      "in_tg": true,
+      "semaforo": "verde",
+      "tg_breakdown": [
+        {
+          "natureza_despesa": "339000",
+          "natureza_despesa_nome": "APLICACOES DIRETAS",
+          "credito_disponivel": 117528.76,
+          "despesas_empenhadas": 0.0,
+          "despesas_empenhadas_a_liquidar": 0.0,
+          "despesas_liquidadas": 0.0,
+          "total": 117528.76
+        },
+        {
+          "natureza_despesa": "339039",
+          "natureza_despesa_nome": "OUTROS SERVICOS DE TERCEIROS - PESSOA JURIDICA",
+          "credito_disponivel": 0.0,
+          "despesas_empenhadas": 165.96,
+          "despesas_empenhadas_a_liquidar": 6.66,
+          "despesas_liquidadas": 159.3,
+          "total": 331.92
+        }
+      ]
+    },
+    {
+      "ugr": "154164",
+      "unidade": "FACULDADE DE ECO ADM CONT E GESTAO DE (FACE)",
+      "plano_interno": "VGY01N0101N",
+      "plano_interno_nome": "CUSTOS INDIRETOS UNIDADE CAPTADORA",
+      "sei": "",
+      "nome_responsavel": "",
+      "nc_alocacao": "",
+      "nc_desconto": "",
+      "valor_aprovado": 0.0,
+      "credito_disponivel_matriz": 0.0,
+      "despesas_empenhadas_matriz": 0.0,
+      "despesas_debitadas_matriz": 0.0,
+      "total_executado_matriz": 0.0,
+      "percentual_executado_matriz": 0.0,
+      "debitar_matriz": 0.0,
+      "credito_disponivel_tg": 26861.03,
+      "despesas_empenhadas_tg": 0.0,
+      "despesas_empenhadas_a_liquidar_tg": 0.0,
+      "despesas_liquidadas_tg": 0.0,
+      "total_tg": 26861.03,
+      "in_matrix": false,
+      "in_tg": true,
+      "semaforo": "tg_only",
+      "tg_breakdown": [
+        {
+          "natureza_despesa": "339000",
+          "natureza_despesa_nome": "APLICACOES DIRETAS",
+          "credito_disponivel": 26861.03,
+          "despesas_empenhadas": 0.0,
+          "despesas_empenhadas_a_liquidar": 0.0,
+          "despesas_liquidadas": 0.0,
+          "total": 26861.03
+        }
+      ]
+    },
+    {
+      "ugr": "152383",
+      "unidade": "OUVIDORIA (OUV)",
+      "plano_interno": "VGY01N0105N",
+      "plano_interno_nome": "CREDITOS DISTRIBUIDOS P/ UNIDADES ADMINISTRAT",
+      "sei": "23106.002446/2026-33",
+      "nome_responsavel": "Douglas",
+      "nc_alocacao": "2026NC001518",
+      "nc_desconto": "2026NC001519",
+      "valor_aprovado": 59278.99,
+      "credito_disponivel_matriz": 44143.37,
+      "despesas_empenhadas_matriz": 85.0,
+      "despesas_debitadas_matriz": 15050.62,
+      "total_executado_matriz": 15135.62,
+      "percentual_executado_matriz": 0.255329,
+      "debitar_matriz": 11649.6,
+      "credito_disponivel_tg": 44143.37,
+      "despesas_empenhadas_tg": 85.0,
+      "despesas_empenhadas_a_liquidar_tg": 0.0,
+      "despesas_liquidadas_tg": 85.0,
+      "total_tg": 44313.37,
+      "in_matrix": true,
+      "in_tg": true,
+      "semaforo": "verde",
+      "tg_breakdown": [
+        {
+          "natureza_despesa": "339000",
+          "natureza_despesa_nome": "APLICACOES DIRETAS",
+          "credito_disponivel": 44143.37,
+          "despesas_empenhadas": 0.0,
+          "despesas_empenhadas_a_liquidar": 0.0,
+          "despesas_liquidadas": 0.0,
+          "total": 44143.37
+        },
+        {
+          "natureza_despesa": "339039",
+          "natureza_despesa_nome": "OUTROS SERVICOS DE TERCEIROS - PESSOA JURIDICA",
+          "credito_disponivel": 0.0,
+          "despesas_empenhadas": 85.0,
+          "despesas_empenhadas_a_liquidar": 0.0,
+          "despesas_liquidadas": 85.0,
+          "total": 170.0
+        }
+      ]
+    },
+    {
+      "ugr": "154368",
+      "unidade": "CENTRO DE DESENVOLVIMENTO SUSTENTAVEL (CDS)",
+      "plano_interno": "VGY01N0103N",
+      "plano_interno_nome": "CUSTOS INDIRETOS DAS UNIDADES - RECOMPOSICAO",
+      "sei": "",
+      "nome_responsavel": "",
+      "nc_alocacao": "",
+      "nc_desconto": "",
+      "valor_aprovado": 0.0,
+      "credito_disponivel_matriz": 0.0,
+      "despesas_empenhadas_matriz": 0.0,
+      "despesas_debitadas_matriz": 0.0,
+      "total_executado_matriz": 0.0,
+      "percentual_executado_matriz": 0.0,
+      "debitar_matriz": 0.0,
+      "credito_disponivel_tg": 40467.25,
+      "despesas_empenhadas_tg": 0.0,
+      "despesas_empenhadas_a_liquidar_tg": 0.0,
+      "despesas_liquidadas_tg": 0.0,
+      "total_tg": 40467.25,
+      "in_matrix": false,
+      "in_tg": true,
+      "semaforo": "tg_only",
+      "tg_breakdown": [
+        {
+          "natureza_despesa": "339000",
+          "natureza_despesa_nome": "APLICACOES DIRETAS",
+          "credito_disponivel": 40467.25,
+          "despesas_empenhadas": 0.0,
+          "despesas_empenhadas_a_liquidar": 0.0,
+          "despesas_liquidadas": 0.0,
+          "total": 40467.25
+        }
+      ]
+    },
+    {
+      "ugr": "154239",
+      "unidade": "DEPARTAMENTO DE ECONOMIA (ECO)",
+      "plano_interno": "OGP01O19D5N",
+      "plano_interno_nome": "PROGRAMA DE POS-GRADUACAO EM ECONOMIA",
+      "sei": "",
+      "nome_responsavel": "",
+      "nc_alocacao": "",
+      "nc_desconto": "",
+      "valor_aprovado": 0.0,
+      "credito_disponivel_matriz": 0.0,
+      "despesas_empenhadas_matriz": 0.0,
+      "despesas_debitadas_matriz": 0.0,
+      "total_executado_matriz": 0.0,
+      "percentual_executado_matriz": 0.0,
+      "debitar_matriz": 0.0,
+      "credito_disponivel_tg": 37372.8,
+      "despesas_empenhadas_tg": 0.0,
+      "despesas_empenhadas_a_liquidar_tg": 0.0,
+      "despesas_liquidadas_tg": 0.0,
+      "total_tg": 37372.8,
+      "in_matrix": false,
+      "in_tg": true,
+      "semaforo": "tg_only",
+      "tg_breakdown": [
+        {
+          "natureza_despesa": "339000",
+          "natureza_despesa_nome": "APLICACOES DIRETAS",
+          "credito_disponivel": 37372.8,
+          "despesas_empenhadas": 0.0,
+          "despesas_empenhadas_a_liquidar": 0.0,
+          "despesas_liquidadas": 0.0,
+          "total": 37372.8
+        }
+      ]
+    },
+    {
+      "ugr": "154299",
+      "unidade": "FACULDADE DE MEDICINA_(FM)",
+      "plano_interno": "MGY01N0104N",
+      "plano_interno_nome": "CREDITOS DISTRIBUIDOS P/UNID.ACAD.- MATRIZ",
+      "sei": "23106.002601/2026-11",
+      "nome_responsavel": "Renato",
+      "nc_alocacao": "1585",
+      "nc_desconto": "1586",
+      "valor_aprovado": 1224980.9,
+      "credito_disponivel_matriz": 960275.99,
+      "despesas_empenhadas_matriz": 160540.0,
+      "despesas_debitadas_matriz": 104164.91,
+      "total_executado_matriz": 264704.91,
+      "percentual_executado_matriz": 0.216089,
+      "debitar_matriz": 222723.8,
+      "credito_disponivel_tg": 528406.04,
+      "despesas_empenhadas_tg": 288919.74,
+      "despesas_empenhadas_a_liquidar_tg": 41148.95,
+      "despesas_liquidadas_tg": 247770.79,
+      "total_tg": 1106245.52,
+      "in_matrix": true,
+      "in_tg": true,
+      "semaforo": "vermelho",
+      "tg_breakdown": [
+        {
+          "natureza_despesa": "339000",
+          "natureza_despesa_nome": "APLICACOES DIRETAS",
+          "credito_disponivel": 528406.04,
+          "despesas_empenhadas": 0.0,
+          "despesas_empenhadas_a_liquidar": 0.0,
+          "despesas_liquidadas": 0.0,
+          "total": 528406.04
+        },
+        {
+          "natureza_despesa": "339014",
+          "natureza_despesa_nome": "DIARIAS - PESSOAL CIVIL",
+          "credito_disponivel": 0.0,
+          "despesas_empenhadas": 5000.0,
+          "despesas_empenhadas_a_liquidar": 2522.95,
+          "despesas_liquidadas": 2477.05,
+          "total": 10000.0
         },
         {
           "natureza_despesa": "339020",
           "natureza_despesa_nome": "AUXILIO FINANCEIRO A PESQUISADORES",
           "credito_disponivel": 0.0,
-          "despesas_empenhadas": 65.72,
-          "despesas_empenhadas_a_liquidar": 0.0,
-          "despesas_liquidadas": 65.72,
-          "total": 131.44
+          "despesas_empenhadas": 267960.0,
+          "despesas_empenhadas_a_liquidar": 37730.0,
+          "despesas_liquidadas": 230230.0,
+          "total": 535920.0
         },
         {
           "natureza_despesa": "339039",
@@ -10028,7 +10289,7 @@
     },
     {
       "ugr": "154232",
-      "unidade": "nan",
+      "unidade": "DEPARTAMENTO DE CIENCIAS DA COMPUTACAO (CIC)",
       "plano_interno": "OGP01O19B8N",
       "plano_interno_nome": "PROGRAMA DE POS-GRADO EM INFORMATICA - PPGINF",
       "sei": "",
@@ -10044,8 +10305,8 @@
       "debitar_matriz": 0.0,
       "credito_disponivel_tg": 25205.4,
       "despesas_empenhadas_tg": 4601.0,
-      "despesas_empenhadas_a_liquidar_tg": 216.72,
-      "despesas_liquidadas_tg": 4384.28,
+      "despesas_empenhadas_a_liquidar_tg": 1047.72,
+      "despesas_liquidadas_tg": 3553.28,
       "total_tg": 34407.4,
       "in_matrix": false,
       "in_tg": true,
@@ -10083,8 +10344,8 @@
           "natureza_despesa_nome": "OUTROS SERVICOS DE TERCEIROS - PESSOA JURIDICA",
           "credito_disponivel": 0.0,
           "despesas_empenhadas": 831.0,
-          "despesas_empenhadas_a_liquidar": 0.0,
-          "despesas_liquidadas": 831.0,
+          "despesas_empenhadas_a_liquidar": 831.0,
+          "despesas_liquidadas": 0.0,
           "total": 1662.0
         }
       ]
@@ -10225,8 +10486,8 @@
       ]
     },
     {
-      "ugr": "150242",
-      "unidade": "nan",
+      "ugr": "152387",
+      "unidade": "DECANATO DE PLANEJ,ORCAM E AVAL INST - DPO",
       "plano_interno": "VGM01N01I1N",
       "plano_interno_nome": "FUNCIONAMENTO GERAL",
       "sei": "",
@@ -10250,8 +10511,8 @@
       "semaforo": "tg_only",
       "tg_breakdown": [
         {
-          "natureza_despesa": "339092",
-          "natureza_despesa_nome": "DESPESAS DE EXERCICIOS ANTERIORES",
+          "natureza_despesa": "339014",
+          "natureza_despesa_nome": "DIARIAS - PESSOAL CIVIL",
           "credito_disponivel": 0.0,
           "despesas_empenhadas": 24587.39,
           "despesas_empenhadas_a_liquidar": 0.0,
@@ -10259,13 +10520,58 @@
           "total": 49174.78
         },
         {
-          "natureza_despesa": "339093",
-          "natureza_despesa_nome": "INDENIZACOES E RESTITUICOES",
+          "natureza_despesa": "339033",
+          "natureza_despesa_nome": "PASSAGENS E DESPESAS COM LOCOMOCAO",
           "credito_disponivel": 0.0,
+          "despesas_empenhadas": 18000.0,
+          "despesas_empenhadas_a_liquidar": 18000.0,
+          "despesas_liquidadas": 0.0,
+          "total": 36000.0
+        }
+      ]
+    },
+    {
+      "ugr": "154251",
+      "unidade": "FACULDADE DE AGRONOMIA E MED VETERINARI (FAV)",
+      "plano_interno": "VGY01N0107N",
+      "plano_interno_nome": "CUSTOS INDIRETOS - EMENDAS PARLAMENTARES",
+      "sei": "",
+      "nome_responsavel": "",
+      "nc_alocacao": "",
+      "nc_desconto": "",
+      "valor_aprovado": 0.0,
+      "credito_disponivel_matriz": 0.0,
+      "despesas_empenhadas_matriz": 0.0,
+      "despesas_debitadas_matriz": 0.0,
+      "total_executado_matriz": 0.0,
+      "percentual_executado_matriz": 0.0,
+      "debitar_matriz": 0.0,
+      "credito_disponivel_tg": 50966.08,
+      "despesas_empenhadas_tg": 578.9,
+      "despesas_empenhadas_a_liquidar_tg": 0.0,
+      "despesas_liquidadas_tg": 578.9,
+      "total_tg": 52123.88,
+      "in_matrix": false,
+      "in_tg": true,
+      "semaforo": "tg_only",
+      "tg_breakdown": [
+        {
+          "natureza_despesa": "339000",
+          "natureza_despesa_nome": "APLICACOES DIRETAS",
+          "credito_disponivel": 50966.08,
           "despesas_empenhadas": 0.0,
           "despesas_empenhadas_a_liquidar": 0.0,
           "despesas_liquidadas": 0.0,
-          "total": 0.0
+          "total": 50966.08
+        },
+        {
+          "natureza_despesa": "339030",
+          "natureza_despesa_nome": "MATERIAL DE CONSUMO",
+          "credito_disponivel": 0.0,
+          "despesas_empenhadas": 578.9,
+          "despesas_empenhadas_a_liquidar": 0.0,
+          "despesas_liquidadas": 578.9,
+          "total": 1157.8
         }
       ]
     },
@@ -10661,7 +10967,7 @@
       "total_tg": 7385881.64,
       "in_matrix": false,
       "in_tg": true,
-      "semaforo": "tg_only",
+      "semaforo": "verde",
       "tg_breakdown": [
         {
           "natureza_despesa": "339039",
@@ -10846,11 +11152,11 @@
         {
           "natureza_despesa": "339039",
           "natureza_despesa_nome": "OUTROS SERVICOS DE TERCEIROS - PESSOA JURIDICA",
-          "credito_disponivel": 1665.0,
-          "despesas_empenhadas": 0.0,
-          "despesas_empenhadas_a_liquidar": 0.0,
+          "credito_disponivel": 1.44,
+          "despesas_empenhadas": 11949.36,
+          "despesas_empenhadas_a_liquidar": 11949.36,
           "despesas_liquidadas": 0.0,
-          "total": 1665.0
+          "total": 23900.16
         }
       ]
     },
@@ -11134,10 +11440,10 @@
       ]
     },
     {
-      "ugr": "154169",
-      "unidade": "nan",
-      "plano_interno": "VGM01N01I1N",
-      "plano_interno_nome": "FUNCIONAMENTO GERAL",
+      "ugr": "156247",
+      "unidade": "PARQUE CIENTIF E TECNOLOGICO DA UNB (PCTEC)",
+      "plano_interno": "VGY01N0103N",
+      "plano_interno_nome": "CUSTOS INDIRETOS DAS UNIDADES - RECOMPOSICAO",
       "sei": "",
       "nome_responsavel": "",
       "nc_alocacao": "",
@@ -11149,11 +11455,11 @@
       "total_executado_matriz": 0.0,
       "percentual_executado_matriz": 0.0,
       "debitar_matriz": 0.0,
-      "credito_disponivel_tg": 33230.62,
-      "despesas_empenhadas_tg": 0.0,
+      "credito_disponivel_tg": 0.0,
+      "despesas_empenhadas_tg": 225000.0,
       "despesas_empenhadas_a_liquidar_tg": 0.0,
-      "despesas_liquidadas_tg": 0.0,
-      "total_tg": 33230.62,
+      "despesas_liquidadas_tg": 225000.0,
+      "total_tg": 450000.0,
       "in_matrix": false,
       "in_tg": true,
       "semaforo": "tg_only",
@@ -11194,11 +11500,11 @@
       "total_executado_matriz": 0.0,
       "percentual_executado_matriz": 0.0,
       "debitar_matriz": 0.0,
-      "credito_disponivel_tg": 15097.4,
-      "despesas_empenhadas_tg": 51619.7,
-      "despesas_empenhadas_a_liquidar_tg": 7983.67,
-      "despesas_liquidadas_tg": 43636.03,
-      "total_tg": 118336.8,
+      "credito_disponivel_tg": 27615.2,
+      "despesas_empenhadas_tg": 5680.8,
+      "despesas_empenhadas_a_liquidar_tg": 0.0,
+      "despesas_liquidadas_tg": 5680.8,
+      "total_tg": 38976.8,
       "in_matrix": false,
       "in_tg": true,
       "semaforo": "tg_only",
@@ -11206,101 +11512,20 @@
         {
           "natureza_despesa": "339000",
           "natureza_despesa_nome": "APLICACOES DIRETAS",
-          "credito_disponivel": 0.0,
+          "credito_disponivel": 27615.2,
           "despesas_empenhadas": 0.0,
           "despesas_empenhadas_a_liquidar": 0.0,
           "despesas_liquidadas": 0.0,
-          "total": 0.0
-        },
-        {
-          "natureza_despesa": "339014",
-          "natureza_despesa_nome": "DIARIAS - PESSOAL CIVIL",
-          "credito_disponivel": 0.0,
-          "despesas_empenhadas": 4000.0,
-          "despesas_empenhadas_a_liquidar": 1571.76,
-          "despesas_liquidadas": 2428.24,
-          "total": 8000.0
-        },
-        {
-          "natureza_despesa": "339030",
-          "natureza_despesa_nome": "MATERIAL DE CONSUMO",
-          "credito_disponivel": 8433.2,
-          "despesas_empenhadas": 0.0,
-          "despesas_empenhadas_a_liquidar": 0.0,
-          "despesas_liquidadas": 0.0,
-          "total": 8433.2
-        },
-        {
-          "natureza_despesa": "339033",
-          "natureza_despesa_nome": "PASSAGENS E DESPESAS COM LOCOMOCAO",
-          "credito_disponivel": 0.0,
-          "despesas_empenhadas": 7000.0,
-          "despesas_empenhadas_a_liquidar": 80.15,
-          "despesas_liquidadas": 6919.85,
-          "total": 14000.0
-        },
-        {
-          "natureza_despesa": "339036",
-          "natureza_despesa_nome": "OUTROS SERVICOS DE TERCEIROS - PESSOA FISICA",
-          "credito_disponivel": 100.0,
-          "despesas_empenhadas": 100.0,
-          "despesas_empenhadas_a_liquidar": 100.0,
-          "despesas_liquidadas": 0.0,
-          "total": 300.0
+          "total": 27615.2
         },
         {
           "natureza_despesa": "339039",
           "natureza_despesa_nome": "OUTROS SERVICOS DE TERCEIROS - PESSOA JURIDICA",
-          "credito_disponivel": 6564.2,
-          "despesas_empenhadas": 3235.0,
-          "despesas_empenhadas_a_liquidar": 3058.0,
-          "despesas_liquidadas": 177.0,
-          "total": 13034.2
-        },
-        {
-          "natureza_despesa": "339040",
-          "natureza_despesa_nome": "SERVICOS DE TECNOLOGIA DA INFORMACAO E COMUNICACAO - PJ",
           "credito_disponivel": 0.0,
-          "despesas_empenhadas": 0.0,
+          "despesas_empenhadas": 5680.8,
           "despesas_empenhadas_a_liquidar": 0.0,
-          "despesas_liquidadas": 0.0,
-          "total": 0.0
-        },
-        {
-          "natureza_despesa": "339093",
-          "natureza_despesa_nome": "INDENIZACOES E RESTITUICOES",
-          "credito_disponivel": 0.0,
-          "despesas_empenhadas": 2185.23,
-          "despesas_empenhadas_a_liquidar": 0.0,
-          "despesas_liquidadas": 2185.23,
-          "total": 4370.46
-        },
-        {
-          "natureza_despesa": "339139",
-          "natureza_despesa_nome": "OUTROS SERVICOS DE TERCEIROS - PESSOA JURIDICA (INTRA)",
-          "credito_disponivel": 0.0,
-          "despesas_empenhadas": 4068.06,
-          "despesas_empenhadas_a_liquidar": 3173.76,
-          "despesas_liquidadas": 894.3,
-          "total": 8136.12
-        },
-        {
-          "natureza_despesa": "339147",
-          "natureza_despesa_nome": "OBRIG.TRIBUT.E CONTRIB-OP.INTRA-ORCAMENTARIAS",
-          "credito_disponivel": 0.0,
-          "despesas_empenhadas": 4426.28,
-          "despesas_empenhadas_a_liquidar": 0.0,
-          "despesas_liquidadas": 4426.28,
-          "total": 8852.56
-        },
-        {
-          "natureza_despesa": "339193",
-          "natureza_despesa_nome": "INDENIZACOES E RESTITUICOES",
-          "credito_disponivel": 0.0,
-          "despesas_empenhadas": 26605.13,
-          "despesas_empenhadas_a_liquidar": 0.0,
-          "despesas_liquidadas": 26605.13,
-          "total": 53210.26
+          "despesas_liquidadas": 5680.8,
+          "total": 11361.6
         }
       ]
     },
@@ -11332,6 +11557,15 @@
         {
           "natureza_despesa": "339039",
           "natureza_despesa_nome": "OUTROS SERVICOS DE TERCEIROS - PESSOA JURIDICA",
+          "credito_disponivel": 26325.0,
+          "despesas_empenhadas": 61560.86,
+          "despesas_empenhadas_a_liquidar": 39470.51,
+          "despesas_liquidadas": 22090.35,
+          "total": 149446.72
+        },
+        {
+          "natureza_despesa": "339040",
+          "natureza_despesa_nome": "SERVICOS DE TECNOLOGIA DA INFORMACAO E COMUNICACAO - PJ",
           "credito_disponivel": 0.0,
           "despesas_empenhadas": 100.0,
           "despesas_empenhadas_a_liquidar": 32.0,
@@ -11462,7 +11696,16 @@
           "despesas_empenhadas": 1000.0,
           "despesas_empenhadas_a_liquidar": 1000.0,
           "despesas_liquidadas": 0.0,
-          "total": 2000.0
+          "total": 0.0
+        },
+        {
+          "natureza_despesa": "339020",
+          "natureza_despesa_nome": "AUXILIO FINANCEIRO A PESQUISADORES",
+          "credito_disponivel": 0.0,
+          "despesas_empenhadas": 866848.91,
+          "despesas_empenhadas_a_liquidar": 0.0,
+          "despesas_liquidadas": 866848.91,
+          "total": 1733697.82
         }
       ]
     },
@@ -12335,7 +12578,7 @@
       "total_tg": 618461.42,
       "in_matrix": true,
       "in_tg": true,
-      "semaforo": "vermelho",
+      "semaforo": "tg_only",
       "tg_breakdown": [
         {
           "natureza_despesa": "339000",
@@ -14036,52 +14279,16 @@
           "despesas_empenhadas": 0.0,
           "despesas_empenhadas_a_liquidar": 0.0,
           "despesas_liquidadas": 0.0,
-          "total": 284272.12
-        },
-        {
-          "natureza_despesa": "339014",
-          "natureza_despesa_nome": "DIARIAS - PESSOAL CIVIL",
-          "credito_disponivel": 0.0,
-          "despesas_empenhadas": 14000.0,
-          "despesas_empenhadas_a_liquidar": 4066.22,
-          "despesas_liquidadas": 9933.78,
-          "total": 28000.0
-        },
-        {
-          "natureza_despesa": "339018",
-          "natureza_despesa_nome": "AUXILIO FINANCEIRO A ESTUDANTES",
-          "credito_disponivel": 0.0,
-          "despesas_empenhadas": 6000.0,
-          "despesas_empenhadas_a_liquidar": 0.0,
-          "despesas_liquidadas": 6000.0,
-          "total": 12000.0
-        },
-        {
-          "natureza_despesa": "339033",
-          "natureza_despesa_nome": "PASSAGENS E DESPESAS COM LOCOMOCAO",
-          "credito_disponivel": 0.0,
-          "despesas_empenhadas": 28474.6,
-          "despesas_empenhadas_a_liquidar": 8253.21,
-          "despesas_liquidadas": 20221.39,
-          "total": 56949.2
+          "total": 0.0
         },
         {
           "natureza_despesa": "339039",
           "natureza_despesa_nome": "OUTROS SERVICOS DE TERCEIROS - PESSOA JURIDICA",
-          "credito_disponivel": 0.0,
-          "despesas_empenhadas": 5910.8,
-          "despesas_empenhadas_a_liquidar": 5840.0,
-          "despesas_liquidadas": 70.8,
-          "total": 11821.6
-        },
-        {
-          "natureza_despesa": "339093",
-          "natureza_despesa_nome": "INDENIZACOES E RESTITUICOES",
-          "credito_disponivel": 0.0,
-          "despesas_empenhadas": 3619.81,
-          "despesas_empenhadas_a_liquidar": 0.0,
-          "despesas_liquidadas": 3619.81,
-          "total": 7239.62
+          "credito_disponivel": 18416.4,
+          "despesas_empenhadas": 1893.6,
+          "despesas_empenhadas_a_liquidar": 1893.6,
+          "despesas_liquidadas": 0.0,
+          "total": 22203.6
         }
       ]
     },
@@ -14549,34 +14756,25 @@
           "despesas_empenhadas": 0.0,
           "despesas_empenhadas_a_liquidar": 0.0,
           "despesas_liquidadas": 0.0,
-          "total": 181332.42
+          "total": 176885.72
         },
         {
-          "natureza_despesa": "339039",
-          "natureza_despesa_nome": "OUTROS SERVICOS DE TERCEIROS - PESSOA JURIDICA",
+          "natureza_despesa": "339147",
+          "natureza_despesa_nome": "OBRIG.TRIBUT.E CONTRIB-OP.INTRA-ORCAMENTARIAS",
           "credito_disponivel": 0.0,
-          "despesas_empenhadas": 0.0,
-          "despesas_empenhadas_a_liquidar": 0.0,
-          "despesas_liquidadas": 0.0,
-          "total": 0.0
-        },
-        {
-          "natureza_despesa": "339040",
-          "natureza_despesa_nome": "SERVICOS DE TECNOLOGIA DA INFORMACAO E COMUNICACAO - PJ",
-          "credito_disponivel": 364537.47,
-          "despesas_empenhadas": 617597.79,
-          "despesas_empenhadas_a_liquidar": 235997.79,
-          "despesas_liquidadas": 381600.0,
-          "total": 1599733.05
+          "despesas_empenhadas": 462.69,
+          "despesas_empenhadas_a_liquidar": 308.46,
+          "despesas_liquidadas": 154.23,
+          "total": 925.38
         },
         {
           "natureza_despesa": "449052",
           "natureza_despesa_nome": "EQUIPAMENTOS E MATERIAL PERMANENTE",
-          "credito_disponivel": 0.0,
-          "despesas_empenhadas": 199994.76,
-          "despesas_empenhadas_a_liquidar": 12717.38,
-          "despesas_liquidadas": 187277.38,
-          "total": 399989.52
+          "credito_disponivel": 130333.56,
+          "despesas_empenhadas": 786715.44,
+          "despesas_empenhadas_a_liquidar": 43210.0,
+          "despesas_liquidadas": 743505.44,
+          "total": 1703764.44
         }
       ]
     },
