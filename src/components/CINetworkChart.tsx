@@ -219,7 +219,6 @@ export default function CINetworkChart({
     });
 
     const sats = precalculated.map(({ rIdx, indexInRing, item }, i) => {
-      const norm = maxE === minE ? 0.5 : (item.empenhado - minE) / (maxE - minE);
       return {
         id: `ci-${i}`, label: item.centro_custo || `CC${i}`,
         empenhado: item.empenhado || 0, pago: item.total_pago_tg || 0,
@@ -228,7 +227,7 @@ export default function CINetworkChart({
         semaforo_verde: item.semaforo_verde || 0,
         semaforo_amarelo: item.semaforo_amarelo || 0,
         semaforo_vermelho: item.semaforo_vermelho || 0,
-        size: clamp(24 + norm * 30, 22, 56),
+        size: 24, // tamanho padrão para todas as unidades
         color: COLORS[i % COLORS.length], phase: seed(i + 541) * Math.PI * 2,
         isHub: false,
         ringIndex: rIdx,
@@ -274,8 +273,8 @@ export default function CINetworkChart({
       // Distribuição uniforme baseada no número real de elementos daquele anel específico, balanceando esquerda/direita e acima/abaixo
       const angle = (indexInRing / actualCount) * Math.PI * 2 + ringIndex * 0.55 + time * (0.00012 / (ringIndex + 1)) + Math.sin(time * 0.0003 + n.phase) * 0.08;
       
-      const r = 160 + ringIndex * 70;
-      const w = 8 + n.size * 0.14;
+      const r = 150 + ringIndex * 80;
+      const w = 5;
       m.set(n.id, {
         x: CX + Math.cos(angle) * r + Math.sin(time * 0.001 + n.phase) * w,
         y: CY + Math.sin(angle) * (r * 0.65) + Math.cos(time * 0.0008 + n.phase) * w * 0.55

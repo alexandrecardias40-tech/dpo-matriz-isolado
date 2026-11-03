@@ -4,7 +4,7 @@ import { PI_GROUPS, PI_GROUP_NAMES, isAllowedPI, isCIorArr, isArrecadacao } from
 import DashboardLayout from "./components/DashboardLayout";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  Legend, AreaChart, Area, PieChart, Pie, Cell, ScatterChart, Scatter, ZAxis
+  Legend, AreaChart, Area, PieChart, Pie, Cell, ScatterChart, Scatter, ZAxis, LabelList
 } from "recharts";
 import { TrendingUp, DollarSign, AlertTriangle, Target, Wallet, ArrowUpRight, Percent, BarChart3, ChevronDown, X, LineChart } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "./components/ui/popover";
@@ -117,7 +117,7 @@ const ScatterTooltip = ({ active, payload }: any) => {
   const d = payload[0].payload;
   return (
     <div style={{ background:"#0f172a", color:"#f1f5f9", borderRadius:10, padding:"10px 14px", fontSize:11, boxShadow:"0 8px 24px rgba(0,0,0,0.3)", minWidth:200 }}>
-      <div style={{ fontWeight:700, marginBottom:6, borderBottom:"1px solid #1e293b", paddingBottom:4 }}>{d.fullName} ({d.name})</div>
+      <div style={{ fontWeight:700, marginBottom:6, borderBottom:"1px solid #1e293b", paddingBottom:4 }}>{String(d.fullName || "").includes(`(${d.name})`) ? d.fullName : `${d.fullName} (${d.name})`}</div>
       <div style={{ display:"flex", justifyContent:"space-between", marginTop:3 }}>
         <span style={{ color:"#94a3b8" }}>Aprovado:</span>
         <span style={{ fontWeight:700 }}>{fmt(d.aprovado)}</span>
@@ -469,21 +469,62 @@ export default function ComparativosPage() {
     }
   }, [selUnidade, D, matrixFilteredRecords, labelMatriz]);
 
+  // Layout sem sobreposição: escala log no X + relaxação de colisões em espaço de pixels aproximado
+  const PLOT_W = 1000, PLOT_H = 340, BUBBLE_R = 19;
+  const scatterLayout = useMemo(() => {
+    const pts = D.scatterData.filter((d: any) => d.x > 0);
+    if (!pts.length) return { data: [] as any[], xDomain: [1, 10] as [number, number] };
+    const logs = pts.map((d: any) => Math.log10(d.x));
+    let lmin = Math.min(...logs), lmax = Math.max(...logs);
+    if (lmax - lmin < 0.5) { lmin -= 0.25; lmax += 0.25; }
+    const pad = (lmax - lmin) * 0.06;
+    lmin -= pad; lmax += pad;
+    const toPx = (l: number) => ((l - lmin) / (lmax - lmin)) * PLOT_W;
+    const fromPx = (px: number) => lmin + (px / PLOT_W) * (lmax - lmin);
+    const yToPx = (y: number) => PLOT_H - (y / 105) * PLOT_H;
+    const pxToY = (py: number) => ((PLOT_H - py) / PLOT_H) * 105;
+    const nodes = pts.map((d: any, i: number) => ({ px: toPx(logs[i]), py: yToPx(d.y) }));
+    const minDist = BUBBLE_R * 2 + 10; // folga para o movimento
+    for (let it = 0; it < 300; it++) {
+      let moved = false;
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          let dx = nodes[j].px - nodes[i].px, dy = nodes[j].py - nodes[i].py;
+          let dist = Math.hypot(dx, dy);
+          if (dist < minDist) {
+            if (dist < 0.01) { dx = Math.cos(i + j); dy = Math.sin(i + j); dist = 1; }
+            const push = (minDist - dist) / 2;
+            const ux = dx / dist, uy = dy / dist;
+            nodes[i].px -= ux * push; nodes[i].py -= uy * push;
+            nodes[j].px += ux * push; nodes[j].py += uy * push;
+            moved = true;
+          }
+        }
+      }
+      nodes.forEach(n => {
+        n.px = Math.max(BUBBLE_R, Math.min(PLOT_W - BUBBLE_R, n.px));
+        n.py = Math.max(BUBBLE_R * 0.5, Math.min(PLOT_H - BUBBLE_R * 0.5, n.py));
+      });
+      if (!moved) break;
+    }
+    const data = pts.map((d: any, i: number) => ({
+      ...d,
+      basePx: nodes[i].px,
+      basePy: nodes[i].py,
+      originalY: d.y,
+    }));
+    return { data, fromPx, pxToY, xDomain: [Math.pow(10, lmin), Math.pow(10, lmax)] as [number, number] };
+  }, [D.scatterData]);
+  // Movimento suave (amplitude de 4px, menor que a folga entre as bolas)
   const animatedScatterData = useMemo(() => {
-    return D.scatterData.map((d: any, idx: number) => {
-      // Gentle floating:
-      // We vary x by up to 1.2% of its value (or a small fixed fraction)
-      // We vary y by up to 1.2 percentage points
-      const offsetFactorX = Math.sin(animationTick + idx * 1.7) * 0.012;
-      const offsetFactorY = Math.cos(animationTick + idx * 2.3) * 1.2;
-      return {
-        ...d,
-        x: d.x * (1 + offsetFactorX),
-        y: Math.max(0, Math.min(100, d.y + offsetFactorY)),
-        originalY: d.y
-      };
-    });
-  }, [D.scatterData, animationTick]);
+    const { data, fromPx, pxToY } = scatterLayout as any;
+    if (!fromPx) return [];
+    return data.map((d: any, idx: number) => ({
+      ...d,
+      x: Math.pow(10, fromPx(d.basePx + Math.sin(animationTick + idx * 1.7) * 4)),
+      y: pxToY(d.basePy + Math.cos(animationTick + idx * 2.3) * 4),
+    }));
+  }, [scatterLayout, animationTick]);
 
   const s = {
     card: { background:"white", borderRadius:12, border:"1px solid #e2e8f0", boxShadow:"0 1px 6px rgba(0,0,0,0.06)" } as React.CSSProperties,
@@ -542,7 +583,7 @@ export default function ComparativosPage() {
               onMouseEnter={(e) => { if (activeTab !== "eficiencia") e.currentTarget.style.background = "#f1f5f9" }}
               onMouseLeave={(e) => { if (activeTab !== "eficiencia") e.currentTarget.style.background = "white" }}
             >
-              <LineChart size={14}/> Matriz de Eficiência
+              <LineChart size={14}/> Matriz de Utilização
             </button>
           </div>
         </div>
@@ -614,27 +655,28 @@ export default function ComparativosPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <div style={{ ...s.card, padding:0, overflow:"hidden" }}>
               <div style={{ padding:"14px 18px", borderBottom:"1px solid #e2e8f0" }}>
-                <div style={s.section}>Matriz de Eficiência Orçamentária ({labelMatriz})</div>
+                <div style={s.section}>Matriz de Utilização Orçamentária ({labelMatriz})</div>
                 <div style={{ fontSize:11, color:"#64748b" }}>
-                  Relação entre <strong>Orçamento Aprovado (X)</strong> e <strong>Taxa de Execução (Y)</strong> · O tamanho da bola representa o <strong>Saldo Disponível</strong>
+                  Relação entre <strong>Orçamento Aprovado (X)</strong> e <strong>Taxa de Execução (Y)</strong> · Passe o mouse sobre a unidade para ver os valores
                 </div>
               </div>
               <div style={{ padding:"24px 20px 10px" }}>
                 <ResponsiveContainer width="100%" height={400}>
                   <ScatterChart margin={{ top:20, right:30, bottom:20, left:20 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                    <XAxis type="number" dataKey="x" name="Aprovado" tickFormatter={v=>fmtK(v)} tick={{ fontSize:10 }} tickLine={false} axisLine={false}>
+                    <XAxis type="number" dataKey="x" name="Aprovado" scale="log" domain={scatterLayout.xDomain} allowDataOverflow tickFormatter={v=>fmtK(v)} tick={{ fontSize:10 }} tickLine={false} axisLine={false}>
                       <label value="Orçamento Aprovado" offset={-10} position="insideBottom" style={{ fontSize:10, fill:"#94a3b8", fontWeight:700 }} />
                     </XAxis>
                     <YAxis type="number" dataKey="y" name="Taxa de Execução" tickFormatter={v=>`${v}%`} tick={{ fontSize:10 }} domain={[0, 105]} tickLine={false} axisLine={false}>
                       <label value="Taxa de Execução" angle={-90} position="insideLeft" style={{ fontSize:10, fill:"#94a3b8", fontWeight:700 }} />
                     </YAxis>
-                    <ZAxis type="number" dataKey="z" range={[60, 1000]} name="Saldo Disponível" />
+                    <ZAxis type="number" dataKey="z" range={[1130, 1130]} name="Saldo Disponível" />
                     <Tooltip cursor={{ strokeDasharray: '3 3' }} content={<ScatterTooltip />} />
                     <Scatter name="Unidades" data={animatedScatterData} fill="#8b5cf6" isAnimationActive={false}>
                       {animatedScatterData.map((entry: any, index: number) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
+                      <LabelList dataKey="name" position="center" style={{ fontSize: 9, fontWeight: 800, fill: "#ffffff", stroke: "rgba(15,23,42,0.55)", strokeWidth: 2, paintOrder: "stroke", pointerEvents: "none" }} />
                     </Scatter>
                   </ScatterChart>
                 </ResponsiveContainer>

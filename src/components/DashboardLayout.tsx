@@ -44,7 +44,7 @@ export default function DashboardLayout({ children, menuConfig, hideUpdateBadge 
               title: "📈 Gráficos",
               items: [
                 { href: "/graficos/academica", label: "Matriz Acadêmica", icon: <Activity size={16} /> },
-                { href: "/graficos/administrativa", label: "Matriz Administrativo", icon: <Activity size={16} /> }
+                { href: "/graficos/administrativa", label: "Matriz Administrativa", icon: <Activity size={16} /> }
               ],
             },
             {
