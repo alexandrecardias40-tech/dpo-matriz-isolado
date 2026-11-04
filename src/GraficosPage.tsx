@@ -153,7 +153,7 @@ function DetailPanel({ cc, onBack, records }: { cc: any; onBack: ()=>void; recor
           if (!ndMap[code]) {
             ndMap[code] = {
               code,
-              name: nd.natureza_despesa_nome || "Sem Nome",
+              name: String(nd.natureza_despesa) === "339000" ? "CRÉDITO DISPONÍVEL" : (nd.natureza_despesa_nome || "Sem Nome"),
               empenhado: 0,
               total: 0
             };

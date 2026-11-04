@@ -1455,7 +1455,7 @@ export default function App() {
                         {selectedRecord.tg_breakdown?.map((nd: any, idx: number) => (
                           <tr key={idx} style={{ background: idx % 2 === 0 ? "white" : "#fafbfc" }}>
                             <td style={{ ...s.td, padding: "8px 10px", fontWeight: 700, color: "#4f46e5" }}>{nd.natureza_despesa}</td>
-                            <td style={{ ...s.td, padding: "8px 10px", textAlign: "left", fontWeight: 600 }}>{nd.natureza_despesa_nome}</td>
+                            <td style={{ ...s.td, padding: "8px 10px", textAlign: "left", fontWeight: 600 }}>{String(nd.natureza_despesa) === "339000" ? "CRÉDITO DISPONÍVEL" : nd.natureza_despesa_nome}</td>
                             <td style={{ ...s.td, padding: "8px 10px" }}>{fmt(nd.credito_disponivel)}</td>
                             <td style={{ ...s.td, padding: "8px 10px", fontWeight: 700 }}>{fmt(nd.despesas_empenhadas)}</td>
                             <td style={{ ...s.td, padding: "8px 10px" }}>{fmt(nd.despesas_empenhadas_a_liquidar)}</td>
