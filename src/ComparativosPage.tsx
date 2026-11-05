@@ -4,7 +4,7 @@ import { PI_GROUPS, PI_GROUP_NAMES, isAllowedPI, isCIorArr, isArrecadacao } from
 import DashboardLayout from "./components/DashboardLayout";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  Legend, AreaChart, Area, PieChart, Pie, Cell, ScatterChart, Scatter, ZAxis, LabelList
+  Legend, AreaChart, Area, PieChart, Pie, Cell, ScatterChart, Scatter, ZAxis, LabelList, Label
 } from "recharts";
 import { TrendingUp, DollarSign, AlertTriangle, Target, Wallet, ArrowUpRight, Percent, BarChart3, ChevronDown, X, LineChart } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "./components/ui/popover";
@@ -13,6 +13,13 @@ import { Checkbox } from "./components/ui/checkbox";
 
 const fmt  = (v: number) => new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL",minimumFractionDigits:2,maximumFractionDigits:2}).format(v||0);
 const fmtK = (v: number) => `R$ ${((v||0)/1e6).toFixed(2)}M`;
+// Formato compacto para o eixo X (ex.: R$ 500 mil, R$ 1,5 mi)
+const fmtAxis = (v: number) => {
+  const n = v || 0;
+  if (n >= 1e6) return `R$ ${(n / 1e6).toLocaleString("pt-BR", { maximumFractionDigits: 1 })} mi`;
+  if (n >= 1e3) return `R$ ${(n / 1e3).toLocaleString("pt-BR", { maximumFractionDigits: 0 })} mil`;
+  return `R$ ${n.toFixed(0)}`;
+};
 const pct  = (a:number,b:number) => b>0?((a/b)*100).toFixed(1)+"%":"0%";
 
 /* ── palette ── */
@@ -470,7 +477,7 @@ export default function ComparativosPage() {
   }, [selUnidade, D, matrixFilteredRecords, labelMatriz]);
 
   // Layout sem sobreposição: escala log no X + relaxação de colisões em espaço de pixels aproximado
-  const PLOT_W = 1000, PLOT_H = 340, BUBBLE_R = 19;
+  const PLOT_W = 1000, PLOT_H = 330, BUBBLE_R = 14;
   const scatterLayout = useMemo(() => {
     const pts = D.scatterData.filter((d: any) => d.x > 0);
     if (!pts.length) return { data: [] as any[], xDomain: [1, 10] as [number, number] };
@@ -513,7 +520,16 @@ export default function ComparativosPage() {
       basePy: nodes[i].py,
       originalY: d.y,
     }));
-    return { data, fromPx, pxToY, xDomain: [Math.pow(10, lmin), Math.pow(10, lmax)] as [number, number] };
+    // Ticks "redondos" (1, 2, 5 × 10^k) dentro do domínio para o eixo X ficar legível
+    const ticks: number[] = [];
+    for (let k = Math.floor(lmin); k <= Math.ceil(lmax); k++) {
+      [1, 2, 5].forEach(m => {
+        const t = m * Math.pow(10, k);
+        const lt = Math.log10(t);
+        if (lt >= lmin && lt <= lmax) ticks.push(t);
+      });
+    }
+    return { data, fromPx, pxToY, xTicks: ticks, xDomain: [Math.pow(10, lmin), Math.pow(10, lmax)] as [number, number] };
   }, [D.scatterData]);
   // Movimento suave (amplitude de 4px, menor que a folga entre as bolas)
   const animatedScatterData = useMemo(() => {
@@ -662,21 +678,34 @@ export default function ComparativosPage() {
               </div>
               <div style={{ padding:"24px 20px 10px" }}>
                 <ResponsiveContainer width="100%" height={400}>
-                  <ScatterChart margin={{ top:20, right:30, bottom:20, left:20 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                    <XAxis type="number" dataKey="x" name="Aprovado" scale="log" domain={scatterLayout.xDomain} allowDataOverflow tickFormatter={v=>fmtK(v)} tick={{ fontSize:10 }} tickLine={false} axisLine={false}>
-                      <label value="Orçamento Aprovado" offset={-10} position="insideBottom" style={{ fontSize:10, fill:"#94a3b8", fontWeight:700 }} />
+                  <ScatterChart margin={{ top:16, right:30, bottom:30, left:24 }}>
+                    <defs>
+                      <radialGradient id="bubbleGrad" cx="35%" cy="30%" r="75%">
+                        <stop offset="0%" stopColor="#7fb89a" />
+                        <stop offset="100%" stopColor="#2f6b52" />
+                      </radialGradient>
+                      <filter id="bubbleShadow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" floodColor="#1e293b" floodOpacity="0.25" />
+                      </filter>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
+                    <XAxis type="number" dataKey="x" name="Aprovado" scale="log" domain={scatterLayout.xDomain} ticks={(scatterLayout as any).xTicks} allowDataOverflow tickFormatter={fmtAxis} tick={{ fontSize:10, fill:"#64748b" }} tickLine={false} axisLine={{ stroke:"#e2e8f0" }} interval={0}>
+                      <Label value="Orçamento Aprovado" offset={-18} position="insideBottom" style={{ fontSize:10, fill:"#94a3b8", fontWeight:700 }} />
                     </XAxis>
-                    <YAxis type="number" dataKey="y" name="Taxa de Execução" tickFormatter={v=>`${v}%`} tick={{ fontSize:10 }} domain={[0, 105]} tickLine={false} axisLine={false}>
-                      <label value="Taxa de Execução" angle={-90} position="insideLeft" style={{ fontSize:10, fill:"#94a3b8", fontWeight:700 }} />
+                    <YAxis type="number" dataKey="y" name="Taxa de Execução" tickFormatter={v=>`${v}%`} ticks={[0, 25, 50, 75, 100]} tick={{ fontSize:10, fill:"#64748b" }} domain={[0, 105]} tickLine={false} axisLine={{ stroke:"#e2e8f0" }}>
+                      <Label value="Taxa de Execução" angle={-90} position="insideLeft" style={{ fontSize:10, fill:"#94a3b8", fontWeight:700, textAnchor:"middle" }} />
                     </YAxis>
-                    <ZAxis type="number" dataKey="z" range={[1130, 1130]} name="Saldo Disponível" />
+                    <ZAxis type="number" dataKey="z" range={[616, 616]} name="Saldo Disponível" />
                     <Tooltip cursor={{ strokeDasharray: '3 3' }} content={<ScatterTooltip />} />
-                    <Scatter name="Unidades" data={animatedScatterData} fill="#8b5cf6" isAnimationActive={false}>
-                      {animatedScatterData.map((entry: any, index: number) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                      <LabelList dataKey="name" position="center" style={{ fontSize: 9, fontWeight: 800, fill: "#ffffff", stroke: "rgba(15,23,42,0.55)", strokeWidth: 2, paintOrder: "stroke", pointerEvents: "none" }} />
+                    <Scatter
+                      name="Unidades"
+                      data={animatedScatterData}
+                      isAnimationActive={false}
+                      shape={(p: any) => (
+                        <circle cx={p.cx} cy={p.cy} r={BUBBLE_R} fill="url(#bubbleGrad)" stroke="#ffffff" strokeWidth={1.5} filter="url(#bubbleShadow)" style={{ cursor: "pointer" }} />
+                      )}
+                    >
+                      <LabelList dataKey="name" position="center" style={{ fontSize: 7.5, fontWeight: 700, fill: "#ffffff", letterSpacing: "0.02em", fontFamily: "Inter, system-ui, sans-serif", pointerEvents: "none" }} />
                     </Scatter>
                   </ScatterChart>
                 </ResponsiveContainer>
