@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import metaData from "../metadata.json";
 import {
   Settings, Menu, X, Home, Activity,
-  GitCompare, ChevronDown, Download,
+  GitCompare, ChevronDown, Download, ExternalLink,
 } from "lucide-react";
 
 interface MenuItem {
@@ -52,6 +52,18 @@ export default function DashboardLayout({ children, menuConfig, hideUpdateBadge 
               title: "🔄 Comparativos",
               items: [
                 { href: "/comparisons", label: "Comparativo de Saldos", icon: <GitCompare size={16} /> },
+              ],
+            },
+            {
+              key: "external",
+              title: "🌐 Externo",
+              items: [
+                {
+                  href: "https://app.powerbi.com/view?r=eyJrIjoiZWNjNzkzZWQtNTJkMi00YmZhLThkOTgtNzgzNmE2MWMzZjdmIiwidCI6ImVjMzU5YmExLTYzMGItNGQyYi1iODMzLWM4ZTZkNDhmODA1OSJ9",
+                  label: "Painel de Gestão UnB",
+                  icon: <ExternalLink size={16} />,
+                  external: true,
+                },
               ],
             },
           ],
@@ -187,7 +199,7 @@ export default function DashboardLayout({ children, menuConfig, hideUpdateBadge 
 
                     if (item.external) {
                       return (
-                        <a key={item.href} href={item.href} style={style}>
+                        <a key={item.href} href={item.href} target="_blank" rel="noopener noreferrer" style={style}>
                           {item.icon}
                           <span>{item.label}</span>
                         </a>

@@ -141,7 +141,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "linear-gradient(135deg, #334155 0%, #0f172a 100%)", color: "white", fontFamily: "sans-serif", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", overflow: "hidden", boxSizing: "border-box" }}>
+    <div style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "linear-gradient(135deg, #334155 0%, #0f172a 100%)", color: "white", fontFamily: "sans-serif", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", overflowY: "auto", overflowX: "hidden", boxSizing: "border-box" }}>
       
       {/* Background Particles Canvas */}
       <canvas
@@ -230,6 +230,99 @@ export default function LandingPage() {
           </a>
         </div>
       </div>
+
+      {/* Botão Canto Direito: Painel de Gestão UnB (Power BI) */}
+      <a
+        href="https://app.powerbi.com/view?r=eyJrIjoiZWNjNzkzZWQtNTJkMi00YmZhLThkOTgtNzgzNmE2MWMzZjdmIiwidCI6ImVjMzU5YmExLTYzMGItNGQyYi1iODMzLWM4ZTZkNDhmODA1OSJ9"
+        target="_blank"
+        rel="noopener noreferrer"
+        title="Abrir Painel de Gestão UnB no Microsoft Power BI"
+        style={{
+          position: "absolute",
+          bottom: "16px",
+          right: "20px",
+          zIndex: 20,
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "10px",
+          padding: "7px 14px 7px 9px",
+          borderRadius: "10px",
+          background: "linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.8) 100%)",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
+          border: "1px solid rgba(245, 158, 11, 0.35)",
+          boxShadow: "0 8px 24px -4px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
+          textDecoration: "none",
+          color: "white",
+          cursor: "pointer",
+          transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = "translateY(-2px) scale(1.02)";
+          e.currentTarget.style.borderColor = "rgba(245, 158, 11, 0.8)";
+          e.currentTarget.style.boxShadow = "0 12px 28px -4px rgba(245, 158, 11, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2)";
+          e.currentTarget.style.background = "linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(30, 41, 59, 0.95) 100%)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = "translateY(0) scale(1)";
+          e.currentTarget.style.borderColor = "rgba(245, 158, 11, 0.35)";
+          e.currentTarget.style.boxShadow = "0 8px 24px -4px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1)";
+          e.currentTarget.style.background = "linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.8) 100%)";
+        }}
+      >
+        {/* Ícone Power BI */}
+        <div
+          style={{
+            width: 26,
+            height: 26,
+            borderRadius: 6,
+            background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0,
+            boxShadow: "0 2px 6px rgba(245, 158, 11, 0.35)",
+          }}
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+            <rect x="4" y="13" width="3.5" height="7" rx="0.75" fill="#FFFFFF" fillOpacity="0.85" />
+            <rect x="10.25" y="8" width="3.5" height="12" rx="0.75" fill="#FFFFFF" fillOpacity="0.95" />
+            <rect x="16.5" y="4" width="3.5" height="16" rx="0.75" fill="#FFFFFF" />
+          </svg>
+        </div>
+
+        {/* Textos */}
+        <div style={{ display: "flex", flexDirection: "column", textAlign: "left", lineHeight: 1.15 }}>
+          <span style={{ fontSize: 8.5, color: "#fbbf24", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+            Power BI
+          </span>
+          <span style={{ fontSize: 12, fontWeight: 700, color: "#f8fafc", letterSpacing: "-0.2px" }}>
+            Painel de Gestão UnB
+          </span>
+        </div>
+
+        {/* Seta externa ↗ */}
+        <div
+          style={{
+            width: 20,
+            height: 20,
+            borderRadius: 5,
+            background: "rgba(245, 158, 11, 0.15)",
+            border: "1px solid rgba(245, 158, 11, 0.25)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0,
+            marginLeft: 3,
+            color: "#fbbf24",
+          }}
+        >
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="7" y1="17" x2="17" y2="7"></line>
+            <polyline points="7 7 17 7 17 17"></polyline>
+          </svg>
+        </div>
+      </a>
 
       {/* Footer */}
       <div style={{ position: "absolute", bottom: 24, width: "100%", textAlign: "center", color: "#64748b", fontSize: 13, zIndex: 10 }}>
