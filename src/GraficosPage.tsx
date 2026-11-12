@@ -257,7 +257,7 @@ function DetailPanel({ cc, onBack, records }: { cc: any; onBack: ()=>void; recor
       {/* KPIs Principais da Unidade na mesma sequência do gráfico */}
       <div style={{ display:"grid", gridTemplateColumns:"repeat(5,1fr)", gap:8 }}>
         <div style={{ ...s.card, borderLeft:"3px solid #3b82f6", padding:"8px 10px" }}>
-          <div style={{ fontSize:8.5, fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.04em", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>💰 Dotação</div>
+          <div style={{ fontSize:8.5, fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.04em", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>💰 Matriz</div>
           <div style={{ fontSize:13.5, fontWeight:800, color:"#0f172a", marginTop:4, fontFamily:"monospace", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{fmt(stats.valor_aprovado)}</div>
           <div style={{ fontSize:8.5, color:"#94a3b8", marginTop:3, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>Planejado na Matriz</div>
         </div>
@@ -269,7 +269,7 @@ function DetailPanel({ cc, onBack, records }: { cc: any; onBack: ()=>void; recor
         <div style={{ ...s.card, borderLeft:"3px solid #14b8a6", padding:"8px 10px" }}>
           <div style={{ fontSize:8.5, fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.04em", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>🎯 Debitado</div>
           <div style={{ fontSize:13.5, fontWeight:800, color:"#0f172a", marginTop:4, fontFamily:"monospace", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{fmt(stats.debitado_tg)}</div>
-          <div style={{ fontSize:8.5, color:"#94a3b8", marginTop:3, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>Dotação - Disp. TG - Emp. TG</div>
+          <div style={{ fontSize:8.5, color:"#94a3b8", marginTop:3, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>Matriz - Disp. TG - Emp. TG</div>
         </div>
         <div style={{ ...s.card, borderLeft:"3px solid #64748b", padding:"8px 10px" }}>
           <div style={{ fontSize:8.5, fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.04em", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>💵 Disponível</div>
@@ -334,7 +334,7 @@ function DetailPanel({ cc, onBack, records }: { cc: any; onBack: ()=>void; recor
                 {[
                   { name: "Descrição", width: "160px" },
                   { name: "Processo SEI", width: "120px" },
-                  { name: "Dotação (Matriz)", width: "85px" },
+                  { name: "Matriz", width: "85px" },
                   { name: "Empenhado (Matriz)", width: "85px" },
                   { name: "Debitado (Matriz)", width: "85px" },
                   { name: "Disponível (Matriz)", width: "85px" },

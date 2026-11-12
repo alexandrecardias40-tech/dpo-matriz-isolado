@@ -611,16 +611,44 @@ function TaxaExecFilter({ sel, set, disponiveis }: { sel: string[]; set: (v: str
   );
 }
 
-function KpiCard({ title, value, sub, color, icon, tooltip }: { title: React.ReactNode; value: string; sub?: string; color: string; icon: string; tooltip?: string }) {
+function KpiCard({ title, value, sub, color, icon, tooltip, sourceTag }: { title: React.ReactNode; value: string; sub?: string; color: string; icon: string; tooltip?: string; sourceTag?: string }) {
   return (
-    <div style={{ background: "white", borderRadius: 8, border: "1px solid #e2e8f0", borderLeft: `3px solid ${color}`, boxShadow: "0 1px 2px rgba(0,0,0,0.05)", padding: "6px 8px", position: "relative", minWidth: 0 }}>
-      <div style={{ fontSize: 8.5, fontWeight: 700, color: "#64748b", letterSpacing: "0.04em", display: "flex", alignItems: "center", gap: 3, textTransform: "uppercase", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={tooltip ?? String(title)}>
-        <span style={{ fontSize: 11 }}>{icon}</span>
-        <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>{title}</span>
-        {tooltip && <HelpIcon size={9} style={{ color: "#94a3b8", cursor: "help", marginLeft: "auto", flexShrink: 0 }} />}
+    <div style={{ background: "white", borderRadius: 8, border: "1px solid #e2e8f0", borderLeft: `3px solid ${color}`, boxShadow: "0 1px 2px rgba(0,0,0,0.05)", padding: "6px 8px", position: "relative", minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+      <div>
+        <div style={{ fontSize: 8.5, fontWeight: 700, color: "#64748b", letterSpacing: "0.04em", display: "flex", alignItems: "center", gap: 3, textTransform: "uppercase", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={tooltip ?? String(title)}>
+          <span style={{ fontSize: 11 }}>{icon}</span>
+          <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>{title}</span>
+          {tooltip && <HelpIcon size={9} style={{ color: "#94a3b8", cursor: "help", marginLeft: "auto", flexShrink: 0 }} />}
+        </div>
+        <div style={{ fontSize: 13, fontWeight: 800, color: "#0f172a", marginTop: 2, lineHeight: 1.1, fontFamily: "monospace", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{value}</div>
       </div>
-      <div style={{ fontSize: 13, fontWeight: 800, color: "#0f172a", marginTop: 2, lineHeight: 1.1, fontFamily: "monospace", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{value}</div>
-      {sub && <div style={{ fontSize: 8.5, color: "#94a3b8", marginTop: 2, fontWeight: 500, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{sub}</div>}
+      {sourceTag ? (
+        <div 
+          style={{
+            marginTop: 3,
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 2.5,
+            background: "#f1f5f9",
+            color: "#334155",
+            border: "1px solid #e2e8f0",
+            borderRadius: 4,
+            padding: "1.5px 3.5px",
+            fontSize: 7,
+            fontWeight: 700,
+            letterSpacing: "-0.15px",
+            maxWidth: "100%",
+            boxSizing: "border-box",
+            lineHeight: 1.1
+          }}
+          title={tooltip ? `${tooltip} (Origem: ${sourceTag})` : `Origem da base: ${sourceTag}`}
+        >
+          <span style={{ width: 3.5, height: 3.5, borderRadius: "50%", background: color, flexShrink: 0 }} />
+          <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{sourceTag}</span>
+        </div>
+      ) : sub ? (
+        <div style={{ fontSize: 8.5, color: "#94a3b8", marginTop: 2, fontWeight: 500, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{sub}</div>
+      ) : null}
     </div>
   );
 }
@@ -1159,6 +1187,48 @@ export default function App() {
 
   const hasFilter = selNivel1 !== null || selNivel2 !== null || selNivel3 !== null || selPI.length > 0 || selOrigem !== "all" || selTaxaExec.length > 0;
 
+  // Origem das variáveis para os KPIs (Matriz, Custos Indiretos, Arrecadação)
+  const kpiSources = useMemo(() => {
+    if (!hasFilter) {
+      return {
+        dispEmp: "Matriz",
+        exec: "Matriz"
+      };
+    }
+
+    const buildLabel = (hasMatriz: boolean, hasCI: boolean, hasArr: boolean) => {
+      const isAllThree = hasMatriz && hasCI && hasArr;
+      const parts: string[] = [];
+      if (hasMatriz) parts.push("Matriz");
+      if (hasCI) parts.push(isAllThree ? "C. Ind." : "Custos Indiretos");
+      if (hasArr) parts.push("Arrecadação");
+      return parts.length > 0 ? parts.join(" + ") : "Matriz";
+    };
+
+    if (selPI.length > 0) {
+      const hasMatriz = selPI.some(name => name === "Matriz Acadêmica" || name === "Matriz Administrativa");
+      const hasCI = selPI.includes("Custos Indiretos");
+      const hasArr = selPI.includes("Arrecadação");
+
+      const label = buildLabel(hasMatriz, hasCI, hasArr);
+      return {
+        dispEmp: label,
+        exec: hasMatriz ? "Matriz" : label
+      };
+    }
+
+    const hasMatriz = filteredRecords.some((d: any) => !isCIorArr(d.plano_interno));
+    const hasCI = filteredRecords.some((d: any) => isCustosIndiretos(d.plano_interno));
+    const hasArr = filteredRecords.some((d: any) => isArrecadacao(d.plano_interno));
+
+    const label = buildLabel(hasMatriz, hasCI, hasArr);
+
+    return {
+      dispEmp: label,
+      exec: "Matriz"
+    };
+  }, [hasFilter, selPI, filteredRecords]);
+
   const cleanFilters = () => {
     setSelNivel1(null);
     setSelNivel2(null);
@@ -1270,20 +1340,20 @@ export default function App() {
               if (isSimplifiedKpis) {
                 return (
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16, maxWidth: 450, margin: "0 auto", width: "100%" }}>
-                    <KpiCard title="Disponível"    value={hasFilter ? fmt(T.credito_disponivel_tg) : fmt(T_default.credito_disponivel_tg)}   sub="Crédito disponível (TG)"    color="#6366f1" icon="📥" tooltip="Crédito disponível no Tesouro Gerencial." />
-                    <KpiCard title="Empenhado"     value={hasFilter ? fmt(T.despesas_empenhadas_tg) : fmt(T_default.despesas_empenhadas_tg)}  sub="Reservado oficialmente"     color="#0ea5e9" icon="📋" tooltip="Despesas empenhadas no Tesouro Gerencial." />
+                    <KpiCard title="Disponível"    value={hasFilter ? fmt(T.credito_disponivel_tg) : fmt(T_default.credito_disponivel_tg)}   sub="Crédito disponível (TG)"    color="#6366f1" icon="📥" tooltip="Crédito disponível no Tesouro Gerencial." sourceTag={kpiSources.dispEmp} />
+                    <KpiCard title="Empenhado"     value={hasFilter ? fmt(T.despesas_empenhadas_tg) : fmt(T_default.despesas_empenhadas_tg)}  sub="Reservado oficialmente"     color="#0ea5e9" icon="📋" tooltip="Despesas empenhadas no Tesouro Gerencial." sourceTag={kpiSources.dispEmp} />
                   </div>
                 );
               }
 
               return (
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 8 }}>
-                  <KpiCard title="Dotação"       value={hasFilter ? fmt(T.valor_aprovado) : fmt(T_default.valor_aprovado)}          sub="Valor fixado aprovado"       color="#3b82f6" icon="💰" tooltip="Valor aprovado fixado no planejamento inicial." />
-                  <KpiCard title="Disponível"    value={hasFilter ? fmt(T.credito_disponivel_tg) : fmt(T_default.credito_disponivel_tg)}   sub="Crédito disponível (TG)"    color="#6366f1" icon="📥" tooltip="Crédito disponível no Tesouro Gerencial." />
-                  <KpiCard title="Empenhado"     value={hasFilter ? fmt(T.despesas_empenhadas_tg) : fmt(T_default.despesas_empenhadas_tg)}  sub="Reservado oficialmente"     color="#0ea5e9" icon="📋" tooltip="Despesas empenhadas no Tesouro Gerencial." />
-                  <KpiCard title="Debitado"      value={hasFilter ? fmt(T.debitado_tg) : fmt(T_default.debitado_tg)} sub="Dotação - Disp. TG - Emp. TG (Matriz)" color="#f59e0b" icon="🧾" tooltip="Calculado por fórmula: Dotação − Crédito Disponível TG − Empenhado TG. Exclui Custos Indiretos." />
-                  <KpiCard title="Executado"     value={hasFilter ? fmt(T.executado_tg) : fmt(T_default.executado_tg)}            sub="Dotação − Disponível TG"    color="#10b981" icon="⚡" tooltip="Calculado por fórmula: Valor Aprovado − Crédito Disponível TG." />
-                  <KpiCard title="% Executado"   value={(hasFilter ? T.pct_exec : T_default.pct_exec).toFixed(2) + "%"}    sub="Em relação à dotação"       color="#8b5cf6" icon="📈" tooltip="Calculado por fórmula: Executado TG / Valor Aprovado." />
+                  <KpiCard title="Matriz"        value={hasFilter ? fmt(T.valor_aprovado) : fmt(T_default.valor_aprovado)}          sub="Valor fixado aprovado"       color="#3b82f6" icon="💰" tooltip="Valor aprovado fixado no planejamento inicial." />
+                  <KpiCard title="Disponível"    value={hasFilter ? fmt(T.credito_disponivel_tg) : fmt(T_default.credito_disponivel_tg)}   sub="Crédito disponível (TG)"    color="#6366f1" icon="📥" tooltip="Crédito disponível no Tesouro Gerencial." sourceTag={kpiSources.dispEmp} />
+                  <KpiCard title="Empenhado"     value={hasFilter ? fmt(T.despesas_empenhadas_tg) : fmt(T_default.despesas_empenhadas_tg)}  sub="Reservado oficialmente"     color="#0ea5e9" icon="📋" tooltip="Despesas empenhadas no Tesouro Gerencial." sourceTag={kpiSources.dispEmp} />
+                  <KpiCard title="Debitado"      value={hasFilter ? fmt(T.debitado_tg) : fmt(T_default.debitado_tg)} sub="Matriz - Disp. TG - Emp. TG (Matriz)" color="#f59e0b" icon="🧾" tooltip="Calculado por fórmula: Matriz − Crédito Disponível TG − Empenhado TG. Exclui Custos Indiretos." />
+                  <KpiCard title="Executado"     value={hasFilter ? fmt(T.executado_tg) : fmt(T_default.executado_tg)}            sub="Matriz − Disponível TG"    color="#10b981" icon="⚡" tooltip="Calculado por fórmula: Valor Aprovado − Crédito Disponível TG." sourceTag={kpiSources.exec} />
+                  <KpiCard title="% Executado"   value={(hasFilter ? T.pct_exec : T_default.pct_exec).toFixed(2) + "%"}    sub="Em relação à Matriz"        color="#8b5cf6" icon="📈" tooltip="Calculado por fórmula: Executado TG / Valor Aprovado." />
                 </div>
               );
             })()}
@@ -1318,7 +1388,7 @@ export default function App() {
                         { name: "UGR", width: "5%" },
                         { name: "UNIDADE", width: "13%" },
                         { name: "DESCRIÇÃO", width: "18%" },
-                        { name: "DOTAÇÃO", width: "10%" },
+                        { name: "MATRIZ", width: "10%" },
                         { name: "DISPONÍVEL", width: "10%" },
                         { name: "EMPENHADO", width: "10%" },
                         { name: "DEBITADO", width: "10%" },

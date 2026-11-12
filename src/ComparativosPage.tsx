@@ -235,6 +235,7 @@ export default function ComparativosPage() {
   const [selUnidade, setSelUnidade] = useState<string[]>([]);
   const [selPI, setSelPI] = useState<string[]>([]);
   const [animationTick, setAnimationTick] = useState(0);
+  const [hoveredUnit, setHoveredUnit] = useState<string | null>(null);
 
   useEffect(() => {
     if (activeTab !== "eficiencia") return;
@@ -620,7 +621,7 @@ export default function ComparativosPage() {
         {/* KPIs de Cruzamento na mesma sequência do gráfico */}
         <div style={{ display:"grid", gridTemplateColumns:"repeat(6,1fr)", gap:8 }}>
           {[
-            { label:"Dotação", value:fmt(D.totAprovado), color:C.blue, icon:<DollarSign size={14}/>, sub:"Total aprovado" },
+            { label:"Matriz", value:fmt(D.totAprovado), color:C.blue, icon:<DollarSign size={14}/>, sub:"Total aprovado" },
             { label:"Empenhado", value:fmt(D.totEmpMatriz), color:C.amber, icon:<TrendingUp size={14}/>, sub:"Provisionado em sistema" },
             { label:"Debitado", value:fmt(D.totDebMatriz), color:C.teal, icon:<Target size={14}/>, sub:"Provisionado em planilha" },
             { label:"Disponível", value:fmt(D.totDispMatriz), color:C.slate, icon:<Wallet size={14}/>, sub:"Saldo livre restante" },
@@ -651,14 +652,122 @@ export default function ComparativosPage() {
               
               <div style={{ padding:"18px 20px 10px", flex:1 }}>
                 <ResponsiveContainer width="100%" height={Math.max(450, D.top15.length * 28)}>
-                  <BarChart data={D.top15} layout="vertical" margin={{ left:5, right:20, top:0, bottom:0 }} barCategoryGap={6} barGap={2}>
+                  <BarChart
+                    data={D.top15}
+                    layout="vertical"
+                    margin={{ left: 5, right: 20, top: 10, bottom: 5 }}
+                    barCategoryGap={6}
+                    barGap={2}
+                    onMouseMove={(state: any) => {
+                      if (state && state.activeLabel) {
+                        setHoveredUnit(state.activeLabel);
+                      }
+                    }}
+                    onMouseLeave={() => setHoveredUnit(null)}
+                  >
                     <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
                     <XAxis type="number" tickFormatter={v=>fmtK(v)} tick={{ fontSize:10, fill:"#94a3b8" }} tickLine={false} axisLine={false} />
-                    <YAxis type="category" dataKey="name" width={60} tick={{ fontSize:10, fill:"#374151", fontWeight:800 }} tickLine={false} axisLine={false} interval={0} />
-                    <Tooltip content={<DarkTooltip/>} cursor={{ fill:"#f8fafc" }} />
-                    <Legend iconType="circle" wrapperStyle={{ fontSize:11, paddingTop:10 }} />
-                    <Bar dataKey={`Aprovado (${labelMatriz})`} fill={C.blue} radius={[0,4,4,0]} barSize={11} isAnimationActive={true} animationDuration={800} />
-                    <Bar dataKey={`Executado (${labelMatriz})`} fill={C.green} radius={[0,4,4,0]} barSize={11} isAnimationActive={true} animationDuration={800} />
+                    <YAxis
+                      type="category"
+                      dataKey="name"
+                      width={65}
+                      tick={(props: any) => {
+                        const { x, y, payload } = props;
+                        const isHovered = hoveredUnit === payload.value;
+                        const isAnyHovered = hoveredUnit !== null;
+                        return (
+                          <g transform={`translate(${x},${y})`}>
+                            <text
+                              x={-8}
+                              y={3.5}
+                              textAnchor="end"
+                              fill={isHovered ? "#2563eb" : isAnyHovered ? "#94a3b8" : "#334155"}
+                              fontWeight={isHovered ? 900 : 700}
+                              fontSize={isHovered ? 11.5 : 10}
+                              style={{
+                                transition: "all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                                cursor: "pointer"
+                              }}
+                            >
+                              {payload.value}
+                            </text>
+                            {isHovered && (
+                              <circle cx={-1} cy={0} r={2.5} fill="#2563eb" />
+                            )}
+                          </g>
+                        );
+                      }}
+                      tickLine={false}
+                      axisLine={false}
+                      interval={0}
+                    />
+                    <Tooltip content={<DarkTooltip/>} cursor={{ fill:"rgba(241, 245, 249, 0.65)" }} />
+                    <Legend
+                      verticalAlign="top"
+                      iconType="circle"
+                      wrapperStyle={{ fontSize: 11, paddingBottom: 14 }}
+                      formatter={(value) => (
+                        <span style={{ marginRight: 20, color: "#475569", fontWeight: 600 }}>
+                          {value}
+                        </span>
+                      )}
+                    />
+                    <Bar
+                      dataKey={`Aprovado (${labelMatriz})`}
+                      fill={C.blue}
+                      radius={[0, 4, 4, 0]}
+                      barSize={11}
+                      isAnimationActive={false}
+                    >
+                      {D.top15.map((entry: any, index: number) => {
+                        const isHovered = hoveredUnit === entry.name;
+                        const isAnyHovered = hoveredUnit !== null;
+                        return (
+                          <Cell
+                            key={`cell-aprov-${index}`}
+                            fill={C.blue}
+                            opacity={isHovered ? 1 : isAnyHovered ? 0.25 : 1}
+                            style={{
+                              transition: "transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease, filter 0.25s ease",
+                              transform: isHovered ? "scaleY(1.4) scaleX(1.025)" : "scale(1)",
+                              transformOrigin: "left center",
+                              transformBox: "fill-box",
+                              filter: isHovered ? "drop-shadow(0 3px 6px rgba(59, 130, 246, 0.5)) brightness(1.1)" : "none",
+                              cursor: "pointer"
+                            }}
+                            onMouseEnter={() => setHoveredUnit(entry.name)}
+                          />
+                        );
+                      })}
+                    </Bar>
+                    <Bar
+                      dataKey={`Executado (${labelMatriz})`}
+                      fill={C.green}
+                      radius={[0, 4, 4, 0]}
+                      barSize={11}
+                      isAnimationActive={false}
+                    >
+                      {D.top15.map((entry: any, index: number) => {
+                        const isHovered = hoveredUnit === entry.name;
+                        const isAnyHovered = hoveredUnit !== null;
+                        return (
+                          <Cell
+                            key={`cell-exec-${index}`}
+                            fill={C.green}
+                            opacity={isHovered ? 1 : isAnyHovered ? 0.25 : 1}
+                            style={{
+                              transition: "transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease, filter 0.25s ease",
+                              transform: isHovered ? "scaleY(1.4) scaleX(1.025)" : "scale(1)",
+                              transformOrigin: "left center",
+                              transformBox: "fill-box",
+                              filter: isHovered ? "drop-shadow(0 3px 6px rgba(16, 185, 129, 0.5)) brightness(1.1)" : "none",
+                              cursor: "pointer"
+                            }}
+                            onMouseEnter={() => setHoveredUnit(entry.name)}
+                          />
+                        );
+                      })}
+                    </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               </div>
