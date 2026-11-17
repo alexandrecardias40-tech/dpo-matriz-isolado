@@ -622,9 +622,9 @@ export default function ComparativosPage() {
         <div style={{ display:"grid", gridTemplateColumns:"repeat(6,1fr)", gap:8 }}>
           {[
             { label:"Matriz", value:fmt(D.totAprovado), color:C.blue, icon:<DollarSign size={14}/>, sub:"Total aprovado" },
+            { label:"Disponível", value:fmt(D.totDispMatriz), color:C.slate, icon:<Wallet size={14}/>, sub:"Saldo livre restante" },
             { label:"Empenhado", value:fmt(D.totEmpMatriz), color:C.amber, icon:<TrendingUp size={14}/>, sub:"Provisionado em sistema" },
             { label:"Debitado", value:fmt(D.totDebMatriz), color:C.teal, icon:<Target size={14}/>, sub:"Provisionado em planilha" },
-            { label:"Disponível", value:fmt(D.totDispMatriz), color:C.slate, icon:<Wallet size={14}/>, sub:"Saldo livre restante" },
             { label:"Execução Média", value:pct(D.totExecMatriz, D.totAprovado), color:C.purple, icon:<Percent size={14}/>, sub:"Aproveitamento total" },
             { label:"Unidades Mapeadas", value:`${D.nCC} unidades`, color:C.slate, icon:<ArrowUpRight size={14}/>, sub:"Mapeadas na planilha" },
           ].map(k=>(

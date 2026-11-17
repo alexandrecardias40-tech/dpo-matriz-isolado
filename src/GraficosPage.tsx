@@ -261,6 +261,11 @@ function DetailPanel({ cc, onBack, records }: { cc: any; onBack: ()=>void; recor
           <div style={{ fontSize:13.5, fontWeight:800, color:"#0f172a", marginTop:4, fontFamily:"monospace", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{fmt(stats.valor_aprovado)}</div>
           <div style={{ fontSize:8.5, color:"#94a3b8", marginTop:3, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>Planejado na Matriz</div>
         </div>
+        <div style={{ ...s.card, borderLeft:"3px solid #64748b", padding:"8px 10px" }}>
+          <div style={{ fontSize:8.5, fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.04em", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>💵 Disponível</div>
+          <div style={{ fontSize:13.5, fontWeight:800, color:"#0f172a", marginTop:4, fontFamily:"monospace", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{fmt(stats.credito_disponivel_tg)}</div>
+          <div style={{ fontSize:8.5, color:"#94a3b8", marginTop:3, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>Crédito disponível TG</div>
+        </div>
         <div style={{ ...s.card, borderLeft:"3px solid #f59e0b", padding:"8px 10px" }}>
           <div style={{ fontSize:8.5, fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.04em", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>📈 Empenhado</div>
           <div style={{ fontSize:13.5, fontWeight:800, color:"#0f172a", marginTop:4, fontFamily:"monospace", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{fmt(stats.despesas_empenhadas_tg)}</div>
@@ -270,11 +275,6 @@ function DetailPanel({ cc, onBack, records }: { cc: any; onBack: ()=>void; recor
           <div style={{ fontSize:8.5, fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.04em", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>🎯 Debitado</div>
           <div style={{ fontSize:13.5, fontWeight:800, color:"#0f172a", marginTop:4, fontFamily:"monospace", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{fmt(stats.debitado_tg)}</div>
           <div style={{ fontSize:8.5, color:"#94a3b8", marginTop:3, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>Matriz - Disp. TG - Emp. TG</div>
-        </div>
-        <div style={{ ...s.card, borderLeft:"3px solid #64748b", padding:"8px 10px" }}>
-          <div style={{ fontSize:8.5, fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.04em", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>💵 Disponível</div>
-          <div style={{ fontSize:13.5, fontWeight:800, color:"#0f172a", marginTop:4, fontFamily:"monospace", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{fmt(stats.credito_disponivel_tg)}</div>
-          <div style={{ fontSize:8.5, color:"#94a3b8", marginTop:3, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>Crédito disponível TG</div>
         </div>
         <div style={{ ...s.card, borderLeft: "3px solid #8b5cf6", padding:"8px 10px" }}>
           <div style={{ fontSize:8.5, fontWeight:700, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.04em", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>⚡ Execução</div>
